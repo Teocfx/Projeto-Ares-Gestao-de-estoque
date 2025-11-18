@@ -1,0 +1,79 @@
+{# Exibe paginação simplificada: primeira, anterior, atual, próxima e última página #}
+{% if posts.paginator.num_pages > 1 %}
+  <nav class="noticias-pagination--wrapper tw:mb-16 tw:mt-16" aria-label="Navegação de páginas">
+    <div class="container">
+      <ul class="noticias-pagination--layout pagination justify-content-center">
+        {# Botão anterior #}
+        <li class="noticias-pagination-item page-item {% if not posts.has_previous %}disabled{% endif %} with-border">
+          <a class="noticias-pagination-link page-link" href="?{% if query_params %}{{ query_params }}&{% endif %}page={% if posts.has_previous %}{{ posts.previous_page_number }}{% else %}1{% endif %}" {% if not posts.has_previous %}aria-disabled="true"{% endif %}>
+            <span aria-hidden="true">
+              <svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7.41 10.59L2.83 6L7.41 1.41L6 0L0 6L6 12L7.41 10.59Z" style="fill: var(--paginator-svg-color, #000);"/>
+              </svg>
+            </span>
+            <span class="sr-only">Página anterior</span>
+          </a>
+        </li>
+
+        {# Primeira página #}
+        <li class="noticias-pagination-item page-item {% if posts.number == 1 %}active{% endif %}">
+          <a class="noticias-pagination-link page-link" href="?{% if query_params %}{{ query_params }}&{% endif %}page=1">1</a>
+        </li>
+
+        {# Reticências se necessário #}
+        {% if posts.number > 3 %}
+          <li class="noticias-pagination-item page-item disabled">
+            <span class="page-link">...</span>
+          </li>
+        {% endif %}
+
+        {# Página anterior à atual #}
+        {% if posts.number|add:'-1' > 1 %}
+          <li class="noticias-pagination-item page-item">
+            <a class="noticias-pagination-link page-link" href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ posts.number|add:'-1' }}">{{ posts.number|add:'-1' }}</a>
+          </li>
+        {% endif %}
+
+        {# Página atual #}
+        {% if posts.number != 1 and posts.number != posts.paginator.num_pages %}
+          <li class="noticias-pagination-item page-item active">
+            <span class="page-link">{{ posts.number }}</span>
+          </li>
+        {% endif %}
+
+        {# Página posterior à atual #}
+        {% if posts.number|add:'1' < posts.paginator.num_pages %}
+          <li class="noticias-pagination-item page-item">
+            <a class="noticias-pagination-link page-link" href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ posts.number|add:'1' }}">{{ posts.number|add:'1' }}</a>
+          </li>
+        {% endif %}
+
+        {# Reticências se necessário #}
+        {% if posts.number < posts.paginator.num_pages|add:'-2' %}
+          <li class="noticias-pagination-item page-item disabled">
+            <span class="page-link">...</span>
+          </li>
+        {% endif %}
+
+        {# Última página #}
+        {% if posts.paginator.num_pages > 1 %}
+          <li class="noticias-pagination-item page-item {% if posts.number == posts.paginator.num_pages %}active{% endif %}">
+            <a class="noticias-pagination-link page-link" href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ posts.paginator.num_pages }}">{{ posts.paginator.num_pages }}</a>
+          </li>
+        {% endif %}
+
+        {# Botão próximo #}
+        <li class="noticias-pagination-item page-item{% if not posts.has_next %} disabled{% endif %} with-border">
+          <a class="noticias-pagination-link page-link" href="?{% if query_params %}{{ query_params }}&{% endif %}page={% if posts.has_next %}{{ posts.next_page_number }}{% else %}{{ posts.paginator.num_pages }}{% endif %}" {% if not posts.has_next %}aria-disabled="true"{% endif %}>
+            <span aria-hidden="true">
+              <svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0.589966 10.59L5.16997 6L0.589966 1.41L1.99997 0L7.99997 6L1.99997 12L0.589966 10.59Z" style="fill: var(--paginator-svg-color, #000);"/>
+              </svg>
+            </span>
+            <span class="sr-only">Próxima página</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+{% endif %}

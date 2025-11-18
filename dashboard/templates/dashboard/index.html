@@ -1,0 +1,354 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sistema de Gestão de Estoque ARES</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {# Estilos movidos para: frontend/scss/dashboard/_dashboard.scss #}
+</head>
+<body class="dashboard-page" data-has-products="{{ system_info.products_available|yesno:'true,false' }}">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="{% url 'dashboard:index' %}">
+                <i class="fas fa-boxes me-2"></i>ARES
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'dashboard:index' %}">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'produtos:list' %}">
+                            <i class="fas fa-box me-1"></i>Produtos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'movimentacoes:list' %}">
+                            <i class="fas fa-exchange-alt me-1"></i>Movimentações
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'relatorios:index' %}">
+                            <i class="fas fa-chart-bar me-1"></i>Relatórios
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <button class="nav-link dropdown-toggle btn btn-link text-white" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Menu do usuário">
+                            <i class="fas fa-user me-1"></i>{{ user.get_full_name|default:user.username }}
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/admin/"><i class="fas fa-cog me-2"></i>Admin</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'autenticacao:logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Sair</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+    <!-- Header de Boas-vindas -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 bg-gradient-primary text-white">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 class="h3 mb-1">
+                                <i class="bi bi-speedometer2 me-2"></i>
+                                Bem-vindo ao Sistema ARES
+                            </h1>
+                            <p class="mb-0 opacity-90">
+                                Olá, <strong>{{ user.get_full_name|default:user.username }}</strong>! 
+                                Aqui está o resumo do seu estoque em {{ system_info.current_time|date:"d/m/Y H:i" }}
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="btn-group">
+                                <a href="{% url 'produtos:create' %}" class="btn btn-light">
+                                    <i class="bi bi-plus-circle me-1"></i>Novo Produto
+                                </a>
+                                <a href="{% url 'produtos:list' %}" class="btn btn-outline-light">
+                                    <i class="bi bi-list-ul me-1"></i>Ver Produtos
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if system_info.products_available %}
+    <!-- Cards de Estatísticas Principais -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total de Produtos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ products_stats.total_products|default:"0" }}
+                            </div>
+                            <small class="text-muted">
+                                {{ products_stats.total_categories|default:"0" }} categorias
+                            </small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-box-seam display-4 text-primary opacity-75"></i>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <a href="{% url 'produtos:list' %}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-arrow-right me-1"></i>Ver Produtos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Valor do Estoque
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                R$ {{ products_stats.total_stock_value|floatformat:2|default:"0,00" }}
+                            </div>
+                            <small class="text-success">
+                                <i class="bi bi-graph-up me-1"></i>Valor total
+                            </small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-currency-dollar display-4 text-success opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Estoque Baixo
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ products_stats.low_stock|default:"0" }}
+                            </div>
+                            <small class="text-warning">
+                                <i class="bi bi-exclamation-triangle me-1"></i>Requer atenção
+                            </small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-exclamation-circle display-4 text-warning opacity-75"></i>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <a href="{% url 'produtos:list' %}?stock_status=BAIXO" class="btn btn-sm btn-outline-warning">
+                            <i class="bi bi-arrow-right me-1"></i>Verificar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Estoque Crítico
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ products_stats.critical_stock|default:"0" }}
+                            </div>
+                            <small class="text-danger">
+                                <i class="bi bi-exclamation-triangle-fill me-1"></i>Sem estoque
+                            </small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-exclamation-triangle display-4 text-danger opacity-75"></i>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <a href="{% url 'produtos:list' %}?stock_status=CRITICO" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-arrow-right me-1"></i>Ver Críticos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="row g-4 mt-4">
+    
+    <!-- Gráfico de Movimentações -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-transparent border-bottom-0 d-flex align-items-center justify-content-between">
+                <h6 class="card-title mb-0 fw-bold">Movimentações dos Últimos 7 Dias</h6>
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-three-dots"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">7 dias</a></li>
+                        <li><a class="dropdown-item" href="#">30 dias</a></li>
+                        <li><a class="dropdown-item" href="#">90 dias</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="movimentacoesChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Produtos com Estoque Baixo -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-transparent border-bottom-0 d-flex align-items-center justify-content-between">
+                <h6 class="card-title mb-0 fw-bold">Estoque Baixo</h6>
+                <a href="{% url 'produtos:list' %}?status=baixo" class="btn btn-outline-primary btn-sm">
+                    Ver Todos
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for produto in produtos_estoque_baixo %}
+                    <div class="list-group-item border-0 px-3 py-3">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="bg-warning bg-opacity-10 rounded-2 p-2">
+                                    <i class="bi bi-box text-warning"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1 fw-medium">{{ produto.name }}</h6>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-warning">{{ produto.current_stock }} {{ produto.unit.name }}</span>
+                                    <small class="text-muted">Min: {{ produto.min_stock }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-check-circle text-success fs-1 mb-3"></i>
+                        <p class="text-muted mb-0">Todos os produtos estão com estoque adequado!</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+<div class="row g-4 mt-4">
+    
+    <!-- Últimas Movimentações -->
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-bottom-0 d-flex align-items-center justify-content-between">
+                <h6 class="card-title mb-0 fw-bold">Últimas Movimentações</h6>
+                <a href="{% url 'movimentacoes:list' %}" class="btn btn-outline-primary btn-sm">
+                    Ver Histórico Completo
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="border-0 fw-medium">Produto</th>
+                                <th class="border-0 fw-medium">Tipo</th>
+                                <th class="border-0 fw-medium">Quantidade</th>
+                                <th class="border-0 fw-medium">Usuário</th>
+                                <th class="border-0 fw-medium">Data</th>
+                                <th class="border-0 fw-medium">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for movimento in ultimas_movimentacoes %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-box me-2 text-muted"></i>
+                                        <span class="fw-medium">{{ movimento.product.name }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if movimento.type == 'ENTRADA' %}
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-arrow-down-circle me-1"></i>Entrada
+                                        </span>
+                                    {% elif movimento.type == 'SAIDA' %}
+                                        <span class="badge bg-danger">
+                                            <i class="bi bi-arrow-up-circle me-1"></i>Saída
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-warning">
+                                            <i class="bi bi-gear me-1"></i>Ajuste
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="fw-medium">{{ movimento.quantity }} {{ movimento.product.unit.name }}</td>
+                                <td class="text-muted">{{ movimento.user.get_full_name|default:movimento.user.username }}</td>
+                                <td class="text-muted">{{ movimento.created_at|date:"d/m/Y H:i" }}</td>
+                                <td>
+                                    <button class="btn btn-outline-primary btn-sm" disabled title="Função em desenvolvimento">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-muted">
+                                    <i class="bi bi-inbox fs-1 mb-3 d-block"></i>
+                                    Nenhuma movimentação registrada ainda.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- App Scripts -->
+<script src="{% static 'js/main.js' %}"></script>
+{# Scripts movidos para: frontend/js/dashboard/dashboard.js #}
+</body>
+</html>

@@ -1,0 +1,182 @@
+/**
+ * Movimentações - Tema Padrão
+ * Registros de entrada e saída de estoque
+ */
+
+body.movimentacoes-page {
+    background-color: var(--theme-bg-secondary);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.movimentacoes-page {
+    // Navbar
+    .navbar {
+        background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
+        box-shadow: 0 2px 8px var(--theme-shadow);
+    }
+    
+    // Formulário
+    .card-form {
+        background-color: var(--theme-bg);
+        box-shadow: 0 2px 12px var(--theme-shadow);
+        border-radius: 12px;
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
+            color: var(--theme-bg);
+            padding: 1.5rem;
+            border-radius: 12px 12px 0 0;
+            
+            h4 {
+                margin: 0;
+                font-weight: 600;
+            }
+        }
+        
+        .card-body {
+            padding: 2rem;
+        }
+    }
+    
+    // Informações do produto
+    .product-info {
+        background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary));
+        border: 2px solid var(--theme-border);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        
+        &.show {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--theme-border-light);
+            
+            &:last-child {
+                border-bottom: none;
+            }
+            
+            strong {
+                color: var(--theme-text);
+            }
+        }
+    }
+    
+    // Indicadores de estoque
+    .stock-indicator {
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-weight: 700;
+        display: inline-block;
+        
+        &.stock-ok {
+            background-color: rgba(46, 125, 50, 0.1);
+            color: var(--theme-success);
+            border: 2px solid var(--theme-success);
+        }
+        
+        &.stock-baixo {
+            background-color: rgba(245, 124, 0, 0.1);
+            color: var(--theme-warning);
+            border: 2px solid var(--theme-warning);
+        }
+        
+        &.stock-critico {
+            background-color: rgba(198, 40, 40, 0.1);
+            color: var(--theme-error);
+            border: 2px solid var(--theme-error);
+        }
+    }
+    
+    // Formulário
+    .form-control, .form-select {
+        border: 2px solid var(--theme-border);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+        background-color: var(--theme-bg);
+        color: var(--theme-text);
+        
+        &:focus {
+            border-color: var(--theme-primary);
+            box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.1);
+            outline: none;
+        }
+    }
+    
+    label {
+        color: var(--theme-text);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    
+    // Botões
+    .btn-primary {
+        background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
+        border: none;
+        padding: 0.875rem 2rem;
+        font-weight: 600;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(198, 40, 40, 0.2);
+        transition: all 0.3s ease;
+        
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(198, 40, 40, 0.3);
+        }
+    }
+    
+    .btn-secondary {
+        background-color: var(--theme-bg-secondary);
+        color: var(--theme-text);
+        border: 2px solid var(--theme-border);
+        padding: 0.875rem 2rem;
+        font-weight: 600;
+        border-radius: 8px;
+        
+        &:hover {
+            background-color: var(--theme-bg-tertiary);
+        }
+    }
+    
+    // Breadcrumb
+    .breadcrumb {
+        background-color: transparent;
+        padding: 0.75rem 0;
+        
+        .breadcrumb-item {
+            color: var(--theme-text-secondary);
+            
+            a {
+                color: var(--theme-primary);
+                text-decoration: none;
+                
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+            
+            &.active {
+                color: var(--theme-text);
+            }
+        }
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

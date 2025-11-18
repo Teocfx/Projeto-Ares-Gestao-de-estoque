@@ -1,0 +1,94 @@
+@use "variables";
+
+.cc--light-funky {
+    color-scheme: light;
+
+    --cc-bg: #{variables.$color-cookie-bg};
+    --cc-primary-color: #{variables.$color-primary}; // #112954;
+    --cc-secondary-color: #{variables.$color-primary}; //#112954;
+
+    --cc-btn-primary-bg: #{variables.$color-primary}; //#3859d0;
+    --cc-btn-primary-color: var(--cc-bg);
+    --cc-btn-primary-hover-bg: #{variables.$color-primary-70}; //#213657;
+    --cc-btn-primary-hover-color: #{variables.$color-white};
+
+    --cc-btn-secondary-bg: #{variables.$color-cookie-secondary-bg};
+    --cc-btn-secondary-color: var(--cc-secondary-color);
+    --cc-btn-secondary-hover-bg: #{variables.$color-cookie-secondary-hover-bg};
+    --cc-btn-secondary-hover-color: #{variables.$color-black};
+
+    --cc-cookie-category-block-bg: #{variables.$color-cookie-category-bg};
+    --cc-cookie-category-block-border: #{variables.$color-cookie-category-bg};
+    --cc-cookie-category-block-hover-bg: #{variables.$color-cookie-category-hover-bg};
+    --cc-cookie-category-block-hover-border: #{variables.$color-cookie-category-hover-bg};
+    --cc-cookie-category-expanded-block-hover-bg: #{variables.$color-cookie-category-bg};
+    --cc-cookie-category-expanded-block-bg: #{variables.$color-cookie-category-bg};
+
+    --cc-overlay-bg: #{variables.$color-cookie-overlay} !important;
+
+    --cc-toggle-readonly-bg: #{variables.$color-cookie-toggle-readonly};
+    --cc-toggle-on-knob-bg: var(--cc-bg);
+    --cc-toggle-off-bg: #{variables.$color-cookie-toggle-off};
+    --cc-toggle-readonly-knob-bg: var(--cc-bg);
+
+    --cc-separator-border-color: variables.$color-light-border;
+
+    --cc-footer-border-color: variables.$color-light-border;
+    --cc-footer-bg: var(--cc-bg);
+
+    // --cc-btn-border-radius: 1rem .6rem 1.3rem .5rem / .5rem 1rem;
+    // --cc-modal-border-radius: var(--cc-btn-border-radius);
+    // --cc-pm-toggle-border-radius: var(--cc-btn-border-radius);
+}
+
+// .cc--light-funky #cc-main .toggle__icon:after {
+//     border-radius: var(--cc-btn-border-radius);
+// }
+
+// .cc--light-funky #cc-main .cm__btn--close {
+//     border-radius: var(--cc-btn-border-radius);
+//     border-top-left-radius: 0;
+//     border-top-right-radius: 0;
+// }
+
+
+// Tema escuro
+.cc--darkmode {
+    --cc-bg: #{variables.$color-black}; 
+
+    --cc-primary-color: #{variables.$color-white};
+    --cc-btn-primary-bg: #{variables.$color-white};
+
+    .cm__texts {
+        color: variables.$color-black !important;
+    }    
+
+    #cc-main {
+        .cm {
+            background-color: #{variables.$color-white} !important;
+        }
+        .cm__desc {
+            color: variables.$color-grey-700 !important;
+        }
+        .cm__btn {
+            background: variables.$color-grey-800;
+            border: 1px solid variables.$color-grey-800;
+            color: variables.$color-white;
+            &:hover {
+                background-color: variables.$color-black;
+            }
+        }
+        .cm__btn--secondary {
+            background: variables.$color-grey-300;
+            border-color: variables.$color-grey-300;
+            color: variables.$color-black;
+            &:hover {
+                background-color: variables.$color-grey-500;
+            }
+        }
+    }
+
+    --cc-btn-primary-hover-bg: #{variables.$color-grey-700};
+    --cc-btn-primary-hover-border-color: #{variables.$color-grey-700};
+    --cc-btn-primary-hover-color: #{variables.$color-white};
+}

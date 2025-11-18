@@ -1,0 +1,320 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes da Movimentação - Sistema ARES</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+        }
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        }
+        body { 
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .detail-card {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .info-item {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        .badge-type {
+            font-size: 0.85rem;
+            padding: 0.5em 0.8em;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark" aria-label="Navegação principal">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="{% url 'dashboard:index' %}">
+                <i class="fas fa-boxes me-2"></i>ARES
+            </a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard:index' %}">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'produtos:list' %}">
+                            <i class="fas fa-box me-1"></i>Produtos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'movimentacoes:list' %}">
+                            <i class="fas fa-exchange-alt me-1"></i>Movimentações
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'relatorios:index' %}">
+                            <i class="fas fa-chart-bar me-1"></i>Relatórios
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'autenticacao:logout' %}">
+                            <i class="fas fa-sign-out-alt me-1"></i>{{ user.username }}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <div class="col-12">
+                <!-- Breadcrumb -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'dashboard:index' %}">
+                                <i class="fas fa-home"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'movimentacoes:list' %}">Movimentações</a>
+                        </li>
+                        <li class="breadcrumb-item active">Detalhes</li>
+                    </ol>
+                </nav>
+
+                <!-- Detalhes da Movimentação -->
+                <div class="card detail-card border-0 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0">
+                                <i class="fas fa-info-circle me-2"></i>Detalhes da Movimentação
+                            </h4>
+                            <div>
+                                {% if movement.type == 'ENTRADA' %}
+                                    <span class="badge bg-success badge-type">
+                                        <i class="fas fa-arrow-down me-1"></i>Entrada
+                                    </span>
+                                {% elif movement.type == 'SAIDA' %}
+                                    <span class="badge bg-danger badge-type">
+                                        <i class="fas fa-arrow-up me-1"></i>Saída
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-warning badge-type">
+                                        <i class="fas fa-edit me-1"></i>Ajuste
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Informações Principais -->
+                        <div class="info-grid mb-4">
+                            <div class="info-item">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-box text-primary me-2"></i>
+                                    <strong>Produto</strong>
+                                </div>
+                                <div class="fw-medium">{{ movement.product.name }}</div>
+                                <small class="text-muted">SKU: {{ movement.product.sku }}</small>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-balance-scale text-primary me-2"></i>
+                                    <strong>Quantidade</strong>
+                                </div>
+                                <div class="fw-medium fs-5">
+                                    {{ movement.quantity }} {{ movement.product.unit.name }}
+                                </div>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-calendar text-primary me-2"></i>
+                                    <strong>Data/Hora</strong>
+                                </div>
+                                <div class="fw-medium">
+                                    {{ movement.created_at|date:"d/m/Y" }}
+                                </div>
+                                <small class="text-muted">{{ movement.created_at|date:"H:i:s" }}</small>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-user text-primary me-2"></i>
+                                    <strong>Usuário</strong>
+                                </div>
+                                <div class="fw-medium">
+                                    {{ movement.user.get_full_name|default:movement.user.username }}
+                                </div>
+                                <small class="text-muted">{{ movement.user.username }}</small>
+                            </div>
+                        </div>
+
+                        <!-- Controle de Estoque -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="card bg-light">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">
+                                            <i class="fas fa-chart-line me-2"></i>Controle de Estoque
+                                        </h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row text-center">
+                                            <div class="col-md-4">
+                                                <div class="border-end">
+                                                    <div class="fw-bold text-muted">Estoque Anterior</div>
+                                                    <div class="fs-5 fw-bold">
+                                                        {{ movement.stock_before }} {{ movement.product.unit.name }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="border-end">
+                                                    <div class="fw-bold text-muted">Diferença</div>
+                                                    <div class="fs-5 fw-bold
+                                                        {% if movement.difference > 0 %}text-success
+                                                        {% elif movement.difference < 0 %}text-danger
+                                                        {% else %}text-muted{% endif %}">
+                                                        {% if movement.difference > 0 %}+{% endif %}{{ movement.difference }} {{ movement.product.unit.name }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="fw-bold text-muted">Estoque Posterior</div>
+                                                <div class="fs-5 fw-bold text-primary">
+                                                    {{ movement.stock_after }} {{ movement.product.unit.name }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Documentação -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="info-item h-100">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-file-invoice text-primary me-2"></i>
+                                        <strong>Documento</strong>
+                                    </div>
+                                    {% if movement.document %}
+                                        <div class="fw-medium">{{ movement.document }}</div>
+                                    {% else %}
+                                        <div class="text-muted fst-italic">Não informado</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-item h-100">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-sticky-note text-primary me-2"></i>
+                                        <strong>Observações</strong>
+                                    </div>
+                                    {% if movement.notes %}
+                                        <div>{{ movement.notes|linebreaks }}</div>
+                                    {% else %}
+                                        <div class="text-muted fst-italic">Nenhuma observação</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ações -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <a href="{% url 'movimentacoes:list' %}" class="btn btn-outline-primary">
+                                        <i class="fas fa-arrow-left me-2"></i>Voltar à Lista
+                                    </a>
+                                    <a href="{% url 'produtos:detail' movement.product.pk %}" class="btn btn-outline-info">
+                                        <i class="fas fa-box me-2"></i>Ver Produto
+                                    </a>
+                                    <a href="{% url 'movimentacoes:create' %}" class="btn btn-success">
+                                        <i class="fas fa-plus me-2"></i>Nova Movimentação
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Movimentações Relacionadas -->
+                {% if related_movements %}
+                <div class="card detail-card border-0 shadow-sm mt-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-history me-2"></i>Outras Movimentações do Produto
+                        </h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Tipo</th>
+                                        <th>Quantidade</th>
+                                        <th>Usuário</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for related in related_movements %}
+                                    <tr>
+                                        <td>{{ related.created_at|date:"d/m/Y H:i" }}</td>
+                                        <td>
+                                            {% if related.type == 'ENTRADA' %}
+                                                <span class="badge bg-success">Entrada</span>
+                                            {% elif related.type == 'SAIDA' %}
+                                                <span class="badge bg-danger">Saída</span>
+                                            {% else %}
+                                                <span class="badge bg-warning">Ajuste</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ related.quantity }} {{ related.product.unit.name }}</td>
+                                        <td>{{ related.user.get_full_name|default:related.user.username }}</td>
+                                        <td>
+                                            <a href="{% url 'movimentacoes:detail' related.pk %}" 
+                                               class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

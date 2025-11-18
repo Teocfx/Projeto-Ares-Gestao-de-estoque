@@ -1,0 +1,25 @@
+@import "tailwindcss" prefix(tw) important;
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+/*Folders para sistema de gestão de estoque*/
+@source '../../backend/templates';
+@source '../../frontend/scss';
+@source '../../backend/core/templates';
+@source '../../backend/dashboard/templates';
+@source '../../backend/produtos/templates';
+@source '../../backend/movimentacoes/templates';
+@source '../../backend/relatorios/templates';
+@source '../../backend/autenticacao/templates';
+
+@theme static {
+  --color-primary: #30599B;
+  --color-primary-escuro: #30599B;
+
+  --color-primary-light: #396BBB;
+
+  --color-gradient-inicio: #396BBB;
+  --color-gradient-fim: #1A3155;
+
+  --font-inter: 'Inter', sans-serif;
+}

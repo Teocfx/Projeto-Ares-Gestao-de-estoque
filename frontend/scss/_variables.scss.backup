@@ -1,0 +1,284 @@
+/**
+ * ARES - Sistema de Gestão de Estoque
+ * Variáveis de Tema usando CSS Custom Properties
+ * 
+ * Este arquivo UNIFICA:
+ * - Variáveis antigas do sistema (Material Design, cores específicas)
+ * - Novo sistema de temas com CSS Custom Properties
+ * 
+ * Temas disponíveis:
+ * - default: Tema padrão ARES (azul escuro + verde)
+ * - dark: Tema escuro para trabalho noturno
+ * - high-contrast: Alto contraste para acessibilidade
+ */
+
+/* ============================================
+   TEMA PADRÃO (DEFAULT)
+   ============================================ */
+:root,
+[data-theme="default"] {
+  /* === CORES PRIMÁRIAS ARES === */
+  --color-primary: #30599b;
+  --color-primary-light: #396BBB;
+  --color-primary-dark: #24477c;
+  --color-primary-darker: #0a00b6;
+  --color-primary-hover: #25447a;
+  --color-primary-rgb: 48, 89, 155;
+  
+  /* === CORES SECUNDÁRIAS === */
+  --color-secondary: #27ae60;
+  --color-secondary-light: #2ecc71;
+  --color-secondary-dark: #229954;
+  --color-secondary-rgb: 39, 174, 96;
+  
+  /* === CORES DE ESTADO === */
+  --color-success: #27ae60;
+  --color-success-light: #2ecc71;
+  --color-success-dark: #229954;
+  
+  --color-warning: #f39c12;
+  --color-warning-light: #f1c40f;
+  --color-warning-dark: #e67e22;
+  
+  --color-danger: #e74c3c;
+  --color-danger-light: #ec7063;
+  --color-danger-dark: #c0392b;
+  
+  --color-info: #3498db;
+  --color-info-light: #5dade2;
+  --color-info-dark: #2980b9;
+  
+  /* === CORES DE FUNDO === */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9f9f9;
+  --bg-tertiary: #f0f0f0;
+  --bg-overlay: rgba(0, 0, 0, 0.5);
+  --bg-modal: rgba(0, 0, 0, 0.7);
+  
+  /* === CORES DE TEXTO === */
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-tertiary: #999999;
+  --text-muted: #aaaaaa;
+  --text-inverse: #ffffff;
+  
+  /* === CORES DE BORDA === */
+  --border-color: #e0e0e0;
+  --border-color-light: #f0f0f0;
+  --border-color-dark: #d0d0d0;
+  
+  /* === SOMBRAS === */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
+  --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.2);
+  
+  /* === TIPOGRAFIA === */
+  --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-family-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
+  --font-size-3xl: 1.875rem;  /* 30px */
+  --font-size-4xl: 2.25rem;   /* 36px */
+  
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* === ESPAÇAMENTOS === */
+  --spacing-xs: 0.25rem;   /* 4px */
+  --spacing-sm: 0.5rem;    /* 8px */
+  --spacing-md: 1rem;      /* 16px */
+  --spacing-lg: 1.5rem;    /* 24px */
+  --spacing-xl: 2rem;      /* 32px */
+  --spacing-2xl: 3rem;     /* 48px */
+  --spacing-3xl: 4rem;     /* 64px */
+  
+  /* === BORDAS === */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+  --border-radius-full: 9999px;
+  
+  --border-width: 1px;
+  --border-width-thick: 2px;
+  
+  /* === TRANSIÇÕES === */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 350ms ease;
+  
+  /* === Z-INDEX === */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+}
+
+/* ============================================
+   TEMA ESCURO (DARK)
+   ============================================ */
+[data-theme="dark"] {
+  /* === CORES PRIMÁRIAS === */
+  --color-primary: #3a506b;
+  --color-primary-light: #5b7290;
+  --color-primary-dark: #1c2833;
+  
+  /* === CORES SECUNDÁRIAS === */
+  --color-secondary: #2ecc71;
+  --color-secondary-light: #52d980;
+  --color-secondary-dark: #27ae60;
+  
+  /* === CORES DE ESTADO === */
+  --color-success: #2ecc71;
+  --color-success-light: #52d980;
+  --color-success-dark: #27ae60;
+  
+  --color-warning: #f39c12;
+  --color-warning-light: #f5b041;
+  --color-warning-dark: #d68910;
+  
+  --color-danger: #e74c3c;
+  --color-danger-light: #ec7063;
+  --color-danger-dark: #c0392b;
+  
+  --color-info: #5dade2;
+  --color-info-light: #85c1e9;
+  --color-info-dark: #3498db;
+  
+  /* === CORES DE FUNDO === */
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2a2a2a;
+  --bg-tertiary: #3a3a3a;
+  --bg-overlay: rgba(0, 0, 0, 0.7);
+  --bg-modal: rgba(0, 0, 0, 0.85);
+  
+  /* === CORES DE TEXTO === */
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --text-tertiary: #808080;
+  --text-muted: #606060;
+  --text-inverse: #1a1a1a;
+  
+  /* === CORES DE BORDA === */
+  --border-color: #404040;
+  --border-color-light: #4a4a4a;
+  --border-color-dark: #303030;
+  
+  /* === SOMBRAS === */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.6);
+}
+
+/* ============================================
+   TEMA ALTO CONTRASTE (HIGH CONTRAST)
+   ============================================ */
+[data-theme="high-contrast"] {
+  /* === CORES PRIMÁRIAS === */
+  --color-primary: #000000;
+  --color-primary-light: #1a1a1a;
+  --color-primary-dark: #000000;
+  
+  /* === CORES SECUNDÁRIAS === */
+  --color-secondary: #ffff00;
+  --color-secondary-light: #ffff66;
+  --color-secondary-dark: #cccc00;
+  
+  /* === CORES DE ESTADO === */
+  --color-success: #00ff00;
+  --color-success-light: #66ff66;
+  --color-success-dark: #00cc00;
+  
+  --color-warning: #ff9900;
+  --color-warning-light: #ffb366;
+  --color-warning-dark: #cc7a00;
+  
+  --color-danger: #ff0000;
+  --color-danger-light: #ff6666;
+  --color-danger-dark: #cc0000;
+  
+  --color-info: #00ffff;
+  --color-info-light: #66ffff;
+  --color-info-dark: #00cccc;
+  
+  /* === CORES DE FUNDO === */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f0f0f0;
+  --bg-tertiary: #e0e0e0;
+  --bg-overlay: rgba(0, 0, 0, 0.9);
+  --bg-modal: rgba(0, 0, 0, 0.95);
+  
+  /* === CORES DE TEXTO === */
+  --text-primary: #000000;
+  --text-secondary: #1a1a1a;
+  --text-tertiary: #333333;
+  --text-muted: #4a4a4a;
+  --text-inverse: #ffffff;
+  
+  /* === CORES DE BORDA === */
+  --border-color: #000000;
+  --border-color-light: #333333;
+  --border-color-dark: #000000;
+  
+  /* === SOMBRAS (reduzidas para alto contraste) === */
+  --shadow-sm: 0 0 0 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 0 0 3px rgba(0, 0, 0, 0.7);
+  --shadow-lg: 0 0 0 4px rgba(0, 0, 0, 0.8);
+  --shadow-xl: 0 0 0 5px rgba(0, 0, 0, 0.9);
+  
+  /* === BORDAS MAIS FORTES === */
+  --border-width: 2px;
+  --border-width-thick: 3px;
+}
+
+/* ============================================
+   CLASSES UTILITÁRIAS DE TEMA
+   ============================================ */
+
+/* Forçar cores de tema independente do tema ativo */
+.text-primary { color: var(--color-primary) !important; }
+.text-secondary { color: var(--color-secondary) !important; }
+.text-success { color: var(--color-success) !important; }
+.text-warning { color: var(--color-warning) !important; }
+.text-danger { color: var(--color-danger) !important; }
+.text-info { color: var(--color-info) !important; }
+
+.bg-primary { background-color: var(--bg-primary) !important; }
+.bg-secondary { background-color: var(--bg-secondary) !important; }
+.bg-tertiary { background-color: var(--bg-tertiary) !important; }
+
+.border-primary { border-color: var(--border-color) !important; }
+
+/* ============================================
+   MODO DE PREFERÊNCIA DO SISTEMA (FALLBACK)
+   ============================================ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    /* Aplicar tema escuro automaticamente se não houver preferência salva */
+    --color-primary: #3a506b;
+    --bg-primary: #1a1a1a;
+    --text-primary: #e0e0e0;
+    /* ... outras variáveis do tema escuro ... */
+  }
+}
+
+@media (prefers-contrast: high) {
+  :root:not([data-theme]) {
+    /* Aplicar alto contraste se o usuário tiver essa preferência no sistema */
+    --border-width: 2px;
+    --border-width-thick: 3px;
+  }
+}

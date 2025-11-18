@@ -1,0 +1,218 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movimentações - Sistema ARES</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+        }
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        }
+        body { 
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .movement-entrada { color: #28a745; }
+        .movement-saida { color: #dc3545; }
+        .movement-ajuste { color: #ffc107; }
+        .filter-card { background: white; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark" aria-label="Navegação principal">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="{% url 'dashboard:index' %}">
+                <i class="fas fa-boxes me-2"></i>ARES
+            </a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard:index' %}">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'produtos:list' %}">
+                            <i class="fas fa-box me-1"></i>Produtos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'movimentacoes:list' %}">
+                            <i class="fas fa-exchange-alt me-1"></i>Movimentações
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'relatorios:index' %}">
+                            <i class="fas fa-chart-bar me-1"></i>Relatórios
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'autenticacao:logout' %}">
+                            <i class="fas fa-sign-out-alt me-1"></i>{{ user.username }}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <!-- Cabeçalho -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h2><i class="fas fa-exchange-alt me-2"></i>Movimentações de Estoque</h2>
+            </div>
+            <div class="col-md-6 text-end">
+                <a href="{% url 'movimentacoes:create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Nova Movimentação
+                </a>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filter-card">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" name="search" class="form-control" 
+                           placeholder="Buscar produto, documento..." 
+                           value="{{ request.GET.search }}">
+                </div>
+                <div class="col-md-3">
+                    <select name="type" class="form-select">
+                        <option value="">Todos os tipos</option>
+                        <option value="ENTRADA" {% if request.GET.type == 'ENTRADA' %}selected{% endif %}>Entrada</option>
+                        <option value="SAIDA" {% if request.GET.type == 'SAIDA' %}selected{% endif %}>Saída</option>
+                        <option value="AJUSTE" {% if request.GET.type == 'AJUSTE' %}selected{% endif %}>Ajuste</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="date" name="date_from" class="form-control" 
+                           placeholder="Data início" value="{{ request.GET.date_from }}">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-secondary w-100">
+                        <i class="fas fa-search me-1"></i>Filtrar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tabela de Movimentações -->
+        <div class="card">
+            <div class="card-body">
+                {% if movements %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Tipo</th>
+                                <th>Produto</th>
+                                <th class="text-end">Quantidade</th>
+                                <th>Documento</th>
+                                <th>Usuário</th>
+                                <th class="text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for movement in movements %}
+                            <tr>
+                                <td>{{ movement.created_at|date:"d/m/Y H:i" }}</td>
+                                <td>
+                                    {% if movement.type == 'ENTRADA' %}
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-arrow-down me-1"></i>Entrada
+                                        </span>
+                                    {% elif movement.type == 'SAIDA' %}
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-arrow-up me-1"></i>Saída
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="fas fa-sync me-1"></i>Ajuste
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <strong>{{ movement.product.name }}</strong><br>
+                                    <small class="text-muted">SKU: {{ movement.product.sku }}</small>
+                                </td>
+                                <td class="text-end">
+                                    <strong>{{ movement.quantity }} {{ movement.product.unit.name }}</strong>
+                                </td>
+                                <td>{{ movement.document|default:"-" }}</td>
+                                <td>{{ movement.user.get_full_name|default:movement.user.username }}</td>
+                                <td class="text-center">
+                                    <a href="{% url 'movimentacoes:detail' movement.pk %}" 
+                                       class="btn btn-sm btn-info" title="Detalhes">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Paginação -->
+                {% if is_paginated %}
+                <nav aria-label="Paginação de movimentações">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{{ request.GET.urlencode }}">Primeira</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{{ request.GET.urlencode }}">Anterior</a>
+                        </li>
+                        {% endif %}
+
+                        <li class="page-item active">
+                            <span class="page-link">{{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+                        </li>
+
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{{ request.GET.urlencode }}">Próxima</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{{ request.GET.urlencode }}">Última</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+                    <h5>Nenhuma movimentação encontrada</h5>
+                    <p class="text-muted">
+                        {% if request.GET %}
+                        Tente ajustar os filtros ou
+                        <a href="{% url 'movimentacoes:list' %}">limpar os filtros</a>
+                        {% else %}
+                        Comece registrando uma nova movimentação
+                        {% endif %}
+                    </p>
+                    <a href="{% url 'movimentacoes:create' %}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Registrar Primeira Movimentação
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,378 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos - Sistema de Gestão de Estoque ARES</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {# Estilos movidos para: frontend/scss/produtos/_produtos.scss #}
+</head>
+<body class="produtos-page">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="{% url 'dashboard:index' %}">
+                <i class="fas fa-boxes me-2"></i>ARES
+            </a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard:index' %}">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'produtos:list' %}">
+                            <i class="fas fa-box me-1"></i>Produtos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'movimentacoes:list' %}">
+                            <i class="fas fa-exchange-alt me-1"></i>Movimentações
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'relatorios:index' %}">
+                            <i class="fas fa-chart-bar me-1"></i>Relatórios
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'autenticacao:logout' %}">
+                            <i class="fas fa-sign-out-alt me-1"></i>{{ user.username }}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+<div class="container-fluid mt-4">
+    <!-- Header com título e ações -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-box-seam me-2"></i>
+                Produtos
+            </h1>
+            <p class="text-muted mb-0">Gerencie o catálogo de produtos</p>
+        </div>
+        
+        <div class="btn-group">
+            <a href="{% url 'produtos:create' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i>
+                Novo Produto
+            </a>
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-three-dots-vertical"></i>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{% url 'produtos:category_list' %}">
+                    <i class="bi bi-tags me-2"></i>Categorias
+                </a></li>
+                <li><a class="dropdown-item" href="{% url 'produtos:unit_list' %}">
+                    <i class="bi bi-rulers me-2"></i>Unidades
+                </a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#" onclick="exportProducts()">
+                    <i class="bi bi-download me-2"></i>Exportar
+                </a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Estatísticas rápidas -->
+    {% if stats %}
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-box display-6 text-primary mb-2"></i>
+                    <h5 class="card-title">{{ stats.total_products }}</h5>
+                    <p class="card-text text-muted">Total de Produtos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-exclamation-triangle display-6 text-danger mb-2"></i>
+                    <h5 class="card-title">{{ stats.critical_stock }}</h5>
+                    <p class="card-text text-muted">Estoque Crítico</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-exclamation-circle display-6 text-warning mb-2"></i>
+                    <h5 class="card-title">{{ stats.low_stock }}</h5>
+                    <p class="card-text text-muted">Estoque Baixo</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-currency-dollar display-6 text-success mb-2"></i>
+                    <h5 class="card-title">R$ {{ stats.total_stock_value|floatformat:2 }}</h5>
+                    <p class="card-text text-muted">Valor Total</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Formulário de busca e filtros -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3" id="search-form">
+                <div class="col-md-4">
+                    {{ search_form.search }}
+                </div>
+                <div class="col-md-2">
+                    {{ search_form.category }}
+                </div>
+                <div class="col-md-2">
+                    {{ search_form.unit }}
+                </div>
+                <div class="col-md-2">
+                    {{ search_form.stock_status }}
+                </div>
+                <div class="col-md-1">
+                    {{ search_form.active }}
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Ações em lote -->
+    <div class="card mb-4" id="bulk-actions" style="display: none;">
+        <div class="card-body">
+            <form id="bulk-action-form">
+                {% csrf_token %}
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label">Ação</label>
+                        <select name="action" class="form-select" required>
+                            <option value="">Selecione uma ação</option>
+                            <option value="activate">Ativar produtos</option>
+                            <option value="deactivate">Desativar produtos</option>
+                            <option value="update_min_stock">Atualizar estoque mínimo</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3" id="min-stock-field" style="display: none;">
+                        <label class="form-label">Novo Estoque Mínimo</label>
+                        <input type="number" name="new_min_stock" class="form-control" step="0.01" min="0">
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-warning me-2">Executar</button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="cancelBulkAction()">Cancelar</button>
+                    </div>
+                    <div class="col-md-3 text-end">
+                        <small class="text-muted">
+                            <span id="selected-count">0</span> produto(s) selecionado(s)
+                        </small>
+                    </div>
+                </div>
+                <input type="hidden" name="selected_products" id="selected-products">
+            </form>
+        </div>
+    </div>
+
+    <!-- Lista de produtos -->
+    <div class="card">
+        <div class="card-body">
+            {% if products %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th width="40">
+                                    <input type="checkbox" id="select-all" class="form-check-input">
+                                </th>
+                                <th>
+                                    <a href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}order_by=sku&direction={% if current_order == 'sku' and current_direction == 'asc' %}desc{% else %}asc{% endif %}" 
+                                       class="text-decoration-none text-dark">
+                                        Código
+                                        {% if current_order == 'sku' %}
+                                            <i class="bi bi-chevron-{% if current_direction == 'asc' %}up{% else %}down{% endif %}"></i>
+                                        {% endif %}
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}order_by=name&direction={% if current_order == 'name' and current_direction == 'asc' %}desc{% else %}asc{% endif %}" 
+                                       class="text-decoration-none text-dark">
+                                        Nome
+                                        {% if current_order == 'name' %}
+                                            <i class="bi bi-chevron-{% if current_direction == 'asc' %}up{% else %}down{% endif %}"></i>
+                                        {% endif %}
+                                    </a>
+                                </th>
+                                <th>Categoria</th>
+                                <th>Estoque</th>
+                                <th>Status</th>
+                                <th>Valor Unit.</th>
+                                <th>Validade</th>
+                                <th width="120">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in products %}
+                            <tr {% if not product.is_active %}class="text-muted"{% endif %}>
+                                <td>
+                                    <input type="checkbox" name="product_ids" value="{{ product.id }}" 
+                                           class="form-check-input product-checkbox">
+                                </td>
+                                <td>
+                                    <code class="text-primary">{{ product.sku }}</code>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div>
+                                            <strong>{{ product.name }}</strong>
+                                            {% if product.description %}
+                                                <br><small class="text-muted">{{ product.description|truncatechars:50 }}</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark">{{ product.category.name }}</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <span class="me-2">{{ product.current_stock|floatformat:2 }} {{ product.unit.name }}</span>
+                                        {% if product.min_stock > 0 %}
+                                            <small class="text-muted">(min: {{ product.min_stock|floatformat:2 }})</small>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if product.stock_status == 'CRITICO' %}
+                                        <span class="badge bg-danger">
+                                            <i class="bi bi-exclamation-triangle me-1"></i>Crítico
+                                        </span>
+                                    {% elif product.stock_status == 'BAIXO' %}
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="bi bi-exclamation-circle me-1"></i>Baixo
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check-circle me-1"></i>OK
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if product.unit_price %}
+                                        R$ {{ product.unit_price|floatformat:2 }}
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if product.expiry_date %}
+                                        {% if product.expiry_status == 'VENCIDO' %}
+                                            <span class="badge bg-danger">Vencido</span>
+                                        {% elif product.expiry_status == 'PROXIMO' %}
+                                            <span class="badge bg-warning text-dark">Próximo</span>
+                                        {% else %}
+                                            <span class="text-success">{{ product.expiry_date|date:"d/m/Y" }}</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{% url 'produtos:detail' product.pk %}" class="btn btn-outline-info" title="Visualizar">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{% url 'produtos:update' product.pk %}" class="btn btn-outline-primary" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="{% url 'produtos:delete' product.pk %}" class="btn btn-outline-danger" title="Excluir">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Paginação -->
+                {% if is_paginated %}
+                <nav aria-label="Paginação de produtos">
+                    <ul class="pagination justify-content-center mt-4">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page=1">Primeira</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}">Anterior</a>
+                            </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.next_page_number }}">Próxima</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.paginator.num_pages }}">Última</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-box display-1 text-muted"></i>
+                    <h4 class="text-muted mt-3">Nenhum produto encontrado</h4>
+                    <p class="text-muted">
+                        {% if request.GET.search or request.GET.category or request.GET.unit %}
+                            Tente ajustar os filtros de busca ou 
+                            <a href="{% url 'produtos:list' %}" class="text-decoration-none">limpar todos os filtros</a>
+                        {% else %}
+                            Comece adicionando seu primeiro produto
+                        {% endif %}
+                    </p>
+                    {% if not request.GET.search and not request.GET.category and not request.GET.unit %}
+                    <a href="{% url 'produtos:create' %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-2"></i>Adicionar Produto
+                    </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/main.js' %}"></script>
+{# Scripts movidos para: frontend/js/produtos/produtos.js #}
+</body>
+</html>

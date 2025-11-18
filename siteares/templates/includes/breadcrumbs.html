@@ -1,0 +1,114 @@
+{% load static %}
+
+{% if breadcrumbs or request.resolver_match %}
+<nav class="breadcrumb-container bg-light border-bottom" aria-label="Navegação estrutural">
+    <div class="container-fluid">
+        <ol class="breadcrumb mb-0 py-2">
+            
+            <!-- Home -->
+            <li class="breadcrumb-item">
+                <a href="{% url 'dashboard:index' %}" class="text-decoration-none">
+                    <i class="bi bi-house-door me-1"></i>
+                    <span class="d-none d-sm-inline">Início</span>
+                </a>
+            </li>
+            
+            <!-- Dynamic Breadcrumbs -->
+            {% if breadcrumbs %}
+                {% for crumb in breadcrumbs %}
+                    {% if not forloop.last %}
+                    <li class="breadcrumb-item">
+                        {% if crumb.url %}
+                        <a href="{{ crumb.url }}" class="text-decoration-none">{{ crumb.title }}</a>
+                        {% else %}
+                        {{ crumb.title }}
+                        {% endif %}
+                    </li>
+                    {% else %}
+                    <li class="breadcrumb-item active" aria-current="page">
+                        {{ crumb.title }}
+                    </li>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <!-- Auto-generated breadcrumbs based on URL -->
+                {% if request.resolver_match.app_name %}
+                    {% if request.resolver_match.app_name == 'produtos' %}
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'produtos:list' %}" class="text-decoration-none">
+                                <i class="bi bi-box-seam me-1"></i>Produtos
+                            </a>
+                        </li>
+                        {% if request.resolver_match.url_name == 'create' %}
+                            <li class="breadcrumb-item active" aria-current="page">Novo Produto</li>
+                        {% elif request.resolver_match.url_name == 'edit' %}
+                            <li class="breadcrumb-item active" aria-current="page">Editar Produto</li>
+                        {% elif request.resolver_match.url_name == 'detail' %}
+                            <li class="breadcrumb-item active" aria-current="page">Detalhes do Produto</li>
+                        {% elif request.resolver_match.url_name == 'categories' %}
+                            <li class="breadcrumb-item active" aria-current="page">Categorias</li>
+                        {% elif request.resolver_match.url_name == 'units' %}
+                            <li class="breadcrumb-item active" aria-current="page">Unidades</li>
+                        {% endif %}
+                    
+                    {% elif request.resolver_match.app_name == 'movimentacoes' %}
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'movimentacoes:list' %}" class="text-decoration-none">
+                                <i class="bi bi-arrow-left-right me-1"></i>Movimentações
+                            </a>
+                        </li>
+                        {% if request.resolver_match.url_name == 'entrada' %}
+                            <li class="breadcrumb-item active" aria-current="page">
+                                <i class="bi bi-arrow-down-circle text-success me-1"></i>Nova Entrada
+                            </li>
+                        {% elif request.resolver_match.url_name == 'saida' %}
+                            <li class="breadcrumb-item active" aria-current="page">
+                                <i class="bi bi-arrow-up-circle text-danger me-1"></i>Nova Saída
+                            </li>
+                        {% elif request.resolver_match.url_name == 'ajuste' %}
+                            <li class="breadcrumb-item active" aria-current="page">
+                                <i class="bi bi-gear text-warning me-1"></i>Ajuste de Estoque
+                            </li>
+                        {% elif request.resolver_match.url_name == 'detail' %}
+                            <li class="breadcrumb-item active" aria-current="page">Detalhes da Movimentação</li>
+                        {% endif %}
+                    
+                    {% elif request.resolver_match.app_name == 'relatorios' %}
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'relatorios:index' %}" class="text-decoration-none">
+                                <i class="bi bi-graph-up me-1"></i>Relatórios
+                            </a>
+                        </li>
+                        {% if request.resolver_match.url_name == 'estoque' %}
+                            <li class="breadcrumb-item active" aria-current="page">Relatório de Estoque</li>
+                        {% elif request.resolver_match.url_name == 'movimentacoes' %}
+                            <li class="breadcrumb-item active" aria-current="page">Relatório de Movimentações</li>
+                        {% elif request.resolver_match.url_name == 'vencimentos' %}
+                            <li class="breadcrumb-item active" aria-current="page">Produtos Vencidos</li>
+                        {% elif request.resolver_match.url_name == 'critico' %}
+                            <li class="breadcrumb-item active" aria-current="page">Estoque Crítico</li>
+                        {% endif %}
+                    
+                    {% elif request.resolver_match.app_name == 'autenticacao' %}
+                        {% if request.resolver_match.url_name == 'profile' %}
+                            <li class="breadcrumb-item active" aria-current="page">
+                                <i class="bi bi-person me-1"></i>Meu Perfil
+                            </li>
+                        {% elif request.resolver_match.url_name == 'settings' %}
+                            <li class="breadcrumb-item active" aria-current="page">
+                                <i class="bi bi-gear me-1"></i>Configurações
+                            </li>
+                        {% endif %}
+                    
+                    {% elif request.resolver_match.app_name == 'dashboard' %}
+                        {% if request.resolver_match.url_name != 'index' %}
+                            <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+            
+        </ol>
+    </div>
+</nav>
+{% endif %}

@@ -1,0 +1,169 @@
+/**
+ * Produtos - Tema Padrão
+ * Listagem e gerenciamento de produtos
+ */
+
+body.produtos-page {
+    background-color: var(--theme-bg-secondary);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.produtos-page {
+    // Navbar
+    .navbar {
+        background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
+        box-shadow: 0 2px 8px var(--theme-shadow);
+    }
+    
+    // Cards
+    .card {
+        background-color: var(--theme-bg);
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px var(--theme-shadow);
+    }
+    
+    // Botões
+    .btn-primary {
+        background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
+        border: none;
+        box-shadow: 0 2px 8px rgba(198, 40, 40, 0.2);
+        transition: all 0.3s ease;
+        
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(198, 40, 40, 0.3);
+        }
+    }
+    
+    // Tabelas
+    .table {
+        color: var(--theme-text);
+        
+        thead {
+            background-color: var(--theme-bg-secondary);
+            
+            th {
+                color: var(--theme-text);
+                font-weight: 600;
+                border-bottom: 2px solid var(--theme-border);
+                padding: 1rem 0.75rem;
+            }
+        }
+        
+        tbody {
+            tr {
+                transition: background-color 0.2s ease;
+                border-bottom: 1px solid var(--theme-border-light);
+                
+                &:hover {
+                    background-color: var(--theme-bg-tertiary);
+                }
+                
+                td {
+                    padding: 1rem 0.75rem;
+                    vertical-align: middle;
+                }
+            }
+        }
+    }
+    
+    // Badges de status
+    .badge {
+        padding: 0.5rem 0.875rem;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.8125rem;
+        
+        &.bg-danger {
+            background-color: var(--theme-error) !important;
+        }
+        
+        &.bg-warning {
+            background-color: var(--theme-warning) !important;
+            color: var(--theme-text);
+        }
+        
+        &.bg-success {
+            background-color: var(--theme-success) !important;
+        }
+        
+        &.bg-info {
+            background-color: var(--theme-info) !important;
+        }
+    }
+    
+    // Filtros e busca
+    .filter-bar {
+        background-color: var(--theme-bg);
+        border-radius: 8px;
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 1px 4px var(--theme-shadow);
+        
+        .form-control {
+            border-color: var(--theme-border);
+            
+            &:focus {
+                border-color: var(--theme-primary);
+                box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.1);
+            }
+        }
+    }
+    
+    // Botões de ação
+    .btn-group {
+        .btn {
+            &.btn-outline-info {
+                color: var(--theme-info);
+                border-color: var(--theme-info);
+                
+                &:hover {
+                    background-color: var(--theme-info);
+                    color: var(--theme-bg);
+                }
+            }
+            
+            &.btn-outline-primary {
+                color: var(--theme-primary);
+                border-color: var(--theme-primary);
+                
+                &:hover {
+                    background-color: var(--theme-primary);
+                    color: var(--theme-bg);
+                }
+            }
+            
+            &.btn-outline-danger {
+                color: var(--theme-error);
+                border-color: var(--theme-error);
+                
+                &:hover {
+                    background-color: var(--theme-error);
+                    color: var(--theme-bg);
+                }
+            }
+        }
+    }
+    
+    // Paginação
+    .pagination {
+        .page-item {
+            .page-link {
+                color: var(--theme-primary);
+                border-color: var(--theme-border);
+                
+                &:hover {
+                    background-color: var(--theme-bg-tertiary);
+                    border-color: var(--theme-primary);
+                }
+            }
+            
+            &.active .page-link {
+                background-color: var(--theme-primary);
+                border-color: var(--theme-primary);
+                color: var(--theme-bg);
+            }
+        }
+    }
+}

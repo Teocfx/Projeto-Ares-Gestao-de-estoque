@@ -1,0 +1,57 @@
+/**
+ * Dashboard - Tema Escuro
+ * Página principal em modo escuro
+ */
+
+[data-theme="dark"] {
+    body.dashboard-page {
+        background-color: var(--theme-bg);
+    }
+    
+    .dashboard-page {
+        .navbar {
+            background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+        
+        .card {
+            background-color: var(--theme-bg-secondary);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+            
+            &:hover {
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            }
+            
+            .card-header {
+                border-bottom-color: var(--theme-border);
+            }
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-light) 100%);
+            
+            &:hover {
+                box-shadow: 0 8px 24px rgba(25, 118, 210, 0.4);
+            }
+        }
+        
+        .table {
+            thead {
+                background-color: var(--theme-bg-tertiary);
+            }
+            
+            tbody tr:hover {
+                background-color: var(--theme-bg);
+            }
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
+            box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+            
+            &:hover {
+                box-shadow: 0 4px 12px rgba(25, 118, 210, 0.4);
+            }
+        }
+    }
+}

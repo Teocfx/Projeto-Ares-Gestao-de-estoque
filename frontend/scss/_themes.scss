@@ -1,0 +1,137 @@
+/**
+ * ARES - Estilos Base com Suporte a Temas
+ * 
+ * Este arquivo contém estilos que usam CSS custom properties (--theme-*)
+ * permitindo trocar entre temas (default, dark, high-contrast) dinamicamente
+ */
+
+/* === BUTTONS === */
+.btn-theme-primary {
+  background-color: var(--theme-primary);
+  color: var(--theme-bg);
+  border: 1px solid var(--theme-primary);
+  
+  &:hover {
+    background-color: var(--theme-primary-hover);
+    border-color: var(--theme-primary-hover);
+  }
+}
+
+.btn-theme-secondary {
+  background-color: var(--theme-secondary);
+  color: var(--theme-bg);
+  border: 1px solid var(--theme-secondary);
+  
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+/* === CARDS === */
+.card-theme {
+  background-color: var(--theme-bg);
+  border: 1px solid var(--theme-border);
+  box-shadow: 0 2px 4px var(--theme-shadow);
+  
+  .card-header {
+    background-color: var(--theme-bg-secondary);
+    border-bottom: 1px solid var(--theme-border);
+    color: var(--theme-text);
+  }
+  
+  .card-body {
+    color: var(--theme-text);
+  }
+  
+  .card-title {
+    color: var(--theme-text);
+  }
+  
+  .card-text {
+    color: var(--theme-text-secondary);
+  }
+}
+
+/* === FORMS === */
+.form-control-theme {
+  background-color: var(--theme-bg);
+  border: 1px solid var(--theme-border);
+  color: var(--theme-text);
+  
+  &:focus {
+    border-color: var(--theme-primary);
+    box-shadow: 0 0 0 0.2rem var(--theme-shadow);
+  }
+  
+  &::placeholder {
+    color: var(--theme-text-secondary);
+  }
+}
+
+/* === TABLES === */
+.table-theme {
+  background-color: var(--theme-bg);
+  color: var(--theme-text);
+  
+  thead {
+    background-color: var(--theme-bg-secondary);
+    border-bottom: 2px solid var(--theme-border);
+  }
+  
+  tbody tr {
+    border-bottom: 1px solid var(--theme-border);
+    
+    &:hover {
+      background-color: var(--theme-bg-secondary);
+    }
+  }
+}
+
+/* === NAVIGATION === */
+.nav-theme {
+  background-color: var(--theme-primary);
+  
+  .nav-link {
+    color: var(--theme-bg);
+    
+    &:hover {
+      background-color: var(--theme-primary-hover);
+    }
+    
+    &.active {
+      background-color: var(--theme-primary-hover);
+      font-weight: 600;
+    }
+  }
+}
+
+/* === THEME SELECTOR WIDGET === */
+.theme-selector {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background-color: var(--theme-bg-secondary);
+  border-radius: 0.5rem;
+  border: 1px solid var(--theme-border);
+  
+  button {
+    padding: 0.5rem 1rem;
+    background-color: var(--theme-bg);
+    border: 1px solid var(--theme-border);
+    color: var(--theme-text);
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    
+    &:hover {
+      background-color: var(--theme-primary);
+      color: var(--theme-bg);
+    }
+    
+    &.active {
+      background-color: var(--theme-primary);
+      color: var(--theme-bg);
+      font-weight: 600;
+    }
+  }
+}

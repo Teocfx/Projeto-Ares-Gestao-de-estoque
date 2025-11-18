@@ -1,0 +1,63 @@
+/**
+ * Relatórios - Tema Escuro
+ * Central de relatórios em modo escuro
+ */
+
+[data-theme="dark"] {
+    body.relatorios-page {
+        background-color: var(--theme-bg);
+    }
+    
+    .relatorios-page {
+        .navbar {
+            background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
+        }
+        
+        .report-card {
+            background-color: var(--theme-bg-secondary);
+            border-color: var(--theme-border);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            
+            &:hover {
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+                border-color: var(--theme-primary);
+            }
+        }
+        
+        .card {
+            background-color: var(--theme-bg-secondary);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+            
+            .card-header {
+                border-bottom-color: var(--theme-border);
+            }
+        }
+        
+        .stats-grid {
+            .stat-item {
+                .stat-value {
+                    color: var(--theme-primary);
+                }
+            }
+        }
+        
+        .table {
+            thead {
+                background-color: var(--theme-bg-tertiary);
+            }
+            
+            tbody tr:hover {
+                background-color: var(--theme-bg);
+            }
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
+            box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+            
+            &:hover {
+                box-shadow: 0 4px 12px rgba(25, 118, 210, 0.4);
+            }
+        }
+    }
+}

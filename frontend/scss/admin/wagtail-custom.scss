@@ -1,0 +1,112 @@
+/**
+ * Admin Wagtail - Tema Padrão
+ * Customizações para o painel administrativo do Wagtail
+ */
+
+// Logo ARES
+.ares-logo {
+    max-height: 50px;
+    width: auto;
+    margin: 0 auto;
+    display: block;
+}
+
+.ares-login-logo {
+    max-width: 200px;
+    margin: 0 auto 2rem;
+    display: block;
+}
+
+// Sidebar customization
+[data-wagtail-sidebar] {
+    background-color: var(--theme-primary) !important;
+    
+    .sidebar-logo {
+        padding: 1rem;
+        text-align: center;
+        border-bottom: 1px solid var(--theme-border-light);
+    }
+    
+    .nav-link {
+        color: var(--theme-text-secondary) !important;
+        transition: all 0.3s ease;
+        
+        &:hover, &.active {
+            background-color: var(--theme-primary-hover) !important;
+            color: var(--theme-bg) !important;
+        }
+    }
+}
+
+// Botões customizados
+.button-primary,
+.button.button-primary {
+    background-color: var(--theme-secondary) !important;
+    border-color: var(--theme-secondary) !important;
+    
+    &:hover {
+        background-color: var(--theme-primary-hover) !important;
+        border-color: var(--theme-primary-hover) !important;
+    }
+}
+
+.button-secondary {
+    background-color: var(--theme-bg-secondary) !important;
+    color: var(--theme-text) !important;
+    border-color: var(--theme-border) !important;
+    
+    &:hover {
+        background-color: var(--theme-bg-tertiary) !important;
+    }
+}
+
+// Status badges
+.status-tag {
+    &.primary {
+        background-color: var(--theme-primary);
+        color: var(--theme-bg);
+    }
+    
+    &.success {
+        background-color: var(--theme-success);
+        color: var(--theme-bg);
+    }
+    
+    &.warning {
+        background-color: var(--theme-warning);
+        color: var(--theme-bg);
+    }
+    
+    &.error {
+        background-color: var(--theme-error);
+        color: var(--theme-bg);
+    }
+}
+
+// Cards e listagens
+.listing {
+    background-color: var(--theme-bg);
+    border: 1px solid var(--theme-border);
+    border-radius: 4px;
+    
+    th {
+        background-color: var(--theme-bg-secondary);
+        color: var(--theme-text);
+        border-bottom: 2px solid var(--theme-border);
+    }
+    
+    tr:hover {
+        background-color: var(--theme-bg-tertiary);
+    }
+}
+
+// Headers
+.header {
+    background-color: var(--theme-bg);
+    border-bottom: 1px solid var(--theme-border);
+    box-shadow: var(--theme-shadow);
+    
+    .title {
+        color: var(--theme-text);
+    }
+}

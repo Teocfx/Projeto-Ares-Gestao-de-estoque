@@ -1,0 +1,517 @@
+/* ==========================================================================
+   Gestão de Estoque - CSS Principal
+   Sistema completo de gestão de estoque baseado em Bootstrap 5
+   ========================================================================== */
+
+/* ==========================================================================
+   Variáveis CSS Customizadas
+   ========================================================================== */
+:root {
+  /* Cores Principais */
+  --bs-primary: #0d6efd;
+  --bs-secondary: #6c757d;
+  --bs-success: #198754;
+  --bs-info: #0dcaf0;
+  --bs-warning: #ffc107;
+  --bs-danger: #dc3545;
+  --bs-light: #f8f9fa;
+  --bs-dark: #212529;
+  
+  /* Cores Customizadas do Sistema */
+  --estoque-primary: #2c5aa0;
+  --estoque-secondary: #5a6c7d;
+  --estoque-accent: #28a745;
+  --estoque-warning: #f39c12;
+  --estoque-danger: #e74c3c;
+  
+  /* Gradientes */
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-success: linear-gradient(135deg, #7de28a 0%, #22c55e 100%);
+  --gradient-warning: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  --gradient-danger: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+  
+  /* Sombras */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* Transições */
+  --transition-all: all 0.3s ease;
+  --transition-fast: all 0.15s ease;
+  
+  /* Bordas */
+  --border-radius-lg: 0.75rem;
+  --border-radius-xl: 1rem;
+}
+
+/* ==========================================================================
+   Estilos Base
+   ========================================================================== */
+
+/* Body e HTML */
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: var(--bs-dark);
+  background-color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ==========================================================================
+   Layout Principais
+   ========================================================================== */
+
+/* Header */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  backdrop-filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.navbar-brand .brand-text {
+  line-height: 1.2;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1 0 auto;
+  padding-top: 0;
+}
+
+/* Footer */
+.footer {
+  flex-shrink: 0;
+  background-color: var(--bs-light);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* ==========================================================================
+   Componentes Customizados
+   ========================================================================== */
+
+/* Cards */
+.card {
+  border: none;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-all);
+  border-radius: var(--border-radius-lg);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.card-header {
+  background-color: transparent;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  font-weight: 600;
+}
+
+/* Badges */
+.badge {
+  font-weight: 500;
+  font-size: 0.75rem;
+  padding: 0.5rem 0.75rem;
+}
+
+/* Buttons */
+.btn {
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition: var(--transition-fast);
+  text-decoration: none;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background: var(--estoque-primary);
+  border-color: var(--estoque-primary);
+}
+
+.btn-primary:hover {
+  background: #1e4186;
+  border-color: #1e4186;
+}
+
+/* ==========================================================================
+   Navegação
+   ========================================================================== */
+
+/* Navbar */
+.navbar-nav .nav-link {
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: var(--transition-fast);
+  position: relative;
+}
+
+.navbar-nav .nav-link:hover {
+  background-color: rgba(13, 110, 253, 0.1);
+  color: var(--bs-primary);
+}
+
+.navbar-nav .nav-link.active {
+  background-color: rgba(13, 110, 253, 0.15);
+  color: var(--bs-primary);
+  font-weight: 600;
+}
+
+.navbar-nav .nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 1rem;
+  right: 1rem;
+  height: 2px;
+  background-color: var(--bs-primary);
+  border-radius: 1px;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+  border: none;
+  box-shadow: var(--shadow-lg);
+  border-radius: var(--border-radius-lg);
+  padding: 0.5rem 0;
+}
+
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  transition: var(--transition-fast);
+  border-radius: 0.375rem;
+  margin: 0 0.5rem;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(13, 110, 253, 0.1);
+  color: var(--bs-primary);
+}
+
+.dropdown-item i {
+  width: 1.25rem;
+  text-align: center;
+}
+
+/* ==========================================================================
+   Breadcrumbs
+   ========================================================================== */
+.breadcrumb-container {
+  background-color: rgba(248, 249, 250, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+.breadcrumb {
+  margin: 0;
+}
+
+.breadcrumb-item a {
+  color: var(--bs-secondary);
+  transition: var(--transition-fast);
+}
+
+.breadcrumb-item a:hover {
+  color: var(--bs-primary);
+}
+
+.breadcrumb-item.active {
+  color: var(--bs-dark);
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   Page Header
+   ========================================================================== */
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-title {
+  color: var(--bs-dark);
+  font-weight: 700;
+}
+
+.page-subtitle {
+  font-size: 1.1rem;
+  color: var(--bs-secondary);
+}
+
+/* ==========================================================================
+   Tabelas
+   ========================================================================== */
+.table {
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+}
+
+.table thead th {
+  background-color: var(--bs-light);
+  border-bottom: 2px solid var(--bs-gray-300);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  color: var(--bs-secondary);
+}
+
+.table tbody tr {
+  transition: var(--transition-fast);
+}
+
+.table tbody tr:hover {
+  background-color: rgba(13, 110, 253, 0.05);
+}
+
+/* ==========================================================================
+   Formulários
+   ========================================================================== */
+.form-control {
+  border: 2px solid #e9ecef;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  transition: var(--transition-fast);
+}
+
+.form-control:focus {
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+.form-label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--bs-dark);
+}
+
+/* ==========================================================================
+   Alerts e Messages
+   ========================================================================== */
+.alert {
+  border: none;
+  border-radius: var(--border-radius-lg);
+  border-left: 4px solid;
+}
+
+.alert-success {
+  background-color: rgba(25, 135, 84, 0.1);
+  border-left-color: var(--bs-success);
+  color: #0a3622;
+}
+
+.alert-danger {
+  background-color: rgba(220, 53, 69, 0.1);
+  border-left-color: var(--bs-danger);
+  color: #58151c;
+}
+
+.alert-warning {
+  background-color: rgba(255, 193, 7, 0.1);
+  border-left-color: var(--bs-warning);
+  color: #664d03;
+}
+
+.alert-info {
+  background-color: rgba(13, 202, 240, 0.1);
+  border-left-color: var(--bs-info);
+  color: #055160;
+}
+
+/* ==========================================================================
+   Loading e Estados
+   ========================================================================== */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loading-spinner {
+  text-align: center;
+}
+
+/* Back to Top Button */
+.btn-back-to-top {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  transition: var(--transition-all);
+  z-index: 1020;
+}
+
+.btn-back-to-top:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ==========================================================================
+   Avatar e Profile
+   ========================================================================== */
+.avatar-placeholder {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.notification-badge {
+  font-size: 0.6rem;
+  padding: 0.25rem 0.4rem;
+}
+
+/* ==========================================================================
+   Utilitários
+   ========================================================================== */
+
+/* Scrollbar Customizada */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+  transition: var(--transition-fast);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease;
+}
+
+/* Skip Link para Acessibilidade */
+.visually-hidden-focusable:not(:focus):not(:focus-within) {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* ==========================================================================
+   Tema Escuro
+   ========================================================================== */
+[data-bs-theme="dark"] {
+  --bs-body-bg: #0d1117;
+  --bs-body-color: #f0f6fc;
+}
+
+[data-bs-theme="dark"] .header {
+  background-color: rgba(13, 17, 23, 0.95) !important;
+  border-bottom-color: #30363d;
+}
+
+[data-bs-theme="dark"] .footer {
+  background-color: #161b22;
+  border-top-color: #30363d;
+}
+
+[data-bs-theme="dark"] .breadcrumb-container {
+  background-color: rgba(22, 27, 34, 0.8);
+  border-bottom-color: #30363d;
+}
+
+[data-bs-theme="dark"] .card {
+  background-color: #161b22;
+  border-color: #30363d;
+}
+
+[data-bs-theme="dark"] .table thead th {
+  background-color: #21262d;
+  border-bottom-color: #30363d;
+}
+
+/* ==========================================================================
+   Responsividade
+   ========================================================================== */
+
+/* Mobile */
+@media (max-width: 576px) {
+  .page-header {
+    margin-bottom: 1.5rem;
+  }
+  
+  .page-title {
+    font-size: 1.75rem;
+  }
+  
+  .card {
+    margin-bottom: 1rem;
+  }
+  
+  .btn {
+    padding: 0.5rem 1rem;
+  }
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+  .navbar-brand .brand-text {
+    display: none !important;
+  }
+  
+  .dropdown-menu {
+    position: static !important;
+    transform: none !important;
+    box-shadow: none;
+    border: 1px solid var(--bs-gray-300);
+  }
+}
+
+/* Desktop */
+@media (min-width: 992px) {
+  .dropdown-menu {
+    min-width: 240px;
+  }
+  
+  .navbar-nav .nav-link {
+    margin: 0 0.25rem;
+  }
+}

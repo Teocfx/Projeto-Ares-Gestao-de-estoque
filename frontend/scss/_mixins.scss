@@ -1,0 +1,66 @@
+/**
+ * ARES - Sistema de Gestão de Estoque
+ * Mixins Reutilizáveis
+ */
+
+/**
+ * Media Query Breakpoints
+ * Uso: @include media-breakpoint-down(md) { ... }
+ */
+@mixin media-breakpoint-down($breakpoint) {
+  @if $breakpoint == xs {
+    @media (max-width: 575.98px) { @content; }
+  } @else if $breakpoint == sm {
+    @media (max-width: 767.98px) { @content; }
+  } @else if $breakpoint == md {
+    @media (max-width: 991.98px) { @content; }
+  } @else if $breakpoint == lg {
+    @media (max-width: 1199.98px) { @content; }
+  } @else if $breakpoint == xl {
+    @media (max-width: 1399.98px) { @content; }
+  }
+}
+
+/**
+ * Transition Mixin
+ * Uso: @include transition(all 0.3s ease);
+ */
+@mixin transition($properties: all 0.3s ease) {
+  transition: $properties;
+}
+
+/**
+ * Flexbox Center Mixin
+ * Uso: @include flex-center;
+ */
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/**
+ * Truncate Text Mixin
+ * Uso: @include truncate-text;
+ */
+@mixin truncate-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/**
+ * Box Shadow Mixin
+ * Uso: @include box-shadow(md);
+ */
+@mixin box-shadow($size: md) {
+  @if $size == sm {
+    box-shadow: var(--shadow-sm);
+  } @else if $size == md {
+    box-shadow: var(--shadow-md);
+  } @else if $size == lg {
+    box-shadow: var(--shadow-lg);
+  } @else if $size == xl {
+    box-shadow: var(--shadow-xl);
+  }
+}

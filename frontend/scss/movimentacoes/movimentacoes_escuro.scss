@@ -1,0 +1,69 @@
+/**
+ * Movimentações - Tema Escuro
+ * Registros em modo escuro
+ */
+
+[data-theme="dark"] {
+    body.movimentacoes-page {
+        background-color: var(--theme-bg);
+    }
+    
+    .movimentacoes-page {
+        .navbar {
+            background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
+        }
+        
+        .card-form {
+            background-color: var(--theme-bg-secondary);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+            
+            .card-header {
+                background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
+            }
+        }
+        
+        .product-info {
+            background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary));
+            border-color: var(--theme-border);
+        }
+        
+        .stock-indicator {
+            &.stock-ok {
+                background-color: rgba(102, 187, 106, 0.15);
+            }
+            
+            &.stock-baixo {
+                background-color: rgba(255, 167, 38, 0.15);
+            }
+            
+            &.stock-critico {
+                background-color: rgba(239, 83, 80, 0.15);
+            }
+        }
+        
+        .form-control, .form-select {
+            background-color: var(--theme-bg-tertiary);
+            color: var(--theme-text);
+            border-color: var(--theme-border);
+            
+            &:focus {
+                border-color: var(--theme-primary);
+                box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.2);
+            }
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
+            box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+            
+            &:hover {
+                box-shadow: 0 4px 12px rgba(25, 118, 210, 0.4);
+            }
+        }
+        
+        .btn-secondary {
+            background-color: var(--theme-bg-tertiary);
+            border-color: var(--theme-border);
+        }
+    }
+}
