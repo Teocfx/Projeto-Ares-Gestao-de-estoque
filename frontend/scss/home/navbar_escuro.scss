@@ -64,6 +64,59 @@
   .site-menu-navbar-toggler {
     border: 1px solid variables.$color-white !important;
     color: variables.$color-white !important;
+    z-index: 1050;
+    
+    // Corrigir hover no mobile no modo escuro
+    @media (max-width: 992px) {
+      &:hover,
+      &:focus {
+        background-color: transparent !important;
+      }
+    }
+  }
+  
+  // Logo mobile no modo escuro - manter fundo claro para contraste
+  .site-menu-navbar-toggler-brand {
+    .navbar-brand-mobile {
+      background-color: variables.$color-white;
+      padding: 4px 12px;
+      border-radius: 8px;
+    }
+  }
+  
+  // Ferramentas de acessibilidade no mobile e desktop (modo escuro)
+  .site-menu-nav-tools {
+    .header-acessibilidade--fonts {
+      background-color: variables.$color-grey-800;
+      color: variables.$color-white;
+      
+      &:hover {
+        background-color: variables.$color-primary;
+        color: variables.$color-white;
+      }
+    }
+    
+    .header-acessibilidade--contraste,
+    .header-acessibilidade--vlibras {
+      background-color: variables.$color-grey-800;
+      color: variables.$color-white;
+      
+      &:hover {
+        background-color: variables.$color-primary;
+        color: variables.$color-white;
+      }
+    }
+  }
+  
+  // Perfil no mobile (modo escuro)
+  .site-menu-nav-login {
+    @media (max-width: 992px) {
+      background-color: variables.$color-grey-900;
+      
+      .nav-link {
+        color: variables.$color-white !important;
+      }
+    }
   }
 
   .site-menu-dropdown-item {

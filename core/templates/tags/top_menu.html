@@ -29,20 +29,12 @@ Não há dropdown aninhado para submenus.
           <!-- Logo centralizada -->
           <div class="container d-flex justify-content-center align-items-center ml-6">
             <a class="navbar-brand" href="/" aria-label="Inicio">
-              {% if HABILITAR_SITE_INTRANET %}
                 <img
                 class="navbar-brand-mobile"
-                src="{% static 'img/banner_intranet_dark.png' %}"
+                src="{% static 'img/logo_banner.svg' %}"
                 alt="{{ settings.core.SiteSettings.title_suffix }}"
                 height="42px"
                 width="160px">
-              {% else %}
-                <img
-                  class="navbar-brand-mobile"
-                  src="{% static 'img/logo_site_mobile_branco.svg' %}"
-                  alt="{{ settings.core.SiteSettings.title_suffix }}"
-                  height="42px">
-                {% endif %}
             </a>
           </div>
 
@@ -133,9 +125,7 @@ Não há dropdown aninhado para submenus.
             {% endif %}
           {% endfor %}
 
-          {% if HABILITAR_SITE_INTRANET %}
             {% include 'include/perfil.html' with classes="nav-item site-menu-nav-login mt-3 d-lg-none" %}
-          {% endif %}
 
           <!-- ============================ TOOLS MOBILE ============================ -->
           <li class="site-menu-nav-tools nav-item d-lg-none">

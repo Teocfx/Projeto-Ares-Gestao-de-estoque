@@ -10,6 +10,15 @@
     }
     
     .relatorios-page {
+        // Títulos principais
+        h2, h5, h6 {
+            color: variables.$color-white !important;
+            
+            i {
+                color: variables.$color-white !important;
+            }
+        }
+        
         // Navbar preta com borda branca
         .navbar {
             background: variables.$dark-surface !important;

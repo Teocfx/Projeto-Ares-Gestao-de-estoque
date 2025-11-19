@@ -169,7 +169,9 @@ def search(request):
             "search_results": paginated_results,
             "selected_types": selected_types,
             "selected_date": date_filter,
-            "breadcrumbs": True,
+            "breadcrumbs": [
+                {"title": "Busca", "url": None}
+            ],
             "query_params": query_params,
             "get_result_type": get_result_type,
             "tipos_disponiveis": tipos_formatados,

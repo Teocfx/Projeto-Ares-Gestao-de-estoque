@@ -160,10 +160,10 @@ def relatorio_estoque(request):
         elif status == 'baixo':
             products = products.filter(
                 current_stock__gt=0,
-                current_stock__lte=models.F('min_stock')
+                current_stock__lte=F('min_stock')
             )
         elif status == 'ok':
-            products = products.filter(current_stock__gt=models.F('min_stock'))
+            products = products.filter(current_stock__gt=F('min_stock'))
     
     # Estatísticas
     stats = {
@@ -172,7 +172,7 @@ def relatorio_estoque(request):
         'critical_count': products.filter(current_stock=0).count(),
         'low_count': products.filter(
             current_stock__gt=0,
-            current_stock__lte=models.F('min_stock')
+            current_stock__lte=F('min_stock')
         ).count(),
     }
     

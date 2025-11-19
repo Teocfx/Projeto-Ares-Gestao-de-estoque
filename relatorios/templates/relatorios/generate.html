@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Gerar Relatório Personalizado - Sistema ARES{% endblock %}
+
+{% block body_class %}relatorios-page relatorios-generate-page{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    
+    <!-- Título da Página -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-file-earmark-plus me-2"></i>Gerar Relatório Personalizado
+            </h1>
+            <p class="text-muted mb-0">Configure e gere relatórios customizados</p>
+        </div>
+        <div>
+            <a href="{% url 'relatorios:index' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Voltar
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Formulário de Geração -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent border-bottom">
+                    <h5 class="mb-0">
+                        <i class="bi bi-gear me-2"></i>Configurações do Relatório
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <!-- Informações Básicas -->
+                        <div class="mb-4">
+                            <h6 class="text-muted mb-3">Informações Básicas</h6>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.title.id_for_label }}" class="form-label">
+                                    Título do Relatório <span class="text-danger">*</span>
+                                </label>
+                                {{ form.title }}
+                                {% if form.title.errors %}
+                                <div class="text-danger small mt-1">{{ form.title.errors.0 }}</div>
+                                {% endif %}
+                                <small class="form-text text-muted">
+                                    Dê um nome descritivo para o relatório
+                                </small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="{{ form.report_type.id_for_label }}" class="form-label">
+                                    Tipo de Relatório <span class="text-danger">*</span>
+                                </label>
+                                {{ form.report_type }}
+                                {% if form.report_type.errors %}
+                                <div class="text-danger small mt-1">{{ form.report_type.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Período -->
+                        <div class="mb-4">
+                            <h6 class="text-muted mb-3">Período</h6>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.date_from.id_for_label }}" class="form-label">
+                                        Data Inicial
+                                    </label>
+                                    {{ form.date_from }}
+                                    {% if form.date_from.errors %}
+                                    <div class="text-danger small mt-1">{{ form.date_from.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.date_to.id_for_label }}" class="form-label">
+                                        Data Final
+                                    </label>
+                                    {{ form.date_to }}
+                                    {% if form.date_to.errors %}
+                                    <div class="text-danger small mt-1">{{ form.date_to.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Filtros -->
+                        <div class="mb-4">
+                            <h6 class="text-muted mb-3">Filtros (Opcional)</h6>
+                            
+                            {% if form.categories %}
+                            <div class="mb-3">
+                                <label for="{{ form.categories.id_for_label }}" class="form-label">
+                                    Categorias
+                                </label>
+                                {{ form.categories }}
+                                {% if form.categories.errors %}
+                                <div class="text-danger small mt-1">{{ form.categories.errors.0 }}</div>
+                                {% endif %}
+                                <small class="form-text text-muted">
+                                    Selecione categorias específicas ou deixe em branco para incluir todas
+                                </small>
+                            </div>
+                            {% endif %}
+
+                            {% if form.include_inactive %}
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    {{ form.include_inactive }}
+                                    <label class="form-check-label" for="{{ form.include_inactive.id_for_label }}">
+                                        Incluir produtos inativos
+                                    </label>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Formato -->
+                        <div class="mb-4">
+                            <h6 class="text-muted mb-3">Formato de Saída</h6>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.format.id_for_label }}" class="form-label">
+                                    Formato
+                                </label>
+                                {{ form.format }}
+                                {% if form.format.errors %}
+                                <div class="text-danger small mt-1">{{ form.format.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Botões de Ação -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-play-circle me-1"></i>Gerar Relatório
+                            </button>
+                            <button type="reset" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-clockwise me-1"></i>Limpar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ajuda e Tipos de Relatório -->
+        <div class="col-lg-4">
+            <!-- Tipos de Relatório Disponíveis -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent border-bottom">
+                    <h6 class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>Tipos de Relatório
+                    </h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for tipo in report_types %}
+                        <div class="list-group-item">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-file-earmark-text text-primary fs-5 me-3"></i>
+                                <div>
+                                    <h6 class="mb-1">{{ tipo.name }}</h6>
+                                    <small class="text-muted">{{ tipo.description }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="list-group-item text-center text-muted py-4">
+                            Nenhum tipo de relatório disponível
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dicas -->
+            <div class="card border-0 shadow-sm bg-light">
+                <div class="card-body">
+                    <h6 class="text-primary mb-3">
+                        <i class="bi bi-lightbulb me-2"></i>Dicas
+                    </h6>
+                    <ul class="small mb-0 ps-3">
+                        <li class="mb-2">Use títulos descritivos para facilitar a organização</li>
+                        <li class="mb-2">Defina períodos específicos para relatórios mais precisos</li>
+                        <li class="mb-2">PDF é recomendado para impressão e arquivamento</li>
+                        <li class="mb-2">Excel/CSV facilita análises posteriores</li>
+                        <li>Os relatórios ficam salvos no histórico por 30 dias</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Relatórios Rápidos -->
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-header bg-transparent border-bottom">
+                    <h6 class="mb-0">
+                        <i class="bi bi-lightning-charge me-2"></i>Relatórios Rápidos
+                    </h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'relatorios:estoque' %}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-boxes me-2 text-primary"></i>Estoque Atual
+                        </a>
+                        <a href="{% url 'relatorios:movimentacoes' %}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-arrow-left-right me-2 text-success"></i>Movimentações
+                        </a>
+                        <a href="{% url 'relatorios:vencimentos' %}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-calendar-x me-2 text-danger"></i>Vencimentos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Adicionar classes Bootstrap aos campos do formulário
+    const formControls = document.querySelectorAll('input[type="text"], input[type="date"], select, textarea');
+    formControls.forEach(function(control) {
+        control.classList.add('form-control');
+    });
+    
+    // Checkboxes
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(function(checkbox) {
+        checkbox.classList.add('form-check-input');
+    });
+});
+</script>
+{% endblock %}

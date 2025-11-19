@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'produtos',
     'movimentacoes',
     'relatorios',
+    'search',
 
     "auth_keycloak",
 

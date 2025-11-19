@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Relatório de Vencimentos - Sistema ARES{% endblock %}
+
+{% block body_class %}relatorios-page relatorios-vencimentos-page{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    
+    <!-- Título da Página -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-calendar-x me-2"></i>Relatório de Vencimentos
+            </h1>
+            <p class="text-muted mb-0">Produtos próximos ao vencimento ou vencidos</p>
+        </div>
+        <div>
+            <a href="{% url 'relatorios:index' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Voltar
+            </a>
+            <button class="btn btn-primary" onclick="window.print()">
+                <i class="bi bi-printer me-1"></i>Imprimir
+            </button>
+        </div>
+    </div>
+
+    <!-- Estatísticas Resumidas -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-list-check display-6 text-primary"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Total</h6>
+                            <h3 class="mb-0">{{ stats.total }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm border-danger">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-x-circle display-6 text-danger"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Vencidos</h6>
+                            <h3 class="mb-0 text-danger">{{ stats.expired_count }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm border-danger">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-exclamation-triangle display-6 text-danger"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Críticos (7 dias)</h6>
+                            <h3 class="mb-0 text-danger">{{ stats.critical_count }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm border-warning">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-exclamation-circle display-6 text-warning"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Atenção (30 dias)</h6>
+                            <h3 class="mb-0 text-warning">{{ stats.warning_count }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="days" class="form-label">Período de Análise</label>
+                    <select class="form-select" id="days" name="days">
+                        <option value="7" {% if days_ahead == 7 %}selected{% endif %}>7 dias</option>
+                        <option value="15" {% if days_ahead == 15 %}selected{% endif %}>15 dias</option>
+                        <option value="30" {% if days_ahead == 30 %}selected{% endif %}>30 dias</option>
+                        <option value="60" {% if days_ahead == 60 %}selected{% endif %}>60 dias</option>
+                        <option value="90" {% if days_ahead == 90 %}selected{% endif %}>90 dias</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="expired" name="expired" 
+                               value="true" {% if include_expired %}checked{% endif %}>
+                        <label class="form-check-label" for="expired">
+                            Incluir produtos já vencidos
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-funnel me-1"></i>Filtrar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Produtos Vencidos -->
+    {% if expired %}
+    <div class="card border-0 shadow-sm mb-4 border-danger">
+        <div class="card-header bg-danger text-white">
+            <h5 class="mb-0">
+                <i class="bi bi-x-circle me-2"></i>Produtos Vencidos
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th class="fw-medium">Produto</th>
+                            <th class="fw-medium">Categoria</th>
+                            <th class="fw-medium">Estoque</th>
+                            <th class="fw-medium">Data de Vencimento</th>
+                            <th class="fw-medium">Dias Vencido</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in expired %}
+                        <tr class="table-danger">
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.category.name }}</td>
+                            <td>{{ product.current_stock }} {{ product.unit.name }}</td>
+                            <td>{{ product.expiry_date|date:"d/m/Y" }}</td>
+                            <td class="fw-bold text-danger">
+                                {{ product.expiry_date|timesince }} atrás
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Produtos Críticos (7 dias) -->
+    {% if critical %}
+    <div class="card border-0 shadow-sm mb-4 border-danger">
+        <div class="card-header bg-danger bg-opacity-75">
+            <h5 class="mb-0 text-dark">
+                <i class="bi bi-exclamation-triangle me-2"></i>Críticos - Vencem em 7 dias
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th class="fw-medium">Produto</th>
+                            <th class="fw-medium">Categoria</th>
+                            <th class="fw-medium">Estoque</th>
+                            <th class="fw-medium">Data de Vencimento</th>
+                            <th class="fw-medium">Dias Restantes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in critical %}
+                        <tr class="table-danger table-danger-light">
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.category.name }}</td>
+                            <td>{{ product.current_stock }} {{ product.unit.name }}</td>
+                            <td>{{ product.expiry_date|date:"d/m/Y" }}</td>
+                            <td class="fw-bold text-danger">
+                                {{ product.expiry_date|timeuntil }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Produtos Atenção (8-30 dias) -->
+    {% if warning %}
+    <div class="card border-0 shadow-sm border-warning">
+        <div class="card-header bg-warning bg-opacity-75">
+            <h5 class="mb-0 text-dark">
+                <i class="bi bi-exclamation-circle me-2"></i>Atenção - Vencem em 8-30 dias
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th class="fw-medium">Produto</th>
+                            <th class="fw-medium">Categoria</th>
+                            <th class="fw-medium">Estoque</th>
+                            <th class="fw-medium">Data de Vencimento</th>
+                            <th class="fw-medium">Dias Restantes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in warning %}
+                        <tr class="table-warning table-warning-light">
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.category.name }}</td>
+                            <td>{{ product.current_stock }} {{ product.unit.name }}</td>
+                            <td>{{ product.expiry_date|date:"d/m/Y" }}</td>
+                            <td class="fw-medium text-warning-emphasis">
+                                {{ product.expiry_date|timeuntil }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Mensagem caso não haja produtos -->
+    {% if not products %}
+    <div class="card border-0 shadow-sm">
+        <div class="card-body text-center py-5 text-muted">
+            <i class="bi bi-check-circle fs-1 text-success d-block mb-3"></i>
+            <h5>Excelente!</h5>
+            <p class="mb-0">Não há produtos próximos ao vencimento no período selecionado.</p>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

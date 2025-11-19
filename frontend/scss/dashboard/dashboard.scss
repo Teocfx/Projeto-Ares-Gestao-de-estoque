@@ -25,6 +25,7 @@ body.dashboard-page {
         background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%);
         box-shadow: 0 2px 8px variables.$color-black-10;
         padding: 1rem 0;
+        z-index: 1021;
         
         .navbar-brand {
             color: variables.$color-white;

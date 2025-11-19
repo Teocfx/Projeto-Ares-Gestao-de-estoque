@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Relatório de Movimentações - Sistema ARES{% endblock %}
+
+{% block body_class %}relatorios-page relatorios-movimentacoes-page{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    
+    <!-- Título da Página -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-arrow-left-right me-2"></i>Relatório de Movimentações
+            </h1>
+            <p class="text-muted mb-0">Histórico de entradas e saídas de estoque</p>
+        </div>
+        <div>
+            <a href="{% url 'relatorios:index' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Voltar
+            </a>
+            <button class="btn btn-primary" onclick="window.print()">
+                <i class="bi bi-printer me-1"></i>Imprimir
+            </button>
+        </div>
+    </div>
+
+    <!-- Estatísticas Resumidas -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-list-ul display-6 text-primary"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Total</h6>
+                            <h3 class="mb-0">{{ stats.total_movements }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-arrow-down-circle display-6 text-success"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Entradas</h6>
+                            <h3 class="mb-0">{{ stats.entradas }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-arrow-up-circle display-6 text-danger"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Saídas</h6>
+                            <h3 class="mb-0">{{ stats.saidas }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-gear display-6 text-warning"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Ajustes</h6>
+                            <h3 class="mb-0">{{ stats.ajustes }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label for="date_from" class="form-label">Data Inicial</label>
+                    <input type="date" class="form-control" id="date_from" name="date_from" 
+                           value="{{ current_filters.date_from }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="date_to" class="form-label">Data Final</label>
+                    <input type="date" class="form-control" id="date_to" name="date_to" 
+                           value="{{ current_filters.date_to }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="type" class="form-label">Tipo</label>
+                    <select class="form-select" id="type" name="type">
+                        <option value="">Todos</option>
+                        {% for code, label in movement_types %}
+                        <option value="{{ code }}" {% if current_filters.type == code %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="product" class="form-label">Produto</label>
+                    <select class="form-select" id="product" name="product">
+                        <option value="">Todos</option>
+                        {% for prod in products %}
+                        <option value="{{ prod.id }}" {% if current_filters.product == prod.id|stringformat:"s" %}selected{% endif %}>
+                            {{ prod.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-funnel me-1"></i>Filtrar
+                    </button>
+                    <a href="{% url 'relatorios:movimentacoes' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle me-1"></i>Limpar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabela de Movimentações -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th class="fw-medium">Data/Hora</th>
+                            <th class="fw-medium">Produto</th>
+                            <th class="fw-medium">Tipo</th>
+                            <th class="fw-medium">Quantidade</th>
+                            <th class="fw-medium">Documento</th>
+                            <th class="fw-medium">Usuário</th>
+                            <th class="fw-medium">Observações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for mov in movements %}
+                        <tr>
+                            <td class="text-nowrap">
+                                {{ mov.created_at|date:"d/m/Y" }}<br>
+                                <small class="text-muted">{{ mov.created_at|time:"H:i" }}</small>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-box me-2 text-muted"></i>
+                                    {{ mov.product.name }}
+                                </div>
+                            </td>
+                            <td>
+                                {% if mov.type == 'ENTRADA' %}
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-arrow-down-circle me-1"></i>Entrada
+                                    </span>
+                                {% elif mov.type == 'SAIDA' %}
+                                    <span class="badge bg-danger">
+                                        <i class="bi bi-arrow-up-circle me-1"></i>Saída
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="bi bi-gear me-1"></i>Ajuste
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td class="fw-medium">{{ mov.quantity }} {{ mov.product.unit.name }}</td>
+                            <td>
+                                {% if mov.document %}
+                                    <code class="text-muted">{{ mov.document }}</code>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ mov.user.get_full_name|default:mov.user.username }}</td>
+                            <td>
+                                {% if mov.notes %}
+                                    <small class="text-muted">{{ mov.notes|truncatewords:8 }}</small>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+                                Nenhuma movimentação encontrada no período selecionado.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Paginação -->
+    {% if movements.has_other_pages %}
+    <nav class="mt-4" aria-label="Paginação">
+        <ul class="pagination justify-content-center">
+            {% if movements.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ movements.previous_page_number }}{% for key, value in current_filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            {% endif %}
+            
+            {% for num in movements.paginator.page_range %}
+            <li class="page-item {% if movements.number == num %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}{% for key, value in current_filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                    {{ num }}
+                </a>
+            </li>
+            {% endfor %}
+            
+            {% if movements.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ movements.next_page_number }}{% for key, value in current_filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+</div>
+{% endblock %}

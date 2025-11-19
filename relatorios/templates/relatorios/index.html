@@ -65,15 +65,15 @@
             <!-- Relatório de Estoque -->
             <div class="col-lg-3 col-md-6 mb-3">
                 <div class="card report-card border-0 shadow-sm h-100" onclick="window.location.href='{% url 'relatorios:estoque' %}'">
-                    <div class="card-body text-center">
+                    <div class="card-body text-center d-flex flex-column">
                         <div class="report-icon text-primary">
                             <i class="fas fa-boxes"></i>
                         </div>
                         <h6 class="fw-bold">Relatório de Estoque</h6>
-                        <p class="text-muted small mb-3">
+                        <p class="text-muted small mb-3 flex-grow-1">
                             Situação atual do estoque, produtos por categoria e status
                         </p>
-                        <div class="btn btn-outline-primary btn-sm w-100">
+                        <div class="btn btn-outline-primary btn-sm w-100 mt-auto">
                             <i class="fas fa-eye me-1"></i>Visualizar
                         </div>
                     </div>
@@ -83,15 +83,15 @@
             <!-- Relatório de Movimentações -->
             <div class="col-lg-3 col-md-6 mb-3">
                 <div class="card report-card border-0 shadow-sm h-100" onclick="window.location.href='{% url 'relatorios:movimentacoes' %}'">
-                    <div class="card-body text-center">
+                    <div class="card-body text-center d-flex flex-column">
                         <div class="report-icon text-success">
                             <i class="fas fa-exchange-alt"></i>
                         </div>
                         <h6 class="fw-bold">Relatório de Movimentações</h6>
-                        <p class="text-muted small mb-3">
+                        <p class="text-muted small mb-3 flex-grow-1">
                             Histórico de entradas, saídas e ajustes de estoque
                         </p>
-                        <div class="btn btn-outline-success btn-sm w-100">
+                        <div class="btn btn-outline-success btn-sm w-100 mt-auto">
                             <i class="fas fa-eye me-1"></i>Visualizar
                         </div>
                     </div>
@@ -101,15 +101,15 @@
             <!-- Relatório de Vencimentos -->
             <div class="col-lg-3 col-md-6 mb-3">
                 <div class="card report-card border-0 shadow-sm h-100" onclick="window.location.href='{% url 'relatorios:vencimentos' %}'">
-                    <div class="card-body text-center">
+                    <div class="card-body text-center d-flex flex-column">
                         <div class="report-icon text-warning">
-                            <i class="fas fa-calendar-exclamation"></i>
+                            <i class="fas fa-calendar-times"></i>
                         </div>
                         <h6 class="fw-bold">Relatório de Vencimentos</h6>
-                        <p class="text-muted small mb-3">
+                        <p class="text-muted small mb-3 flex-grow-1">
                             Produtos próximos ao vencimento e já vencidos
                         </p>
-                        <div class="btn btn-outline-warning btn-sm w-100">
+                        <div class="btn btn-outline-warning btn-sm w-100 mt-auto">
                             <i class="fas fa-eye me-1"></i>Visualizar
                         </div>
                     </div>
@@ -119,15 +119,15 @@
             <!-- Gerador Personalizado -->
             <div class="col-lg-3 col-md-6 mb-3">
                 <div class="card report-card border-0 shadow-sm h-100" onclick="window.location.href='{% url 'relatorios:generate' %}'">
-                    <div class="card-body text-center">
+                    <div class="card-body text-center d-flex flex-column">
                         <div class="report-icon text-info">
                             <i class="fas fa-cogs"></i>
                         </div>
                         <h6 class="fw-bold">Relatório Personalizado</h6>
-                        <p class="text-muted small mb-3">
+                        <p class="text-muted small mb-3 flex-grow-1">
                             Criar relatório com filtros e configurações específicas
                         </p>
-                        <div class="btn btn-info btn-sm w-100">
+                        <div class="btn btn-info btn-sm w-100 mt-auto">
                             <i class="fas fa-plus me-1"></i>Criar Novo
                         </div>
                     </div>
