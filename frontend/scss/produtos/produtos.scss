@@ -1,63 +1,72 @@
+@use '../variables';
 /**
  * Produtos - Tema Padrão
  * Listagem e gerenciamento de produtos
  */
 
 body.produtos-page {
-    background-color: var(--theme-bg-secondary);
+    background-color: variables.$color-grey-300;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .produtos-page {
     // Navbar
     .navbar {
-        background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
-        box-shadow: 0 2px 8px var(--theme-shadow);
+        background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%);
+        box-shadow: 0 2px 8px variables.$color-black-10;
     }
     
     // Cards
     .card {
-        background-color: var(--theme-bg);
+        background-color: variables.$color-white;
         border: none;
         border-radius: 12px;
-        box-shadow: 0 2px 12px var(--theme-shadow);
+        box-shadow: 0 2px 12px variables.$color-black-10;
     }
     
     // Botões
     .btn-primary {
-        background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
+        background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%);
         border: none;
-        box-shadow: 0 2px 8px rgba(198, 40, 40, 0.2);
+        box-shadow: 0 2px 8px variables.$color-primary-20;
         transition: all 0.3s ease;
         
         &:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(198, 40, 40, 0.3);
+            box-shadow: 0 4px 12px variables.$color-primary-40;
         }
     }
     
     // Tabelas
     .table {
-        color: var(--theme-text);
+        color: variables.$color-grey-900;
         
         thead {
-            background-color: var(--theme-bg-secondary);
+            background-color: variables.$color-grey-800;
             
             th {
-                color: var(--theme-text);
+                color: variables.$color-primary !important;
                 font-weight: 600;
-                border-bottom: 2px solid var(--theme-border);
+                border-bottom: 2px solid variables.$color-grey-700;
                 padding: 1rem 0.75rem;
+                
+                a {
+                    color: variables.$color-primary !important;
+                    
+                    &:hover {
+                        color: variables.$color-primary !important;
+                    }
+                }
             }
         }
         
         tbody {
             tr {
                 transition: background-color 0.2s ease;
-                border-bottom: 1px solid var(--theme-border-light);
+                border-bottom: 1px solid variables.$color-grey-300;
                 
                 &:hover {
-                    background-color: var(--theme-bg-tertiary);
+                    background-color: variables.$color-bg-light-grey;
                 }
                 
                 td {
@@ -65,6 +74,22 @@ body.produtos-page {
                     vertical-align: middle;
                 }
             }
+        }
+    }
+    
+    // Botões de ação na tabela
+    .btn-action {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        
+        &:not(:last-child) {
+            margin-right: 0.375rem;
+        }
+        
+        &:hover {
+            transform: translateY(-1px);
         }
     }
     
@@ -76,36 +101,36 @@ body.produtos-page {
         font-size: 0.8125rem;
         
         &.bg-danger {
-            background-color: var(--theme-error) !important;
+            background-color: variables.$color-error !important;
         }
         
         &.bg-warning {
-            background-color: var(--theme-warning) !important;
-            color: var(--theme-text);
+            background-color: variables.$color-warning !important;
+            color: variables.$color-text-primary;
         }
         
         &.bg-success {
-            background-color: var(--theme-success) !important;
+            background-color: variables.$color-success !important;
         }
         
         &.bg-info {
-            background-color: var(--theme-info) !important;
+            background-color: variables.$color-info !important;
         }
     }
     
     // Filtros e busca
     .filter-bar {
-        background-color: var(--theme-bg);
+        background-color: variables.$color-grey-200;
         border-radius: 8px;
         padding: 1.25rem;
         margin-bottom: 1.5rem;
-        box-shadow: 0 1px 4px var(--theme-shadow);
+        box-shadow: 0 1px 4px variables.$color-black-10;
         
         .form-control {
-            border-color: var(--theme-border);
+            border-color: variables.$color-light-border;
             
             &:focus {
-                border-color: var(--theme-primary);
+                border-color: variables.$color-primary;
                 box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.1);
             }
         }
@@ -115,32 +140,32 @@ body.produtos-page {
     .btn-group {
         .btn {
             &.btn-outline-info {
-                color: var(--theme-info);
-                border-color: var(--theme-info);
+                color: variables.$color-info;
+                border-color: variables.$color-info;
                 
                 &:hover {
-                    background-color: var(--theme-info);
-                    color: var(--theme-bg);
+                    background-color: variables.$color-info;
+                    color: variables.$color-white;
                 }
             }
             
             &.btn-outline-primary {
-                color: var(--theme-primary);
-                border-color: var(--theme-primary);
+                color: variables.$color-primary;
+                border-color: variables.$color-primary;
                 
                 &:hover {
-                    background-color: var(--theme-primary);
-                    color: var(--theme-bg);
+                    background-color: variables.$color-primary;
+                    color: variables.$color-white;
                 }
             }
             
             &.btn-outline-danger {
-                color: var(--theme-error);
-                border-color: var(--theme-error);
+                color: variables.$color-error;
+                border-color: variables.$color-error;
                 
                 &:hover {
-                    background-color: var(--theme-error);
-                    color: var(--theme-bg);
+                    background-color: variables.$color-error;
+                    color: variables.$color-white;
                 }
             }
         }
@@ -150,19 +175,19 @@ body.produtos-page {
     .pagination {
         .page-item {
             .page-link {
-                color: var(--theme-primary);
-                border-color: var(--theme-border);
+                color: variables.$color-primary;
+                border-color: variables.$color-light-border;
                 
                 &:hover {
-                    background-color: var(--theme-bg-tertiary);
-                    border-color: var(--theme-primary);
+                    background-color: variables.$color-bg-light-grey;
+                    border-color: variables.$color-primary;
                 }
             }
             
             &.active .page-link {
-                background-color: var(--theme-primary);
-                border-color: var(--theme-primary);
-                color: var(--theme-bg);
+                background-color: variables.$color-primary;
+                border-color: variables.$color-primary;
+                color: variables.$color-white;
             }
         }
     }

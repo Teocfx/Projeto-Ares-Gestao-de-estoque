@@ -1,0 +1,97 @@
+{% load static %}
+
+{% comment %}
+Componente: Título de Página Versátil
+
+Uso básico (título simples):
+{% include 'include/titulo.html' with titulo="Minha Página" %}
+
+Uso completo:
+{% include 'include/titulo.html' with titulo="Produtos" subtitulo="Gerenciar estoque" descricao="Lista de todos os produtos cadastrados" show_actions=True icon="box-seam" %}
+
+Uso Wagtail (compatibilidade):
+{% include 'include/titulo.html' with titulo=self.titulo bgClass=self.corBackground %}
+
+Parâmetros:
+- titulo (obrigatório): Título principal da página
+- subtitulo (opcional): Subtítulo descritivo
+- descricao (opcional): Descrição mais detalhada
+- show_actions (opcional): Se True, renderiza slot para ações (botões, filtros, etc.)
+- icon (opcional): Ícone do Bootstrap Icons (ex: "box-seam")
+- bgClass (opcional): Classe CSS para background customizado
+- bgClassExtra (opcional): Classes CSS adicionais
+- classes (opcional): Classes CSS para o título
+- remover_svg (opcional): Remove linha decorativa (padrão Wagtail)
+- centralizado (opcional): Centraliza o título (padrão: False)
+- nivel (opcional): Nível do heading (h1, h2, h3, etc. - padrão: h1)
+{% endcomment %}
+
+<div class="page-titulo titulo-container {% if bgClass %}{{ bgClass }}{% endif %} {% if bgClassExtra %}{{ bgClassExtra }}{% endif %} {% if centralizado or not show_actions %}text-center{% endif %} mb-4">
+    <div class="{% if centralizado or not show_actions %}container-fluid{% else %}container-fluid{% endif %}">
+        <div class="row align-items-center py-3">
+            
+            <!-- Título e descrição -->
+            <div class="col-lg-{% if show_actions %}8{% else %}12{% endif %}">
+                <div class="page-titulo__content {% if centralizado %}d-flex flex-column align-items-center{% endif %}">
+                    
+                    <!-- Título principal -->
+                    {% if nivel == 'h2' %}
+                        <h2 class="page-titulo__title titulo-1 h2 mb-2 {% if classes %}{{ classes }}{% endif %} {% if icon or not centralizado %}d-flex align-items-center{% endif %}">
+                    {% elif nivel == 'h3' %}
+                        <h3 class="page-titulo__title titulo-1 h3 mb-2 {% if classes %}{{ classes }}{% endif %} {% if icon or not centralizado %}d-flex align-items-center{% endif %}">
+                    {% else %}
+                        <h1 class="page-titulo__title titulo-1 h2 mb-2 {% if classes %}{{ classes }}{% endif %} {% if icon or not centralizado %}d-flex align-items-center{% endif %}">
+                    {% endif %}
+                        {% if icon %}
+                            <i class="bi bi-{{ icon }} me-2"></i>
+                        {% endif %}
+                        {{ titulo }}
+                    {% if nivel == 'h2' %}
+                        </h2>
+                    {% elif nivel == 'h3' %}
+                        </h3>
+                    {% else %}
+                        </h1>
+                    {% endif %}
+                    
+                    <!-- Linha decorativa SVG (padrão Wagtail) -->
+                    {% if not remover_svg and centralizado %}
+                    <div class="titulo-linha my-2">
+                        <svg width="133" height="3">
+                            <line x1="0" y1="1.5" x2="133" y2="1.5" stroke-width="3"/>
+                        </svg>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Subtítulo -->
+                    {% if subtitulo %}
+                    <p class="page-titulo__subtitle text-muted mb-1">
+                        {{ subtitulo }}
+                    </p>
+                    {% endif %}
+                    
+                    <!-- Descrição -->
+                    {% if descricao %}
+                    <p class="page-titulo__description text-muted small mb-0">
+                        {{ descricao }}
+                    </p>
+                    {% endif %}
+                    
+                </div>
+            </div>
+            
+            <!-- Ações (botões, filtros, etc.) -->
+            {% if show_actions %}
+            <div class="col-lg-4">
+                <div class="page-titulo__actions d-flex justify-content-lg-end gap-2">
+                    {% block titulo_actions %}
+                        <!-- Conteúdo personalizado de ações -->
+                        <!-- Exemplo: botões, filtros, etc. -->
+                    {% endblock %}
+                </div>
+            </div>
+            {% endif %}
+            
+        </div>
+    </div>
+</div>

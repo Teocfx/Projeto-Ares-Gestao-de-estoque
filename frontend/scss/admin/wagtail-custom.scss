@@ -1,3 +1,4 @@
+@use '../variables';
 /**
  * Admin Wagtail - Tema Padrão
  * Customizações para o painel administrativo do Wagtail
@@ -19,21 +20,21 @@
 
 // Sidebar customization
 [data-wagtail-sidebar] {
-    background-color: var(--theme-primary) !important;
+    background-color: variables.$color-primary !important;
     
     .sidebar-logo {
         padding: 1rem;
         text-align: center;
-        border-bottom: 1px solid var(--theme-border-light);
+        border-bottom: 1px solid variables.$color-grey-300;
     }
     
     .nav-link {
-        color: var(--theme-text-secondary) !important;
+        color: variables.$color-text-secondary !important;
         transition: all 0.3s ease;
         
         &:hover, &.active {
-            background-color: var(--theme-primary-hover) !important;
-            color: var(--theme-bg) !important;
+            background-color: variables.$color-primary-hover !important;
+            color: variables.$color-grey-200 !important;
         }
     }
 }
@@ -41,72 +42,72 @@
 // Botões customizados
 .button-primary,
 .button.button-primary {
-    background-color: var(--theme-secondary) !important;
-    border-color: var(--theme-secondary) !important;
+    background-color: variables.$color-secondary !important;
+    border-color: variables.$color-secondary !important;
     
     &:hover {
-        background-color: var(--theme-primary-hover) !important;
-        border-color: var(--theme-primary-hover) !important;
+        background-color: variables.$color-primary-hover !important;
+        border-color: variables.$color-primary-hover !important;
     }
 }
 
 .button-secondary {
-    background-color: var(--theme-bg-secondary) !important;
-    color: var(--theme-text) !important;
-    border-color: var(--theme-border) !important;
+    background-color: variables.$color-grey-300 !important;
+    color: variables.$color-text-primary !important;
+    border-color: variables.$color-light-border !important;
     
     &:hover {
-        background-color: var(--theme-bg-tertiary) !important;
+        background-color: variables.$color-bg-light-grey !important;
     }
 }
 
 // Status badges
 .status-tag {
     &.primary {
-        background-color: var(--theme-primary);
-        color: var(--theme-bg);
+        background-color: variables.$color-primary;
+        color: variables.$color-grey-200;
     }
     
     &.success {
-        background-color: var(--theme-success);
-        color: var(--theme-bg);
+        background-color: variables.$color-success;
+        color: variables.$color-grey-200;
     }
     
     &.warning {
-        background-color: var(--theme-warning);
-        color: var(--theme-bg);
+        background-color: variables.$color-warning;
+        color: variables.$color-grey-200;
     }
     
     &.error {
-        background-color: var(--theme-error);
-        color: var(--theme-bg);
+        background-color: variables.$color-error;
+        color: variables.$color-grey-200;
     }
 }
 
 // Cards e listagens
 .listing {
-    background-color: var(--theme-bg);
-    border: 1px solid var(--theme-border);
+    background-color: variables.$color-grey-200;
+    border: 1px solid variables.$color-light-border;
     border-radius: 4px;
     
     th {
-        background-color: var(--theme-bg-secondary);
-        color: var(--theme-text);
-        border-bottom: 2px solid var(--theme-border);
+        background-color: variables.$color-grey-300;
+        color: variables.$color-text-primary;
+        border-bottom: 2px solid variables.$color-light-border;
     }
     
     tr:hover {
-        background-color: var(--theme-bg-tertiary);
+        background-color: variables.$color-bg-light-grey;
     }
 }
 
 // Headers
 .header {
-    background-color: var(--theme-bg);
-    border-bottom: 1px solid var(--theme-border);
-    box-shadow: var(--theme-shadow);
+    background-color: variables.$color-grey-200;
+    border-bottom: 1px solid variables.$color-light-border;
+    box-shadow: variables.$color-black-10;
     
     .title {
-        color: var(--theme-text);
+        color: variables.$color-text-primary;
     }
 }

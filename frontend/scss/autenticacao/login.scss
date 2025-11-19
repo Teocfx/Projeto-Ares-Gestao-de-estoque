@@ -1,10 +1,11 @@
+@use '../variables';
 /**
  * Autenticação - Login - Tema Padrão
  * Página de login do sistema
  */
 
 body.login-page {
-    background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
+    background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%);
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -13,9 +14,9 @@ body.login-page {
 }
 
 .login-container {
-    background-color: var(--theme-bg);
+    background-color: variables.$color-white;
     border-radius: 12px;
-    box-shadow: 0 10px 40px var(--theme-shadow-lg);
+    box-shadow: 0 10px 40px variables.$color-black-50;
     padding: 3rem 2.5rem;
     width: 100%;
     max-width: 450px;
@@ -32,14 +33,14 @@ body.login-page {
     }
     
     h1 {
-        color: var(--theme-text);
+        color: variables.$color-text-primary;
         font-size: 1.75rem;
         font-weight: 600;
         margin-bottom: 0.5rem;
     }
     
     p {
-        color: var(--theme-text-secondary);
+        color: variables.$color-text-secondary;
         font-size: 0.95rem;
     }
 }
@@ -51,7 +52,7 @@ body.login-page {
         
         label {
             display: block;
-            color: var(--theme-text);
+            color: variables.$color-text-primary;
             font-weight: 500;
             margin-bottom: 0.5rem;
             font-size: 0.9rem;
@@ -60,34 +61,34 @@ body.login-page {
         input {
             width: 100%;
             padding: 0.875rem 1rem;
-            border: 2px solid var(--theme-border);
+            border: 2px solid variables.$color-light-border;
             border-radius: 8px;
             font-size: 1rem;
             transition: all 0.3s ease;
-            background-color: var(--theme-bg);
-            color: var(--theme-text);
+            background-color: variables.$color-white;
+            color: variables.$color-grey-900;
             
             &:focus {
                 outline: none;
-                border-color: var(--theme-primary);
-                box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.1);
+                border-color: variables.$color-primary;
+                box-shadow: 0 0 0 3px variables.$color-primary-10;
             }
             
             &::placeholder {
-                color: var(--theme-text-muted);
+                color: variables.$color-grey-600;
             }
         }
         
         &.focused label {
-            color: var(--theme-primary);
+            color: variables.$color-primary;
         }
     }
     
     .btn-login {
         width: 100%;
         padding: 1rem;
-        background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
-        color: var(--theme-bg);
+        background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%);
+        color: variables.$color-grey-200;
         border: none;
         border-radius: 8px;
         font-size: 1rem;
@@ -111,16 +112,16 @@ body.login-page {
     text-align: center;
     margin-top: 1.5rem;
     padding-top: 1.5rem;
-    border-top: 1px solid var(--theme-border);
+    border-top: 1px solid variables.$color-light-border;
     
     a {
-        color: var(--theme-primary);
+        color: variables.$color-primary;
         text-decoration: none;
         font-size: 0.9rem;
         transition: color 0.3s ease;
         
         &:hover {
-            color: var(--theme-primary-hover);
+            color: variables.$color-primary-hover;
             text-decoration: underline;
         }
     }
@@ -129,7 +130,7 @@ body.login-page {
 .system-info {
     text-align: center;
     margin-top: 1.5rem;
-    color: var(--theme-text-secondary);
+    color: variables.$color-text-secondary;
     font-size: 0.85rem;
 }
 
@@ -140,14 +141,14 @@ body.login-page {
     
     &.alert-danger {
         background-color: #ffebee;
-        border: 1px solid var(--theme-error);
-        color: var(--theme-error);
+        border: 1px solid variables.$color-error;
+        color: variables.$color-error;
     }
     
     &.alert-success {
         background-color: #e8f5e9;
-        border: 1px solid var(--theme-success);
-        color: var(--theme-success);
+        border: 1px solid variables.$color-success;
+        color: variables.$color-success;
     }
 }
 

@@ -1,33 +1,46 @@
+@use '../variables';
 /**
  * Dashboard - Tema Padrão
  * Página principal do sistema
  */
 
 body.dashboard-page {
-    background-color: var(--theme-bg-secondary);
+    background-color: variables.$color-grey-300;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+// Card de boas-vindas com gradiente
+.bg-gradient-primary {
+    background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%) !important;
+    color: variables.$color-white !important;
+    
+    h1, h2, h3, h4, h5, h6, p, strong {
+        color: variables.$color-white !important;
+    }
 }
 
 .dashboard-page {
     // Navbar
     .navbar {
-        background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
-        box-shadow: 0 2px 8px var(--theme-shadow);
+        background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%);
+        box-shadow: 0 2px 8px variables.$color-black-10;
         padding: 1rem 0;
         
         .navbar-brand {
-            color: var(--theme-bg);
+            color: variables.$color-white;
             font-weight: 700;
             font-size: 1.5rem;
         }
         
         .nav-link {
-            color: rgba(255, 255, 255, 0.9);
+            color: variables.$color-white;
+            opacity: 0.9;
             transition: all 0.3s ease;
             
             &:hover, &.active {
-                color: var(--theme-bg);
-                background-color: rgba(255, 255, 255, 0.1);
+                color: variables.$color-white;
+                opacity: 1;
+                background-color: variables.$color-primary-12;
                 border-radius: 4px;
             }
         }
@@ -35,24 +48,24 @@ body.dashboard-page {
     
     // Cards gerais
     .card {
-        background-color: var(--theme-bg);
+        background-color: variables.$color-white;
         border: none;
         border-radius: 12px;
-        box-shadow: 0 2px 12px var(--theme-shadow);
+        box-shadow: 0 2px 12px variables.$color-black-10;
         transition: all 0.3s ease;
         
         &:hover {
             transform: translateY(-4px);
-            box-shadow: 0 4px 20px var(--theme-shadow-lg);
+            box-shadow: 0 4px 20px variables.$color-black-20;
         }
         
         .card-header {
             background-color: transparent;
-            border-bottom: 1px solid var(--theme-border);
+            border-bottom: 1px solid variables.$color-light-border;
             padding: 1.25rem;
             
             h6 {
-                color: var(--theme-text);
+                color: variables.$color-text-primary;
                 font-weight: 600;
                 margin: 0;
             }
@@ -65,8 +78,8 @@ body.dashboard-page {
     
     // Cards de métricas
     .metric-card {
-        background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-light) 100%);
-        color: var(--theme-bg);
+        background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-light 100%);
+        color: variables.$color-white;
         border: none;
         
         .display-4 {
@@ -75,62 +88,62 @@ body.dashboard-page {
         
         &:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(198, 40, 40, 0.3);
+            box-shadow: 0 8px 24px variables.$color-primary-40;
         }
     }
     
     // Cards de alerta
     .alert-card {
-        border-left: 4px solid var(--theme-error);
+        border-left: 4px solid variables.$color-error;
         
         &.warning {
-            border-left-color: var(--theme-warning);
+            border-left-color: variables.$color-warning;
         }
         
         &.success {
-            border-left-color: var(--theme-success);
+            border-left-color: variables.$color-success;
         }
     }
     
     // Status do estoque
     .stock-critical {
-        color: var(--theme-error);
+        color: variables.$color-error;
         font-weight: 700;
         
         .badge {
-            background-color: var(--theme-error);
+            background-color: variables.$color-error;
         }
     }
     
     .stock-low {
-        color: var(--theme-warning);
+        color: variables.$color-warning;
         font-weight: 700;
         
         .badge {
-            background-color: var(--theme-warning);
+            background-color: variables.$color-warning;
         }
     }
     
     .stock-ok {
-        color: var(--theme-success);
+        color: variables.$color-success;
         font-weight: 700;
         
         .badge {
-            background-color: var(--theme-success);
+            background-color: variables.$color-success;
         }
     }
     
     // Tabelas
     .table {
-        color: var(--theme-text);
+        color: variables.$color-text-primary;
         
         thead {
-            background-color: var(--theme-bg-secondary);
+            background-color: variables.$color-grey-300;
             
             th {
-                color: var(--theme-text);
+                color: variables.$color-text-primary;
                 font-weight: 600;
-                border-bottom: 2px solid var(--theme-border);
+                border-bottom: 2px solid variables.$color-light-border;
             }
         }
         
@@ -139,36 +152,68 @@ body.dashboard-page {
                 transition: background-color 0.2s ease;
                 
                 &:hover {
-                    background-color: var(--theme-bg-tertiary);
+                    background-color: variables.$color-bg-light-grey;
                 }
             }
             
             td {
-                border-color: var(--theme-border-light);
+                border-color: variables.$color-grey-300;
             }
         }
     }
     
     // Botões
     .btn-primary {
-        background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
+        background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%);
         border: none;
-        box-shadow: 0 2px 8px rgba(198, 40, 40, 0.2);
+        box-shadow: 0 2px 8px variables.$color-primary-20;
         transition: all 0.3s ease;
         
         &:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(198, 40, 40, 0.3);
+            box-shadow: 0 4px 12px variables.$color-primary-40;
         }
     }
     
     .btn-outline-primary {
-        color: var(--theme-primary);
-        border-color: var(--theme-primary);
+        color: variables.$color-primary;
+        border-color: variables.$color-primary;
         
         &:hover {
-            background-color: var(--theme-primary);
-            color: var(--theme-bg);
+            background-color: variables.$color-primary;
+            color: variables.$color-white;
+        }
+    }
+    
+    // Botões light (usado em cards com fundo escuro/vermelho)
+    .btn-light {
+        background-color: variables.$color-white;
+        color: variables.$color-grey-900;
+        border: none;
+        font-weight: 600;
+        box-shadow: 0 2px 8px variables.$color-black-20;
+        transition: all 0.3s ease;
+        
+        &:hover {
+            background-color: variables.$color-grey-100;
+            color: variables.$color-grey-900;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px variables.$color-black-30;
+        }
+    }
+    
+    .btn-outline-light {
+        color: variables.$color-white;
+        border-color: variables.$color-white;
+        background-color: transparent;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        
+        &:hover {
+            background-color: variables.$color-white;
+            color: variables.$color-primary;
+            border-color: variables.$color-white;
+            transform: translateY(-2px);
         }
     }
 }

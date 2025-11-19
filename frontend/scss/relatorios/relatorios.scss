@@ -1,35 +1,36 @@
+@use '../variables';
 /**
  * Relatórios - Tema Padrão
  * Central de relatórios e análises
  */
 
 body.relatorios-page {
-    background-color: var(--theme-bg-secondary);
+    background-color: variables.$color-grey-300;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .relatorios-page {
     // Navbar
     .navbar {
-        background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
-        box-shadow: 0 2px 8px var(--theme-shadow);
+        background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%);
+        box-shadow: 0 2px 8px variables.$color-black-10;
     }
     
     // Cards de relatório
     .report-card {
-        background-color: var(--theme-bg);
-        border: 2px solid var(--theme-border);
+        background-color: variables.$color-grey-200;
+        border: 2px solid variables.$color-light-border;
         border-radius: 12px;
         padding: 2rem;
         text-align: center;
         cursor: pointer;
         transition: all 0.3s ease;
-        box-shadow: 0 2px 8px var(--theme-shadow);
+        box-shadow: 0 2px 8px variables.$color-black-10;
         
         &:hover {
             transform: translateY(-8px);
-            box-shadow: 0 8px 24px var(--theme-shadow-lg);
-            border-color: var(--theme-primary);
+            box-shadow: 0 8px 24px variables.$color-black;
+            border-color: variables.$color-primary;
         }
         
         .report-icon {
@@ -37,30 +38,30 @@ body.relatorios-page {
             margin-bottom: 1rem;
             
             &.text-primary {
-                color: var(--theme-primary);
+                color: variables.$color-primary;
             }
             
             &.text-success {
-                color: var(--theme-success);
+                color: variables.$color-success;
             }
             
             &.text-warning {
-                color: var(--theme-warning);
+                color: variables.$color-warning;
             }
             
             &.text-info {
-                color: var(--theme-info);
+                color: variables.$color-info;
             }
         }
         
         h6 {
-            color: var(--theme-text);
+            color: variables.$color-grey-900;
             font-weight: 700;
             margin-bottom: 0.75rem;
         }
         
         p {
-            color: var(--theme-text-secondary);
+            color: variables.$color-grey-700;
             font-size: 0.9rem;
             margin-bottom: 1.25rem;
         }
@@ -76,18 +77,18 @@ body.relatorios-page {
     
     // Cards gerais
     .card {
-        background-color: var(--theme-bg);
+        background-color: variables.$color-grey-200;
         border: none;
         border-radius: 12px;
-        box-shadow: 0 2px 12px var(--theme-shadow);
+        box-shadow: 0 2px 12px variables.$color-black-10;
         
         .card-header {
             background-color: transparent;
-            border-bottom: 1px solid var(--theme-border);
+            border-bottom: 1px solid variables.$color-light-border;
             padding: 1.25rem;
             
             h6 {
-                color: var(--theme-text);
+                color: variables.$color-grey-900;
                 font-weight: 600;
                 margin: 0;
             }
@@ -104,14 +105,14 @@ body.relatorios-page {
             text-align: center;
             
             .stat-value {
-                color: var(--theme-primary);
+                color: variables.$color-primary;
                 font-size: 2rem;
                 font-weight: 700;
                 margin-bottom: 0.5rem;
             }
             
             .stat-label {
-                color: var(--theme-text-secondary);
+                color: variables.$color-grey-700;
                 font-size: 0.9rem;
             }
         }
@@ -119,15 +120,15 @@ body.relatorios-page {
     
     // Tabela de relatórios
     .table {
-        color: var(--theme-text);
+        color: variables.$color-grey-900;
         
         thead {
-            background-color: var(--theme-bg-secondary);
+            background-color: variables.$color-grey-300;
             
             th {
-                color: var(--theme-text);
+                color: variables.$color-grey-900;
                 font-weight: 600;
-                border-bottom: 2px solid var(--theme-border);
+                border-bottom: 2px solid variables.$color-light-border;
             }
         }
         
@@ -136,7 +137,7 @@ body.relatorios-page {
                 transition: background-color 0.2s ease;
                 
                 &:hover {
-                    background-color: var(--theme-bg-tertiary);
+                    background-color: variables.$color-bg-light-grey;
                 }
             }
         }
@@ -144,50 +145,50 @@ body.relatorios-page {
     
     // Botões
     .btn-primary {
-        background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
+        background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%);
         border: none;
-        box-shadow: 0 2px 8px rgba(198, 40, 40, 0.2);
+        box-shadow: 0 2px 8px variables.$color-primary-20;
         transition: all 0.3s ease;
         
         &:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(198, 40, 40, 0.3);
+            box-shadow: 0 4px 12px variables.$color-primary-40;
         }
     }
     
     .btn-outline-primary {
-        color: var(--theme-primary);
-        border-color: var(--theme-primary);
+        color: variables.$color-primary;
+        border-color: variables.$color-primary;
         
         &:hover {
-            background-color: var(--theme-primary);
-            color: var(--theme-bg);
+            background-color: variables.$color-primary;
+            color: variables.$color-white;
         }
     }
     
     .btn-outline-success {
-        color: var(--theme-success);
-        border-color: var(--theme-success);
+        color: variables.$color-success;
+        border-color: variables.$color-success;
         
         &:hover {
-            background-color: var(--theme-success);
-            color: var(--theme-bg);
+            background-color: variables.$color-success;
+            color: variables.$color-white;
         }
     }
     
     .btn-outline-warning {
-        color: var(--theme-warning);
-        border-color: var(--theme-warning);
+        color: variables.$color-warning;
+        border-color: variables.$color-warning;
         
         &:hover {
-            background-color: var(--theme-warning);
-            color: var(--theme-text);
+            background-color: variables.$color-warning;
+            color: variables.$color-grey-900;
         }
     }
     
     .btn-info {
-        background-color: var(--theme-info);
-        color: var(--theme-bg);
+        background-color: variables.$color-info;
+        color: variables.$color-white;
         border: none;
         
         &:hover {
@@ -201,17 +202,17 @@ body.relatorios-page {
         padding: 4rem 2rem;
         
         i {
-            color: var(--theme-text-muted);
+            color: variables.$color-grey-600;
             margin-bottom: 1.5rem;
         }
         
         h5 {
-            color: var(--theme-text-secondary);
+            color: variables.$color-grey-700;
             margin-bottom: 1rem;
         }
         
         p {
-            color: var(--theme-text-muted);
+            color: variables.$color-grey-600;
             margin-bottom: 2rem;
         }
     }

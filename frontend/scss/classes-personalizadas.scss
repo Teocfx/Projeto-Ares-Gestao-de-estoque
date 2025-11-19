@@ -20,7 +20,7 @@
 }
 
 .texto-destaque {
-  color: variables.$color-on-surface !important;
+  color: variables.$color-grey-900 !important;
   font-weight: 600;
 }
 
@@ -35,39 +35,39 @@
 // Classes de background
 .fundo-primario {
   background-color: variables.$color-primary !important;
-  color: variables.$color-on-primary;
+  color: variables.$color-white;
 }
 
 .fundo-secundario {
   background-color: variables.$color-secondary !important;
-  color: variables.$color-on-secondary;
+  color: variables.$color-black;
 }
 
 .fundo-superficie {
   background-color: variables.$color-surface !important;
-  color: variables.$color-on-surface;
+  color: variables.$color-grey-900;
 }
 
 .fundo-aviso {
   background-color: variables.$color-warning !important;
-  color: variables.$color-on-warning;
+  color: variables.$color-black;
 }
 
 .fundo-sucesso {
   background-color: variables.$color-success !important;
-  color: variables.$color-on-success;
+  color: variables.$color-white;
 }
 
 .fundo-erro {
   background-color: variables.$color-error !important;
-  color: variables.$color-on-error;
+  color: variables.$color-white;
 }
 
 // Classes de botões personalizados
 .botao-primario {
   display: inline-block;
   padding: 0.5rem 1rem;
-  color: variables.$color-on-primary;
+  color: variables.$color-white;
   background-color: variables.$color-primary;
   border: 1px solid variables.$color-primary;
   border-radius: 8px;
@@ -81,7 +81,7 @@
     transform: translateY(-2px);
     background-color: variables.$color-primary-dark;
     border-color: variables.$color-primary-dark;
-    color: variables.$color-on-primary;
+    color: variables.$color-white;
     text-decoration: none;
     box-shadow: 0 3px 8px rgba(variables.$color-primary, 0.25);
   }
@@ -144,7 +144,7 @@
   
   &:hover {
     background-color: variables.$color-primary;
-    color: variables.$color-on-primary;
+    color: variables.$color-white;
     text-decoration: none;
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(variables.$color-primary, 0.3);
@@ -221,27 +221,27 @@
 
 .etiqueta-importante {
   background-color: variables.$color-warning;
-  color: variables.$color-on-warning;
+  color: variables.$color-black;
 }
 
 .etiqueta-sucesso {
   background-color: variables.$color-success;
-  color: variables.$color-on-success;
+  color: variables.$color-white;
 }
 
 .etiqueta-erro {
   background-color: variables.$color-error;
-  color: variables.$color-on-error;
+  color: variables.$color-white;
 }
 
 .etiqueta-primaria {
   background-color: variables.$color-primary;
-  color: variables.$color-on-primary;
+  color: variables.$color-white;
 }
 
 .etiqueta-secundaria {
   background-color: variables.$color-secondary;
-  color: variables.$color-on-secondary;
+  color: variables.$color-black;
 }
 
 // Classes de alertas
@@ -253,25 +253,25 @@
 }
 
 .alerta-sucesso {
-  color: variables.$color-on-success;
+  color: variables.$color-white;
   background-color: variables.$color-success;
   border-color: color.adjust(variables.$color-success, $lightness: -10%);
 }
 
 .alerta-aviso {
-  color: variables.$color-on-warning;
+  color: variables.$color-black;
   background-color: variables.$color-warning;
   border-color: color.adjust(variables.$color-warning, $lightness: -10%);
 }
 
 .alerta-erro {
-  color: variables.$color-on-error;
+  color: variables.$color-white;
   background-color: variables.$color-error;
   border-color: color.adjust(variables.$color-error, $lightness: -10%);
 }
 
 .alerta-info {
-  color: variables.$color-on-primary;
+  color: variables.$color-white;
   background-color: color.adjust(variables.$color-primary, $lightness: 30%);
   border-color: variables.$color-primary;
 }

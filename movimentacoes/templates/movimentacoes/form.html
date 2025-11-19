@@ -1,106 +1,11 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nova Movimentação - Sistema ARES</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-        }
-        .navbar {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-        }
-        body { 
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        .card-form {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .product-info {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            border: 1px solid #dee2e6;
-            border-radius: 0.5rem;
-            display: none;
-        }
-        .product-info.show {
-            display: block;
-        }
-        .stock-indicator {
-            font-weight: bold;
-            padding: 0.5rem;
-            border-radius: 0.25rem;
-        }
-        .stock-ok { background-color: #d4edda; color: #155724; }
-        .stock-baixo { background-color: #fff3cd; color: #856404; }
-        .stock-critico { background-color: #f8d7da; color: #721c24; }
-    </style>
-</head>
-<body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark" aria-label="Navegação principal">
-        <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="{% url 'dashboard:index' %}">
-                <i class="fas fa-boxes me-2"></i>ARES
-            </a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'dashboard:index' %}">
-                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'produtos:list' %}">
-                            <i class="fas fa-box me-1"></i>Produtos
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{% url 'movimentacoes:list' %}">
-                            <i class="fas fa-exchange-alt me-1"></i>Movimentações
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'relatorios:index' %}">
-                            <i class="fas fa-chart-bar me-1"></i>Relatórios
-                        </a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'autenticacao:logout' %}">
-                            <i class="fas fa-sign-out-alt me-1"></i>{{ user.username }}
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
 
-    <!-- Conteúdo Principal -->
-    <div class="container-fluid mt-4">
-        <div class="row">
-            <div class="col-12">
-                <!-- Breadcrumb -->
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <a href="{% url 'dashboard:index' %}">
-                                <i class="fas fa-home"></i> Dashboard
-                            </a>
-                        </li>
-                        <li class="breadcrumb-item">
-                            <a href="{% url 'movimentacoes:list' %}">Movimentações</a>
-                        </li>
-                        <li class="breadcrumb-item active">Nova Movimentação</li>
-                    </ol>
-                </nav>
+{% block title %}Nova Movimentação - Sistema ARES{% endblock %}
+
+{% block body_class %}movimentacoes-page{% endblock %}
+
+{% block content %}
 
                 <!-- Formulário -->
                 <div class="card card-form border-0 shadow-sm">
@@ -239,10 +144,8 @@
             </div>
         </div>
     </div>
+{% endblock %}
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static 'js/main.js' %}"></script>
+{% block extra_js %}
     {# Scripts movidos para: frontend/js/movimentacoes/movimentacoes.js #}
-</body>
-</html>
+{% endblock %}

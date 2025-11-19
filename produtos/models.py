@@ -4,6 +4,7 @@ Models para gerenciamento de produtos.
 from django.db import models
 from django.core.validators import MinValueValidator
 from django.utils import timezone
+from django.urls import reverse
 from decimal import Decimal
 
 from core.models import TimeStampedModel, SoftDeleteModel
@@ -28,6 +29,25 @@ class Category(TimeStampedModel, SoftDeleteModel):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        """Retorna a URL da lista de produtos desta categoria."""
+        return reverse('produtos:list') + f'?category={self.pk}'
+
+    @property
+    def url(self):
+        """Alias para get_absolute_url (compatibilidade com Wagtail)."""
+        return self.get_absolute_url()
+
+    @property
+    def title(self):
+        """Retorna o nome como title (compatibilidade com busca)."""
+        return self.name
+
+    @property
+    def search_description(self):
+        """Retorna a descrição para resultados de busca."""
+        return self.description or f"Categoria de produtos: {self.name}"
 
 
 class Unit(TimeStampedModel):
@@ -141,6 +161,31 @@ class Product(TimeStampedModel, SoftDeleteModel):
 
     def __str__(self):
         return f"{self.sku} — {self.name}"
+
+    def get_absolute_url(self):
+        """Retorna a URL de detalhes do produto."""
+        return reverse('produtos:detail', kwargs={'pk': self.pk})
+
+    @property
+    def url(self):
+        """Alias para get_absolute_url (compatibilidade com Wagtail)."""
+        return self.get_absolute_url()
+
+    @property
+    def title(self):
+        """Retorna o nome como title (compatibilidade com busca)."""
+        return f"{self.sku} - {self.name}"
+
+    @property
+    def search_description(self):
+        """Retorna descrição formatada para resultados de busca."""
+        desc_parts = []
+        if self.description:
+            desc_parts.append(self.description[:150])
+        desc_parts.append(f"Categoria: {self.category.name}")
+        desc_parts.append(f"Estoque: {self.current_stock} {self.unit.name}")
+        desc_parts.append(f"Status: {self.stock_status_display}")
+        return " | ".join(desc_parts)
 
     @property
     def stock_status(self):

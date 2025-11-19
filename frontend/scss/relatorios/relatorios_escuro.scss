@@ -1,3 +1,4 @@
+@use '../variables';
 /**
  * Relatórios - Tema Escuro
  * Central de relatórios em modo escuro
@@ -5,58 +6,99 @@
 
 [data-theme="dark"] {
     body.relatorios-page {
-        background-color: var(--theme-bg);
+        background-color: variables.$dark-bg;
     }
     
     .relatorios-page {
+        // Navbar preta com borda branca
         .navbar {
-            background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
+            background: variables.$dark-surface !important;
+            border-bottom: 2px solid variables.$color-white;
+            box-shadow: 0 2px 8px variables.$color-black-50;
         }
         
         .report-card {
-            background-color: var(--theme-bg-secondary);
-            border-color: var(--theme-border);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            background-color: variables.$dark-surface;
+            border-color: variables.$dark-border;
+            box-shadow: 0 2px 8px variables.$color-black-30;
             
             &:hover {
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-                border-color: var(--theme-primary);
+                box-shadow: 0 8px 24px variables.$color-black-50;
+                border-color: variables.$theme-primary-darkmode;
+            }
+            
+            h6 {
+                color: variables.$dark-text-primary;
+            }
+            
+            p {
+                color: variables.$dark-text-secondary;
             }
         }
         
         .card {
-            background-color: var(--theme-bg-secondary);
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+            background-color: variables.$dark-surface;
+            box-shadow: 0 2px 12px variables.$color-black-30;
             
             .card-header {
-                border-bottom-color: var(--theme-border);
+                border-bottom-color: variables.$dark-border;
+                
+                h6 {
+                    color: variables.$dark-text-primary;
+                }
+            }
+            
+            .card-body {
+                color: variables.$dark-text-primary;
             }
         }
         
         .stats-grid {
             .stat-item {
                 .stat-value {
-                    color: var(--theme-primary);
+                    color: variables.$theme-primary-darkmode;
+                }
+                
+                .stat-label {
+                    color: variables.$dark-text-secondary;
                 }
             }
         }
         
         .table {
+            color: variables.$dark-text-primary;
+            
             thead {
-                background-color: var(--theme-bg-tertiary);
+                background-color: variables.$dark-surface-alt;
+                
+                th {
+                    color: variables.$dark-text-primary;
+                }
             }
             
-            tbody tr:hover {
-                background-color: var(--theme-bg);
+            tbody {
+                tr:hover {
+                    background-color: variables.$dark-surface-alt;
+                }
+                
+                td {
+                    color: variables.$dark-text-primary;
+                }
             }
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
-            box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+            background: linear-gradient(135deg, variables.$theme-primary-darkmode 0%, variables.$theme-primary-darkmode-hover 100%);
+            box-shadow: 0 2px 8px variables.$color-primary-20;
             
             &:hover {
-                box-shadow: 0 4px 12px rgba(25, 118, 210, 0.4);
+                box-shadow: 0 4px 12px variables.$color-primary-40;
+            }
+        }
+        
+        .empty-state {
+            i, h5, p {
+                color: variables.$dark-text-secondary;
             }
         }
     }

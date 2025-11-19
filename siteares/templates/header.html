@@ -1,195 +1,90 @@
-{% load static %}
-{% load wagtailcore_tags %}
+{% load static navigation_tags wagtailcore_tags wagtailsettings_tags socialaccount %}
 
-<header class="header bg-white shadow-sm border-bottom">
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container-fluid">
-            
-            <!-- Logo e Título -->
-            <a class="navbar-brand d-flex align-items-center" href="{% url 'dashboard:index' %}">
-                <img src="{% static 'img/logo.png' %}" alt="Logo" width="40" height="40" class="me-2">
-                <div class="brand-text d-none d-sm-block">
-                    <span class="fw-bold text-primary fs-5">Gestão</span>
-                    <span class="fw-light text-secondary fs-5">Estoque</span>
-                </div>
-            </a>
-            
-            <!-- Mobile Menu Toggle -->
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Abrir menu de navegação">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <!-- Navigation Menu -->
-            <div class="collapse navbar-collapse" id="navbarNav">
-                
-                <!-- Main Navigation -->
-                <ul class="navbar-nav me-auto">
-                    
-                    <!-- Dashboard -->
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.app_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard:index' %}">
-                            <i class="bi bi-speedometer2 me-1"></i>
-                            Dashboard
-                        </a>
-                    </li>
-                    
-                    <!-- Produtos -->
-                    <li class="nav-item dropdown">
-                        <button class="nav-link dropdown-toggle btn btn-link text-decoration-none {% if request.resolver_match.app_name == 'produtos' %}active{% endif %}" type="button" id="produtosDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-box-seam me-1"></i>
-                            Produtos
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="produtosDropdown">
-                            <li><a class="dropdown-item" href="{% url 'produtos:list' %}">
-                                <i class="bi bi-list-ul me-2"></i>Listar Produtos
-                            </a></li>
-                            <li><a class="dropdown-item" href="{% url 'produtos:create' %}">
-                                <i class="bi bi-plus-circle me-2"></i>Novo Produto
-                            </a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{% url 'produtos:categories' %}">
-                                <i class="bi bi-tags me-2"></i>Categorias
-                            </a></li>
-                            <li><a class="dropdown-item" href="{% url 'produtos:units' %}">
-                                <i class="bi bi-rulers me-2"></i>Unidades
-                            </a></li>
-                        </ul>
-                    </li>
-                    
-                    <!-- Movimentações -->
-                    <li class="nav-item dropdown">
-                        <button class="nav-link dropdown-toggle btn btn-link text-decoration-none {% if request.resolver_match.app_name == 'movimentacoes' %}active{% endif %}" type="button" id="movimentacoesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-arrow-left-right me-1"></i>
-                            Movimentações
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="movimentacoesDropdown">
-                            <li><a class="dropdown-item" href="{% url 'movimentacoes:list' %}">
-                                <i class="bi bi-list-ul me-2"></i>Histórico
-                            </a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{% url 'movimentacoes:entrada' %}">
-                                <i class="bi bi-arrow-down-circle text-success me-2"></i>Nova Entrada
-                            </a></li>
-                            <li><a class="dropdown-item" href="{% url 'movimentacoes:saida' %}">
-                                <i class="bi bi-arrow-up-circle text-danger me-2"></i>Nova Saída
-                            </a></li>
-                            <li><a class="dropdown-item" href="{% url 'movimentacoes:ajuste' %}">
-                                <i class="bi bi-gear text-warning me-2"></i>Ajuste de Estoque
-                            </a></li>
-                        </ul>
-                    </li>
-                    
-                    <!-- Relatórios -->
-                    <li class="nav-item dropdown">
-                        <button class="nav-link dropdown-toggle btn btn-link text-decoration-none {% if request.resolver_match.app_name == 'relatorios' %}active{% endif %}" type="button" id="relatoriosDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-file-text me-1"></i>
-                            Relatórios
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="relatoriosDropdown">
-                            <li><a class="dropdown-item" href="{% url 'relatorios:estoque' %}">
-                                <i class="bi bi-box me-2"></i>Relatório de Estoque
-                            </a></li>
-                            <li><a class="dropdown-item" href="{% url 'relatorios:movimentacoes' %}">
-                                <i class="bi bi-arrow-left-right me-2"></i>Movimentações
-                            </a></li>
-                            <li><a class="dropdown-item" href="{% url 'relatorios:vencimentos' %}">
-                                <i class="bi bi-calendar-x me-2"></i>Produtos Vencidos
-                            </a></li>
-                            <li><a class="dropdown-item" href="{% url 'relatorios:critico' %}">
-                                <i class="bi bi-exclamation-triangle me-2"></i>Estoque Crítico
-                            </a></li>
-                        </ul>
-                    </li>
-                    
-                </ul>
-                
-                <!-- Right Side Menu -->
-                <ul class="navbar-nav">
-                    
-                    <!-- Notifications -->
-                    <li class="nav-item dropdown">
-                        <button class="nav-link btn btn-link text-decoration-none position-relative" type="button" id="notificationsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-bell fs-5"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge d-none">
-                                99+
-                                <span class="visually-hidden">notificações não lidas</span>
-                            </span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end notifications-dropdown" aria-labelledby="notificationsDropdown">
-                            <li><h6 class="dropdown-header">Notificações</h6></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">
-                                <div class="d-flex">
-                                    <div class="flex-shrink-0">
-                                        <i class="bi bi-exclamation-triangle text-warning"></i>
-                                    </div>
-                                    <div class="flex-grow-1 ms-2">
-                                        <p class="mb-0 small">5 produtos com estoque crítico</p>
-                                        <p class="mb-0 text-muted small">há 2 minutos</p>
-                                    </div>
-                                </div>
-                            </a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-center small" href="#">Ver todas as notificações</a></li>
-                        </ul>
-                    </li>
-                    
-                    <!-- Theme Toggle -->
-                    <li class="nav-item">
-                        <button class="nav-link btn border-0" id="theme-toggle" type="button" title="Alternar tema">
-                            <i class="bi bi-sun-fill theme-icon-light"></i>
-                            <i class="bi bi-moon-fill theme-icon-dark d-none"></i>
-                        </button>
-                    </li>
-                    
-                    <!-- User Menu -->
-                    {% if user.is_authenticated %}
-                    <li class="nav-item dropdown">
-                        <button class="nav-link dropdown-toggle btn btn-link text-decoration-none d-flex align-items-center" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <div class="avatar me-2">
-                                {% if user.profile.avatar %}
-                                    <img src="{{ user.profile.avatar.url }}" alt="Avatar" class="rounded-circle" width="32" height="32">
-                                {% else %}
-                                    <div class="avatar-placeholder bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
-                                        {{ user.first_name.0|default:user.username.0|upper }}
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <span class="d-none d-md-inline">{{ user.get_full_name|default:user.username }}</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li><h6 class="dropdown-header">{{ user.get_full_name|default:user.username }}</h6></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{% url 'autenticacao:profile' %}">
-                                <i class="bi bi-person me-2"></i>Meu Perfil
-                            </a></li>
-                            <li><a class="dropdown-item" href="{% url 'autenticacao:settings' %}">
-                                <i class="bi bi-gear me-2"></i>Configurações
-                            </a></li>
-                            {% if user.is_superuser %}
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{% url 'wagtailadmin_home' %}" target="_blank">
-                                <i class="bi bi-shield-check me-2"></i>Administração
-                            </a></li>
-                            {% endif %}
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{% url 'autenticacao:logout' %}">
-                                <i class="bi bi-box-arrow-right me-2"></i>Sair
-                            </a></li>
-                        </ul>
-                    </li>
-                    {% else %}
-                    <!-- Login Button -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'autenticacao:login' %}">
-                            <i class="bi bi-box-arrow-in-right me-1"></i>
-                            Entrar
-                        </a>
-                    </li>
-                    {% endif %}
-                    
-                </ul>
+<div class="header-wrapper d-none d-lg-block">
+  <div class="container">
+    <div class="header-layout row">
+      {# Logo #}
+      <div class="col-auto d-flex align-items-center">
+        <a href="/" aria-label="Início" class="text-decoration-none">
+          <img class="header-logo" src="{% static 'img/logo_banner.svg' %}" alt="{{ settings.core.SiteSettings.title_suffix }}">
+        </a>
+      </div>
+
+      {# Busca #}
+      <div class="col-auto d-flex align-items-center">
+        <form action="{% url 'search' %}" class="d-flex" role="search" method="get">
+          <input class="header-input-search" 
+                 type="text"
+                 placeholder="Buscar produtos, movimentações..."
+                 aria-label="Buscar no sistema" 
+                 name="query" 
+                 value="{{ request.GET.query }}">
+          <button class="header-btn-search" type="submit">
+            <div class="row g-0">
+              <div class="col-auto d-flex align-items-center header-btn-search-icon">
+                <i class="bi bi-search"></i>
+              </div>
+              <div class="col-auto header-btn-search-text">
+                <span>Pesquisar</span>
+              </div>
             </div>
+          </button>
+        </form>
+      </div>
+
+      {# Acessibilidade #}
+      <div class="col-auto d-flex align-items-center">
+        <div class="header-acessibilidade row g-0">
+          <div class="col-auto">
+            <a id="theme-toggle" class="header-acessibilidade--contraste" href="#" aria-label="Alternar tema">
+              alto contraste
+            </a>
+          </div>
+          <div class="col-auto">
+            <a class="header-acessibilidade--vlibras" 
+               href="https://www.vlibras.com.br/" 
+               target="_blank"
+               aria-label="VLibras - Tradutor de Libras">
+              vlibras
+            </a>
+          </div>
         </div>
-    </nav>
-</header>
+      </div>
+
+      {# Ferramentas de Zoom #}
+      <div class="col-auto d-flex align-items-center">
+        <div class="header-tools header-acessibilidade row g-0">
+          <div class="col-auto">
+            <a class="header-acessibilidade--fonts" 
+               href="javascript:(function(){document.body.style.zoom = (parseFloat(document.body.style.zoom || 1) - 0.1)})()"
+               aria-label="Diminuir fonte">
+              A-
+            </a>
+          </div>
+          <div class="col-auto">
+            <a class="header-acessibilidade--fonts" 
+               href="javascript:(function(){document.body.style.zoom = (parseFloat(document.body.style.zoom || 1) + 0.1)})()"
+               aria-label="Aumentar fonte">
+              A+
+            </a>
+          </div>
+          <div class="col-auto">
+            <a class="header-acessibilidade--fonts" 
+               href="javascript:(function(){document.body.style.zoom = 1})()"
+               aria-label="Resetar fonte">
+              A
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {# Perfil / Login #}
+      {% include 'include/perfil.html' with classes="col-auto d-flex align-items-center" %}
+
+    </div>
+  </div>
+</div>
+
+{# Menu Principal #}
+{% get_site_root as site_root %}
+{% top_menu parent=site_root calling_page=self %}

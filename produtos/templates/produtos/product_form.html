@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title|default:"Produto" }} - Sistema ARES{% endblock %}
+
+{% block body_class %}produtos-page{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h3 mb-0">
+                        <i class="bi bi-box-seam me-2"></i>
+                        {{ title|default:"Produto" }}
+                    </h1>
+                    <p class="text-muted mb-0">Preencha os dados do produto</p>
+                </div>
+                <a href="{% url 'produtos:list' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i>Voltar
+                </a>
+            </div>
+
+            <!-- Formulário -->
+            <div class="card">
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        <div class="row">
+                            <!-- SKU -->
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.sku.id_for_label }}" class="form-label">
+                                    {{ form.sku.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.sku }}
+                                {% if form.sku.errors %}
+                                    <div class="text-danger small mt-1">{{ form.sku.errors }}</div>
+                                {% endif %}
+                                {% if form.sku.help_text %}
+                                    <div class="form-text">{{ form.sku.help_text }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Nome -->
+                            <div class="col-md-8 mb-3">
+                                <label for="{{ form.name.id_for_label }}" class="form-label">
+                                    {{ form.name.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.name }}
+                                {% if form.name.errors %}
+                                    <div class="text-danger small mt-1">{{ form.name.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Descrição -->
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.description.id_for_label }}" class="form-label">
+                                    {{ form.description.label }}
+                                </label>
+                                {{ form.description }}
+                                {% if form.description.errors %}
+                                    <div class="text-danger small mt-1">{{ form.description.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Categoria -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.category.id_for_label }}" class="form-label">
+                                    {{ form.category.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.category }}
+                                {% if form.category.errors %}
+                                    <div class="text-danger small mt-1">{{ form.category.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Unidade -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.unit.id_for_label }}" class="form-label">
+                                    {{ form.unit.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.unit }}
+                                {% if form.unit.errors %}
+                                    <div class="text-danger small mt-1">{{ form.unit.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Estoque Mínimo -->
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.min_stock.id_for_label }}" class="form-label">
+                                    {{ form.min_stock.label }}
+                                </label>
+                                {{ form.min_stock }}
+                                {% if form.min_stock.errors %}
+                                    <div class="text-danger small mt-1">{{ form.min_stock.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Estoque Atual -->
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.current_stock.id_for_label }}" class="form-label">
+                                    {{ form.current_stock.label }}
+                                </label>
+                                {{ form.current_stock }}
+                                {% if form.current_stock.errors %}
+                                    <div class="text-danger small mt-1">{{ form.current_stock.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Preço Unitário -->
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.unit_price.id_for_label }}" class="form-label">
+                                    {{ form.unit_price.label }}
+                                </label>
+                                {{ form.unit_price }}
+                                {% if form.unit_price.errors %}
+                                    <div class="text-danger small mt-1">{{ form.unit_price.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Data de Validade -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.expiry_date.id_for_label }}" class="form-label">
+                                    {{ form.expiry_date.label }}
+                                </label>
+                                {{ form.expiry_date }}
+                                {% if form.expiry_date.errors %}
+                                    <div class="text-danger small mt-1">{{ form.expiry_date.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Ativo -->
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check mt-4">
+                                    {{ form.is_active }}
+                                    <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+                                        {{ form.is_active.label }}
+                                    </label>
+                                </div>
+                                {% if form.is_active.errors %}
+                                    <div class="text-danger small mt-1">{{ form.is_active.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Botões -->
+                            <div class="col-12">
+                                <hr class="my-4">
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-save me-1"></i>
+                                        {% if action == 'create' %}Criar Produto{% else %}Salvar Alterações{% endif %}
+                                    </button>
+                                    <a href="{% url 'produtos:list' %}" class="btn btn-outline-secondary">
+                                        <i class="bi bi-x-circle me-1"></i>Cancelar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

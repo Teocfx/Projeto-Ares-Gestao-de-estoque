@@ -4,6 +4,7 @@ Models para movimentações de estoque (entradas e saídas).
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator
+from django.urls import reverse
 from django.db import transaction
 from decimal import Decimal
 
@@ -92,6 +93,33 @@ class InventoryMovement(TimeStampedModel):
 
     def __str__(self):
         return f"{self.get_type_display()} - {self.product.name} ({self.quantity} {self.product.unit})"
+
+    def get_absolute_url(self):
+        """Retorna a URL de detalhes da movimentação."""
+        return reverse('movimentacoes:detail', kwargs={'pk': self.pk})
+
+    @property
+    def url(self):
+        """Alias para get_absolute_url (compatibilidade com Wagtail)."""
+        return self.get_absolute_url()
+
+    @property
+    def title(self):
+        """Retorna título formatado para busca."""
+        return f"{self.get_type_display()}: {self.product.name} ({self.quantity} {self.product.unit})"
+
+    @property
+    def search_description(self):
+        """Retorna descrição formatada para resultados de busca."""
+        desc_parts = []
+        desc_parts.append(f"Produto: {self.product.sku} - {self.product.name}")
+        desc_parts.append(f"Quantidade: {self.quantity} {self.product.unit}")
+        desc_parts.append(f"Estoque: {self.stock_before} → {self.stock_after}")
+        if self.document:
+            desc_parts.append(f"Documento: {self.document}")
+        if self.notes:
+            desc_parts.append(f"Obs: {self.notes[:100]}")
+        return " | ".join(desc_parts)
 
     def save(self, *args, **kwargs):
         """

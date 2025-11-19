@@ -1,0 +1,146 @@
+@use "../variables.scss";
+@use  '../sprite';
+
+[data-theme="dark"] {
+  .header-logo {
+    filter: brightness(0) invert(1);
+  }
+  
+  .header-input-search {
+    border: 1.5px solid variables.$color-white;
+    border-right: 0.5px solid variables.$color-white;
+    background-color: variables.$color-white;
+    color: variables.$color-black;
+  }
+
+  .header-btn-search {
+    border-top-right-radius: variables.$border-radius-search;
+    border-bottom-right-radius: variables.$border-radius-search;
+    border: 1.5px solid variables.$color-white;
+    border-left: 0.5px solid variables.$color-white;
+    background-color: variables.$color-black;
+    color: variables.$color-white;
+  }
+
+  .header-acessibilidade--vlibras {
+    color: variables.$color-white;
+    &:hover {
+      color: variables.$color-white;
+    }
+    &:before {
+      @include sprite.sprite(sprite.$vlibras);
+    }
+  }
+
+  .header-acessibilidade--contraste {
+    border-right: 1px solid variables.$color-white;
+    color: variables.$color-white;
+    &:hover {
+      color: variables.$color-white;
+    }
+    &:before {
+      @include sprite.sprite(sprite.$contraste);
+    }
+  }
+
+  .header-tools {
+    border-left: 1px solid variables.$color-white;
+  }
+
+  .header-acessibilidade--fonts {
+    color: variables.$color-white;
+    &:hover {
+      color: variables.$color-white;
+    }
+  }
+
+  .header-acessibilidade--intranet {
+    color: variables.$color-white;
+    &:hover {
+      color: variables.$color-grey-200;
+    }
+  }
+
+  .header-acessibilidade--sair {
+    color: variables.$color-white;
+    &:hover {
+      color: variables.$color-grey-200;
+    }
+  }
+  
+  // Perfil/Intranet no modo escuro
+  .header-intranet-user-icon-wrapper {
+    border-color: variables.$color-white;
+  }
+  
+  .header-intranet-user-icon {
+    fill: variables.$color-white;
+  }
+  
+  .header-intranet-user-text {
+    color: variables.$color-white;
+  }
+  
+  // Dropdown do perfil
+  .dropdown-toggle {
+    color: variables.$color-white;
+    
+    &:hover {
+      color: variables.$color-grey-200;
+    }
+    
+    // Setinha do dropdown no modo escuro
+    &::after {
+      border-top-color: variables.$color-white !important;
+    }
+  }
+  
+  // Dropdown menu - modo escuro
+  .dropdown-menu {
+    background-color: variables.$dark-surface;
+    border-color: variables.$color-white;
+    
+    .dropdown-item {
+      color: variables.$dark-text-primary;
+      
+      &:hover {
+        background-color: variables.$color-white;
+        color: variables.$dark-bg;
+      }
+      
+      i {
+        color: variables.$color-white;
+      }
+      
+      &:hover i {
+        color: variables.$dark-bg;
+      }
+      
+      &.text-danger {
+        color: #EF5350;
+        
+        &:hover {
+          background-color: #EF5350;
+          color: variables.$color-white;
+        }
+        
+        i {
+          color: #EF5350;
+        }
+        
+        &:hover i {
+          color: variables.$color-white;
+        }
+      }
+    }
+    
+    .dropdown-divider {
+      border-color: variables.$dark-border;
+    }
+  }
+  
+  // Background do header no modo escuro
+  .header-wrapper {
+    background-color: variables.$dark-bg;
+  }
+}

@@ -1,3 +1,4 @@
+@use '../variables';
 /**
  * Admin Wagtail - Tema Escuro
  * Customizações para o painel administrativo do Wagtail em modo escuro
@@ -6,15 +7,15 @@
 [data-theme="dark"] {
     // Sidebar em modo escuro
     [data-wagtail-sidebar] {
-        background-color: var(--theme-bg-secondary) !important;
-        border-right: 1px solid var(--theme-border);
+        background-color: variables.$color-grey-300 !important;
+        border-right: 1px solid variables.$color-light-border;
         
         .nav-link {
-            color: var(--theme-text-secondary) !important;
+            color: variables.$color-text-secondary !important;
             
             &:hover, &.active {
-                background-color: var(--theme-primary) !important;
-                color: var(--theme-text) !important;
+                background-color: variables.$color-primary !important;
+                color: variables.$color-text-primary !important;
             }
         }
     }
@@ -22,42 +23,42 @@
     // Botões em modo escuro
     .button-primary,
     .button.button-primary {
-        background-color: var(--theme-primary) !important;
-        border-color: var(--theme-primary) !important;
+        background-color: variables.$color-primary !important;
+        border-color: variables.$color-primary !important;
         
         &:hover {
-            background-color: var(--theme-primary-hover) !important;
+            background-color: variables.$color-primary-hover !important;
         }
     }
     
     .button-secondary {
-        background-color: var(--theme-bg-tertiary) !important;
-        color: var(--theme-text) !important;
-        border-color: var(--theme-border) !important;
+        background-color: variables.$color-bg-light-grey !important;
+        color: variables.$color-text-primary !important;
+        border-color: variables.$color-light-border !important;
         
         &:hover {
-            background-color: var(--theme-bg-secondary) !important;
+            background-color: variables.$color-grey-300 !important;
         }
     }
     
     // Cards e listagens em modo escuro
     .listing {
-        background-color: var(--theme-bg-secondary);
-        border-color: var(--theme-border);
+        background-color: variables.$color-grey-300;
+        border-color: variables.$color-light-border;
         
         th {
-            background-color: var(--theme-bg-tertiary);
-            color: var(--theme-text);
+            background-color: variables.$color-bg-light-grey;
+            color: variables.$color-text-primary;
         }
         
         tr:hover {
-            background-color: var(--theme-bg);
+            background-color: variables.$color-grey-200;
         }
     }
     
     // Headers em modo escuro
     .header {
-        background-color: var(--theme-bg-secondary);
-        border-bottom-color: var(--theme-border);
+        background-color: variables.$color-grey-300;
+        border-bottom-color: variables.$color-light-border;
     }
 }

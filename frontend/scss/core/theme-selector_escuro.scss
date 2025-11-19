@@ -1,0 +1,35 @@
+@use '../variables';
+/**
+ * Theme Selector Widget - Modos Escuros
+ * Variações para ARES Dark e ATHENA Dark
+ */
+
+[data-theme="ares-dark"],
+[data-theme="athena-dark"] {
+    .theme-selector-widget {
+        .theme-toggle-btn {
+            background: variables.$color-primary;
+            
+            /* Ocultar ícones de modos claros */
+            .theme-icon-ares-light,
+            .theme-icon-athena-light {
+                display: none;
+            }
+        }
+        
+        .theme-options {
+            background: variables.$color-grey-200;
+            border-color: variables.$color-light-border;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+    }
+}
+
+/* Mostrar apenas ícone correto para cada tema dark */
+[data-theme="ares-dark"] .theme-icon-ares-dark {
+    display: inline-block !important;
+}
+
+[data-theme="athena-dark"] .theme-icon-athena-dark {
+    display: inline-block !important;
+}

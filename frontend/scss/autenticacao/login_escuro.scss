@@ -1,3 +1,4 @@
+@use '../variables';
 /**
  * Autenticação - Login - Tema Escuro
  * Página de login em modo escuro
@@ -5,30 +6,30 @@
 
 [data-theme="dark"] {
     body.login-page {
-        background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
+        background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%);
     }
     
     .login-container {
-        background-color: var(--theme-bg-secondary);
+        background-color: variables.$color-grey-300;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
     }
     
     .login-form {
         .form-group {
             input {
-                background-color: var(--theme-bg-tertiary);
-                border-color: var(--theme-border);
-                color: var(--theme-text);
+                background-color: variables.$color-bg-light-grey;
+                border-color: variables.$color-light-border;
+                color: variables.$color-text-primary;
                 
                 &:focus {
-                    border-color: var(--theme-primary);
+                    border-color: variables.$color-primary;
                     box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.2);
                 }
             }
         }
         
         .btn-login {
-            background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
+            background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%);
             box-shadow: 0 4px 12px rgba(25, 118, 210, 0.4);
             
             &:hover {
@@ -40,12 +41,12 @@
     .alert {
         &.alert-danger {
             background-color: rgba(239, 83, 80, 0.1);
-            border-color: var(--theme-error);
+            border-color: variables.$color-error;
         }
         
         &.alert-success {
             background-color: rgba(102, 187, 106, 0.1);
-            border-color: var(--theme-success);
+            border-color: variables.$color-success;
         }
     }
 }

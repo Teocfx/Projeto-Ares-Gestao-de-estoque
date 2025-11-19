@@ -1,0 +1,22 @@
+{% load static wagtailcore_tags wagtailsettings_tags %}
+
+<div class="footer-wrapper">
+  <div class="container">
+    <div class="footer-layout row py-4">
+      {# Logo/Informações #}
+      <div class="col-12 col-md-6 footer-info">
+        <h2>{{ settings.core.SiteSettings.title_suffix }}</h2>
+        <div class="app-versao">
+          <p>&copy; {% now "Y" %} Todos os direitos reservados.</p>
+        </div>
+      </div>
+
+      {# Redes Sociais / Ícones #}
+      <div class="col-12 col-md-6 footer-icones d-flex justify-content-md-end">
+        {% if settings.core.SiteSettings.redes_sociais %}
+          {{ settings.core.SiteSettings.redes_sociais|richtext }}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>

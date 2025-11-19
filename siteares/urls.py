@@ -34,6 +34,7 @@ urlpatterns = [
     path('produtos/', include('produtos.urls')),
     path('movimentacoes/', include('movimentacoes.urls')),
     path('relatorios/', include('relatorios.urls')),
+    path('search/', include('search.urls')),
     
     # Core URLs
     path("core/", include("core.urls")),

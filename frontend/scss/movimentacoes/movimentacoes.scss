@@ -1,29 +1,30 @@
+@use '../variables';
 /**
  * Movimentações - Tema Padrão
  * Registros de entrada e saída de estoque
  */
 
 body.movimentacoes-page {
-    background-color: var(--theme-bg-secondary);
+    background-color: variables.$color-grey-300;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .movimentacoes-page {
     // Navbar
     .navbar {
-        background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
-        box-shadow: 0 2px 8px var(--theme-shadow);
+        background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%);
+        box-shadow: 0 2px 8px variables.$color-black-10;
     }
     
     // Formulário
     .card-form {
-        background-color: var(--theme-bg);
-        box-shadow: 0 2px 12px var(--theme-shadow);
+        background-color: variables.$color-white;
+        box-shadow: 0 2px 12px variables.$color-black-10;
         border-radius: 12px;
         
         .card-header {
-            background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
-            color: var(--theme-bg);
+            background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%);
+            color: variables.$color-white;
             padding: 1.5rem;
             border-radius: 12px 12px 0 0;
             
@@ -40,8 +41,8 @@ body.movimentacoes-page {
     
     // Informações do produto
     .product-info {
-        background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary));
-        border: 2px solid var(--theme-border);
+        background: variables.$color-bg-light-grey;
+        border: 2px solid variables.$color-light-border;
         border-radius: 8px;
         padding: 1.5rem;
         margin-bottom: 1.5rem;
@@ -56,14 +57,18 @@ body.movimentacoes-page {
             justify-content: space-between;
             align-items: center;
             padding: 0.75rem 0;
-            border-bottom: 1px solid var(--theme-border-light);
+            border-bottom: 1px solid variables.$color-grey-300;
             
             &:last-child {
                 border-bottom: none;
             }
             
             strong {
-                color: var(--theme-text);
+                color: variables.$color-grey-900;
+            }
+            
+            span {
+                color: variables.$color-grey-700;
             }
         }
     }
@@ -77,41 +82,41 @@ body.movimentacoes-page {
         
         &.stock-ok {
             background-color: rgba(46, 125, 50, 0.1);
-            color: var(--theme-success);
-            border: 2px solid var(--theme-success);
+            color: variables.$color-success;
+            border: 2px solid variables.$color-success;
         }
         
         &.stock-baixo {
             background-color: rgba(245, 124, 0, 0.1);
-            color: var(--theme-warning);
-            border: 2px solid var(--theme-warning);
+            color: variables.$color-warning;
+            border: 2px solid variables.$color-warning;
         }
         
         &.stock-critico {
             background-color: rgba(198, 40, 40, 0.1);
-            color: var(--theme-error);
-            border: 2px solid var(--theme-error);
+            color: variables.$color-error;
+            border: 2px solid variables.$color-error;
         }
     }
     
     // Formulário
     .form-control, .form-select {
-        border: 2px solid var(--theme-border);
+        border: 2px solid variables.$color-light-border;
         border-radius: 8px;
         padding: 0.75rem 1rem;
         transition: all 0.3s ease;
-        background-color: var(--theme-bg);
-        color: var(--theme-text);
+        background-color: variables.$color-white;
+        color: variables.$color-grey-900;
         
         &:focus {
-            border-color: var(--theme-primary);
-            box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.1);
+            border-color: variables.$color-primary;
+            box-shadow: 0 0 0 3px variables.$color-primary-10;
             outline: none;
         }
     }
     
     label {
-        color: var(--theme-text);
+        color: variables.$color-grey-900;
         font-weight: 600;
         margin-bottom: 0.5rem;
         display: block;
@@ -119,30 +124,30 @@ body.movimentacoes-page {
     
     // Botões
     .btn-primary {
-        background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
+        background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%);
         border: none;
         padding: 0.875rem 2rem;
         font-weight: 600;
         border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(198, 40, 40, 0.2);
+        box-shadow: 0 2px 8px variables.$color-primary-20;
         transition: all 0.3s ease;
         
         &:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(198, 40, 40, 0.3);
+            box-shadow: 0 4px 12px variables.$color-primary-40;
         }
     }
     
     .btn-secondary {
-        background-color: var(--theme-bg-secondary);
-        color: var(--theme-text);
-        border: 2px solid var(--theme-border);
+        background-color: variables.$color-grey-200;
+        color: variables.$color-grey-900;
+        border: 2px solid variables.$color-light-border;
         padding: 0.875rem 2rem;
         font-weight: 600;
         border-radius: 8px;
         
         &:hover {
-            background-color: var(--theme-bg-tertiary);
+            background-color: variables.$color-grey-300;
         }
     }
     
@@ -152,10 +157,10 @@ body.movimentacoes-page {
         padding: 0.75rem 0;
         
         .breadcrumb-item {
-            color: var(--theme-text-secondary);
+            color: variables.$color-grey-600;
             
             a {
-                color: var(--theme-primary);
+                color: variables.$color-primary;
                 text-decoration: none;
                 
                 &:hover {
@@ -164,7 +169,7 @@ body.movimentacoes-page {
             }
             
             &.active {
-                color: var(--theme-text);
+                color: variables.$color-grey-900;
             }
         }
     }

@@ -1,3 +1,4 @@
+@use '../variables';
 /**
  * Dashboard - Tema Escuro
  * Página principal em modo escuro
@@ -5,52 +6,175 @@
 
 [data-theme="dark"] {
     body.dashboard-page {
-        background-color: var(--theme-bg);
+        background-color: variables.$dark-bg;
     }
     
     .dashboard-page {
+        // Navbar preta com borda branca
         .navbar {
-            background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            background: variables.$dark-surface !important;
+            border-bottom: 2px solid variables.$color-white;
+            box-shadow: 0 2px 8px variables.$color-black-50;
+            
+            .navbar-brand {
+                color: variables.$color-white;
+            }
+            
+            .nav-link {
+                color: variables.$color-white;
+                
+                &:hover, &.active {
+                    color: variables.$color-white;
+                    background-color: variables.$color-black-30;
+                }
+            }
+        }
+        
+        // Card de boas-vindas (bg-gradient-primary) no tema escuro
+        .bg-gradient-primary {
+            background: variables.$dark-surface !important;
+            border: 2px solid variables.$color-white !important;
+            color: variables.$color-white !important;
+            
+            h1, h2, h3, h4, h5, h6, p, strong {
+                color: variables.$color-white !important;
+            }
         }
         
         .card {
-            background-color: var(--theme-bg-secondary);
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+            background-color: variables.$dark-surface;
+            box-shadow: 0 2px 12px variables.$color-black-30;
             
             &:hover {
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+                box-shadow: 0 4px 20px variables.$color-black-50;
             }
             
             .card-header {
-                border-bottom-color: var(--theme-border);
+                border-bottom-color: variables.$dark-border;
+                
+                h6, .card-title {
+                    color: variables.$dark-text-primary;
+                }
+            }
+            
+            .card-body {
+                color: variables.$dark-text-primary;
+                
+                // Títulos e labels
+                .text-xs, .text-uppercase, small {
+                    color: variables.$dark-text-secondary;
+                }
+                
+                // Números grandes
+                .h5, .h4, .display-4, .font-weight-bold {
+                    color: variables.$dark-text-primary !important;
+                }
+                
+                // Cores de status
+                .text-primary {
+                    color: variables.$theme-primary-darkmode !important;
+                }
+                
+                .text-success {
+                    color: #4CAF50 !important;
+                }
+                
+                .text-warning {
+                    color: #FFC107 !important;
+                }
+                
+                .text-danger {
+                    color: #EF5350 !important;
+                }
+                
+                .text-muted, .text-gray-800 {
+                    color: variables.$dark-text-secondary !important;
+                }
             }
         }
         
         .metric-card {
-            background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-light) 100%);
+            background: linear-gradient(135deg, variables.$theme-primary-darkmode 0%, variables.$theme-primary-darkmode-hover 100%);
             
             &:hover {
-                box-shadow: 0 8px 24px rgba(25, 118, 210, 0.4);
+                box-shadow: 0 8px 24px variables.$color-primary-40;
             }
         }
         
         .table {
+            color: variables.$dark-text-primary;
+            
             thead {
-                background-color: var(--theme-bg-tertiary);
+                background-color: variables.$dark-surface-alt;
             }
             
             tbody tr:hover {
-                background-color: var(--theme-bg);
+                background-color: variables.$dark-surface-alt;
             }
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
-            box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+            background: linear-gradient(135deg, variables.$theme-primary-darkmode 0%, variables.$theme-primary-darkmode-hover 100%);
+            box-shadow: 0 2px 8px variables.$color-primary-20;
             
             &:hover {
-                box-shadow: 0 4px 12px rgba(25, 118, 210, 0.4);
+                box-shadow: 0 4px 12px variables.$color-primary-40;
+            }
+        }
+        
+        // Botões light no tema escuro
+        .btn-light {
+            background-color: variables.$dark-surface-alt;
+            color: variables.$dark-text-primary;
+            border: 1px solid variables.$dark-border;
+            
+            &:hover {
+                background-color: variables.$dark-surface;
+                color: variables.$dark-text-primary;
+                border-color: variables.$color-white;
+            }
+        }
+        
+        .btn-outline-light {
+            color: variables.$color-white;
+            border-color: variables.$color-white;
+            background-color: transparent;
+            
+            &:hover {
+                background-color: variables.$color-white;
+                color: variables.$dark-bg;
+                border-color: variables.$color-white;
+            }
+        }
+        
+        // Botões outline no tema escuro
+        .btn-outline-primary {
+            color: variables.$theme-primary-darkmode;
+            border-color: variables.$theme-primary-darkmode;
+            
+            &:hover {
+                background-color: variables.$theme-primary-darkmode;
+                color: variables.$color-white;
+            }
+        }
+        
+        .btn-outline-warning {
+            color: #FFC107;
+            border-color: #FFC107;
+            
+            &:hover {
+                background-color: #FFC107;
+                color: variables.$dark-bg;
+            }
+        }
+        
+        .btn-outline-danger {
+            color: #EF5350;
+            border-color: #EF5350;
+            
+            &:hover {
+                background-color: #EF5350;
+                color: variables.$color-white;
             }
         }
     }

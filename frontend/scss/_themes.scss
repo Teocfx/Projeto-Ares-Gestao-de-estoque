@@ -1,26 +1,27 @@
 /**
- * ARES - Estilos Base com Suporte a Temas
+ * ARES - Estilos Base
  * 
- * Este arquivo contém estilos que usam CSS custom properties (--theme-*)
- * permitindo trocar entre temas (default, dark, high-contrast) dinamicamente
+ * Este arquivo contém estilos base usando variáveis SCSS padrão
  */
+
+@use 'variables';
 
 /* === BUTTONS === */
 .btn-theme-primary {
-  background-color: var(--theme-primary);
-  color: var(--theme-bg);
-  border: 1px solid var(--theme-primary);
+  background-color: variables.$color-primary;
+  color: variables.$color-white;
+  border: 1px solid variables.$color-primary;
   
   &:hover {
-    background-color: var(--theme-primary-hover);
-    border-color: var(--theme-primary-hover);
+    background-color: variables.$color-primary-hover;
+    border-color: variables.$color-primary-hover;
   }
 }
 
 .btn-theme-secondary {
-  background-color: var(--theme-secondary);
-  color: var(--theme-bg);
-  border: 1px solid var(--theme-secondary);
+  background-color: variables.$color-secondary;
+  color: variables.$color-black;
+  border: 1px solid variables.$color-secondary;
   
   &:hover {
     opacity: 0.9;
@@ -29,77 +30,77 @@
 
 /* === CARDS === */
 .card-theme {
-  background-color: var(--theme-bg);
-  border: 1px solid var(--theme-border);
-  box-shadow: 0 2px 4px var(--theme-shadow);
+  background-color: variables.$color-grey-200;
+  border: 1px solid variables.$color-light-border;
+  box-shadow: 0 2px 4px variables.$color-black-10;
   
   .card-header {
-    background-color: var(--theme-bg-secondary);
-    border-bottom: 1px solid var(--theme-border);
-    color: var(--theme-text);
+    background-color: variables.$color-grey-300;
+    border-bottom: 1px solid variables.$color-light-border;
+    color: variables.$color-grey-900;
   }
   
   .card-body {
-    color: var(--theme-text);
+    color: variables.$color-grey-900;
   }
   
   .card-title {
-    color: var(--theme-text);
+    color: variables.$color-grey-900;
   }
   
   .card-text {
-    color: var(--theme-text-secondary);
+    color: variables.$color-grey-600;
   }
 }
 
 /* === FORMS === */
 .form-control-theme {
-  background-color: var(--theme-bg);
-  border: 1px solid var(--theme-border);
-  color: var(--theme-text);
+  background-color: variables.$color-white;
+  border: 1px solid variables.$color-light-border;
+  color: variables.$color-grey-900;
   
   &:focus {
-    border-color: var(--theme-primary);
-    box-shadow: 0 0 0 0.2rem var(--theme-shadow);
+    border-color: variables.$color-primary;
+    box-shadow: 0 0 0 0.2rem variables.$color-black-10;
   }
   
   &::placeholder {
-    color: var(--theme-text-secondary);
+    color: variables.$color-grey-600;
   }
 }
 
 /* === TABLES === */
 .table-theme {
-  background-color: var(--theme-bg);
-  color: var(--theme-text);
+  background-color: variables.$color-white;
+  color: variables.$color-grey-900;
   
   thead {
-    background-color: var(--theme-bg-secondary);
-    border-bottom: 2px solid var(--theme-border);
+    background-color: variables.$color-bg-table-header;
+    border-bottom: 2px solid variables.$color-light-border;
   }
   
   tbody tr {
-    border-bottom: 1px solid var(--theme-border);
+    border-bottom: 1px solid variables.$color-light-border;
     
     &:hover {
-      background-color: var(--theme-bg-secondary);
+      background-color: variables.$color-bg-light-grey;
     }
   }
 }
 
 /* === NAVIGATION === */
 .nav-theme {
-  background-color: var(--theme-primary);
+  background-color: variables.$color-primary;
   
   .nav-link {
-    color: var(--theme-bg);
+    color: variables.$color-white;
     
     &:hover {
-      background-color: var(--theme-primary-hover);
+      background-color: variables.$color-primary-hover;
     }
     
     &.active {
-      background-color: var(--theme-primary-hover);
+      background-color: variables.$color-primary-hover;
       font-weight: 600;
     }
   }
@@ -110,27 +111,27 @@
   display: flex;
   gap: 0.5rem;
   padding: 0.5rem;
-  background-color: var(--theme-bg-secondary);
+  background-color: variables.$color-grey-300;
   border-radius: 0.5rem;
-  border: 1px solid var(--theme-border);
+  border: 1px solid variables.$color-light-border;
   
   button {
     padding: 0.5rem 1rem;
-    background-color: var(--theme-bg);
-    border: 1px solid var(--theme-border);
-    color: var(--theme-text);
+    background-color: variables.$color-white;
+    border: 1px solid variables.$color-light-border;
+    color: variables.$color-grey-900;
     border-radius: 0.25rem;
     cursor: pointer;
     transition: all 0.2s;
     
     &:hover {
-      background-color: var(--theme-primary);
-      color: var(--theme-bg);
+      background-color: variables.$color-primary;
+      color: variables.$color-white;
     }
     
     &.active {
-      background-color: var(--theme-primary);
-      color: var(--theme-bg);
+      background-color: variables.$color-primary;
+      color: variables.$color-white;
       font-weight: 600;
     }
   }

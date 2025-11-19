@@ -22,6 +22,7 @@ import './movimentacoes/movimentacoes.js';
 import './relatorios/relatorios.js';
 import './core/document-viewer.js';
 import './core/filtros.js';
+import './core/theme-manager.js';
 
 import Swiper from 'swiper/bundle';
 import 'swiper/css/bundle';

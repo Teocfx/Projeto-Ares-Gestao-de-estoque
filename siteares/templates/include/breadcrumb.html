@@ -1,7 +1,10 @@
 {% load static %}
 
-{% if breadcrumbs or request.resolver_match %}
-<nav class="breadcrumb-container bg-light border-bottom" aria-label="Navegação estrutural">
+{% comment %}
+Breadcrumb só aparece em páginas internas, não na home
+{% endcomment %}
+{% if request.resolver_match.url_name != 'index' or request.resolver_match.app_name != 'dashboard' %}
+<nav class="breadcrumb-container" aria-label="Navegação estrutural">
     <div class="container-fluid">
         <ol class="breadcrumb mb-0 py-2">
             
