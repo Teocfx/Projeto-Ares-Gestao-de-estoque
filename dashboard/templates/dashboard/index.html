@@ -6,57 +6,147 @@
 
 {% block body_class %}dashboard-page{% endblock %}
 
-{% block page_header %}
-    <div class="page-titulo titulo-container mb-4">
-        <div class="container-fluid">
-            <div class="row align-items-center py-3">
-                <!-- Título e descrição -->
-                <div class="col-lg-8">
-                    <div class="page-titulo__content">
-                        <h1 class="page-titulo__title titulo-1 h2 mb-2 d-flex align-items-center">
-                            <i class="bi bi-speedometer2 me-2"></i>
-                            Dashboard
-                        </h1>
-                        <p class="page-titulo__subtitle text-muted mb-1">
-                            Bem-vindo ao Sistema ARES
-                        </p>
-                    </div>
-                </div>
-                <!-- Ações (botões) -->
-                <div class="col-lg-4">
-                    <div class="page-titulo__actions d-flex justify-content-lg-end gap-2">
-                        <a href="{% url 'produtos:create' %}" class="btn btn-primary">
-                            <i class="bi bi-plus-circle me-1"></i>Novo Produto
-                        </a>
-                        <a href="{% url 'produtos:list' %}" class="btn btn-outline-primary">
-                            <i class="bi bi-list-ul me-1"></i>Ver Produtos
-                        </a>
+{% block content %}
+    <!-- Header de Boas-vindas -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 bg-gradient-primary text-white">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 class="h3 mb-1">
+                                <i class="bi bi-speedometer2 me-2"></i>
+                                Bem-vindo ao Sistema ARES
+                            </h1>
+                            <p class="mb-0 opacity-90">
+                                Olá, <strong>{{ user.get_full_name|default:user.username }}</strong>! 
+                                Aqui está o resumo do seu estoque em {{ system_info.current_time|date:"d/m/Y H:i" }}
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="btn-group">
+                                <a href="{% url 'produtos:create' %}" class="btn btn-light">
+                                    <i class="bi bi-plus-circle me-1"></i>Novo Produto
+                                </a>
+                                <a href="{% url 'produtos:list' %}" class="btn btn-outline-light">
+                                    <i class="bi bi-list-ul me-1"></i>Ver Produtos
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-{% endblock %}
 
-{% block content %}
-    
     {% if system_info.products_available %}
     <!-- Cards de Estatísticas Principais -->
     <div class="row mb-4">
-        <div class="col-xl-3 col-md-6 mb-3">
-            {% include 'include/card.html' with titulo="Total de Produtos" conteudo="<h2 class='mb-1'>"|add:products_stats.total_products|default:"0"|add:"</h2><small class='text-muted'>"|add:products_stats.total_categories|default:"0"|add:" categorias</small>" variant="primary" icon="box-seam" clickable=True href=produtos_list_url footer_text="<a href='"|add:produtos_list_url|add:"' class='text-decoration-none'><i class='bi bi-arrow-right me-1'></i>Ver Produtos</a>" %}
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total de Produtos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ products_stats.total_products|default:"0" }}
+                            </div>
+                            <small class="text-muted">
+                                {{ products_stats.total_categories|default:"0" }} categorias
+                            </small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-box-seam display-4 text-primary opacity-75"></i>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <a href="{% url 'produtos:list' %}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-arrow-right me-1"></i>Ver Produtos
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="col-xl-3 col-md-6 mb-3">
-            {% include 'include/card.html' with titulo="Valor do Estoque" conteudo="<h2 class='mb-1'>R$ "|add:products_stats.total_stock_value|floatformat:2|default:"0,00"|add:"</h2><small class='text-success'><i class='bi bi-graph-up me-1'></i>Valor total</small>" variant="success" icon="currency-dollar" %}
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Valor do Estoque
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                R$ {{ products_stats.total_stock_value|floatformat:2|default:"0,00" }}
+                            </div>
+                            <small class="text-success">
+                                <i class="bi bi-graph-up me-1"></i>Valor total
+                            </small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-currency-dollar display-4 text-success opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="col-xl-3 col-md-6 mb-3">
-            {% include 'include/card.html' with titulo="Estoque Baixo" conteudo="<h2 class='mb-1'>"|add:products_stats.low_stock|default:"0"|add:"</h2><small class='text-warning'><i class='bi bi-exclamation-triangle me-1'></i>Requer atenção</small>" variant="warning" icon="exclamation-circle" clickable=True href=produtos_baixo_url footer_text="<a href='"|add:produtos_baixo_url|add:"' class='text-decoration-none'><i class='bi bi-arrow-right me-1'></i>Verificar</a>" %}
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Estoque Baixo
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ products_stats.low_stock|default:"0" }}
+                            </div>
+                            <small class="text-warning">
+                                <i class="bi bi-exclamation-triangle me-1"></i>Requer atenção
+                            </small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-exclamation-circle display-4 text-warning opacity-75"></i>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <a href="{% url 'produtos:list' %}?stock_status=BAIXO" class="btn btn-sm btn-outline-warning">
+                            <i class="bi bi-arrow-right me-1"></i>Verificar
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="col-xl-3 col-md-6 mb-3">
-            {% include 'include/card.html' with titulo="Estoque Crítico" conteudo="<h2 class='mb-1'>"|add:products_stats.critical_stock|default:"0"|add:"</h2><small class='text-danger'><i class='bi bi-exclamation-triangle-fill me-1'></i>Sem estoque</small>" variant="danger" icon="exclamation-triangle" clickable=True href=produtos_critico_url footer_text="<a href='"|add:produtos_critico_url|add:"' class='text-decoration-none'><i class='bi bi-arrow-right me-1'></i>Ver Críticos</a>" %}
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Estoque Crítico
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ products_stats.critical_stock|default:"0" }}
+                            </div>
+                            <small class="text-danger">
+                                <i class="bi bi-exclamation-triangle-fill me-1"></i>Sem estoque
+                            </small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-exclamation-triangle display-4 text-danger opacity-75"></i>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <a href="{% url 'produtos:list' %}?stock_status=CRITICO" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-arrow-right me-1"></i>Ver Críticos
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

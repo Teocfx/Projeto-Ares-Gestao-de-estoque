@@ -108,6 +108,92 @@
 }
 
 // ===========================
+// Card de Boas-Vindas (Dashboard)
+// ===========================
+.bg-gradient-primary {
+    background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%) !important;
+    color: variables.$color-white !important;
+    
+    h1, h2, h3, h4, h5, h6, p, strong {
+        color: variables.$color-white !important;
+    }
+    
+    .btn-light {
+        background-color: variables.$color-white;
+        color: variables.$color-grey-900;
+        border: none;
+        font-weight: 600;
+        box-shadow: 0 2px 8px variables.$color-black-20;
+        transition: all 0.3s ease;
+        
+        &:hover {
+            background-color: variables.$color-grey-100;
+            color: variables.$color-grey-900;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px variables.$color-black-30;
+        }
+    }
+    
+    .btn-outline-light {
+        color: variables.$color-white;
+        border-color: variables.$color-white;
+        background-color: transparent;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        
+        &:hover {
+            background-color: variables.$color-white;
+            color: variables.$color-primary;
+            border-color: variables.$color-white;
+            transform: translateY(-2px);
+        }
+    }
+}
+
+// ===========================
+// Cards de Estatísticas (Dashboard/Produtos)
+// ===========================
+.text-xs {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.font-weight-bold {
+    font-weight: 700 !important;
+}
+
+.text-gray-800 {
+    color: variables.$color-grey-800 !important;
+}
+
+.no-gutters {
+    margin-right: 0;
+    margin-left: 0;
+    
+    > .col,
+    > [class*="col-"] {
+        padding-right: 0;
+        padding-left: 0;
+    }
+}
+
+.display-4 {
+    font-size: 3.5rem;
+    font-weight: 300;
+    line-height: 1.2;
+}
+
+.opacity-75 {
+    opacity: 0.75 !important;
+}
+
+.opacity-90 {
+    opacity: 0.9 !important;
+}
+
+// ===========================
 // Componente: card.html
 // ===========================
 .card-component {
