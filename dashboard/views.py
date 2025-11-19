@@ -123,7 +123,11 @@ def index(request):
             'products_available': PRODUCTS_AVAILABLE,
             'movements_available': MOVEMENTS_AVAILABLE,
             'current_time': datetime.now(),
-        }
+        },
+        # URLs para os cards
+        'produtos_list_url': '/produtos/',
+        'produtos_baixo_url': '/produtos/?stock_status=BAIXO',
+        'produtos_critico_url': '/produtos/?stock_status=CRITICO',
     })
     
     return render(request, 'dashboard/index.html', context)

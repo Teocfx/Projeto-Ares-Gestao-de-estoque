@@ -1,0 +1,76 @@
+{% load static %}
+
+{% comment %}
+Componente: Modal Reutilizável
+Uso: {% include 'include/modal.html' with modal_id="meuModal" titulo="Confirmar Ação" %}
+
+Parâmetros:
+- modal_id (obrigatório): ID único do modal
+- titulo (obrigatório): Título do modal
+- conteudo (opcional): Conteúdo HTML do modal
+- size (opcional): Tamanho do modal (sm, md, lg, xl, fullscreen). Padrão: md
+- show_footer (opcional): Booleano para mostrar footer. Padrão: True
+- btn_primary_text (opcional): Texto do botão primário. Padrão: "Confirmar"
+- btn_secondary_text (opcional): Texto do botão secundário. Padrão: "Cancelar"
+- btn_primary_class (opcional): Classes do botão primário. Padrão: "btn-primary"
+- centered (opcional): Booleano para centralizar verticalmente. Padrão: False
+- scrollable (opcional): Booleano para conteúdo scrollável. Padrão: True
+
+Exemplos:
+1. Modal Simples:
+   {% include 'include/modal.html' with modal_id="deleteModal" titulo="Confirmar Exclusão" conteudo="<p>Deseja realmente excluir este item?</p>" %}
+
+2. Modal Grande:
+   {% include 'include/modal.html' with modal_id="detailsModal" titulo="Detalhes" size="lg" %}
+
+3. Modal com Botões Customizados:
+   {% include 'include/modal.html' with modal_id="saveModal" titulo="Salvar Alterações" btn_primary_text="Salvar" btn_primary_class="btn-success" %}
+
+Para abrir o modal via JavaScript:
+const modal = new bootstrap.Modal(document.getElementById('meuModal'));
+modal.show();
+
+Ou via botão:
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#meuModal">
+    Abrir Modal
+</button>
+{% endcomment %}
+
+{% with size=size|default:"md" show_footer=show_footer|default:True btn_primary_text=btn_primary_text|default:"Confirmar" btn_secondary_text=btn_secondary_text|default:"Cancelar" btn_primary_class=btn_primary_class|default:"btn-primary" %}
+
+<div class="modal fade" id="{{ modal_id }}" tabindex="-1" aria-labelledby="{{ modal_id }}Label" aria-hidden="true">
+    <div class="modal-dialog {% if size != 'md' %}modal-{{ size }}{% endif %} {% if centered %}modal-dialog-centered{% endif %} {% if scrollable %}modal-dialog-scrollable{% endif %}">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="{{ modal_id }}Label">{{ titulo }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            
+            <div class="modal-body">
+                {% if conteudo %}
+                    {{ conteudo|safe }}
+                {% else %}
+                    {% block modal_content %}
+                    {# Templates filhos podem sobrescrever para conteúdo customizado #}
+                    <p>Conteúdo do modal</p>
+                    {% endblock %}
+                {% endif %}
+            </div>
+            
+            {% if show_footer %}
+            <div class="modal-footer">
+                {% block modal_footer %}
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    {{ btn_secondary_text }}
+                </button>
+                <button type="button" class="btn {{ btn_primary_class }}" id="{{ modal_id }}PrimaryBtn">
+                    {{ btn_primary_text }}
+                </button>
+                {% endblock %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endwith %}

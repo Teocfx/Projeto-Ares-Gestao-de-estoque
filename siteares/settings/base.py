@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     
     # Apps ARES
     "core",
+    "blocks",  # Template tags e componentes reutilizáveis
     'dashboard',
     'autenticacao',
     'produtos',

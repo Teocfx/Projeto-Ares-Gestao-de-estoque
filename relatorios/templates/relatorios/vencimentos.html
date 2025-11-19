@@ -1,30 +1,24 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static block_tags %}
 
 {% block title %}Relatório de Vencimentos - Sistema ARES{% endblock %}
 
 {% block body_class %}relatorios-page relatorios-vencimentos-page{% endblock %}
 
+{% block page_header %}
+{% include 'include/titulo.html' with titulo="Relatório de Vencimentos" subtitulo="Produtos próximos ao vencimento ou vencidos" icon="calendar-x" show_actions=True %}
+    {% block titulo_actions %}
+        <a href="{% url 'relatorios:index' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Voltar
+        </a>
+        <button class="btn btn-primary" onclick="window.print()">
+            <i class="bi bi-printer me-1"></i>Imprimir
+        </button>
+    {% endblock %}
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid mt-4">
-    
-    <!-- Título da Página -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-0">
-                <i class="bi bi-calendar-x me-2"></i>Relatório de Vencimentos
-            </h1>
-            <p class="text-muted mb-0">Produtos próximos ao vencimento ou vencidos</p>
-        </div>
-        <div>
-            <a href="{% url 'relatorios:index' %}" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left me-1"></i>Voltar
-            </a>
-            <button class="btn btn-primary" onclick="window.print()">
-                <i class="bi bi-printer me-1"></i>Imprimir
-            </button>
-        </div>
-    </div>
 
     <!-- Estatísticas Resumidas -->
     <div class="row g-3 mb-4">

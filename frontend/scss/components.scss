@@ -1,0 +1,301 @@
+@use './variables.scss';
+
+/**
+ * Componentes Reutilizáveis
+ * Estilos para os componentes em blocks/templates/include/
+ */
+
+// ===========================
+// Componente: titulo.html
+// ===========================
+.page-titulo {
+    background-color: variables.$color-white;
+    border-bottom: 2px solid variables.$color-primary;
+    box-shadow: 0 2px 4px variables.$color-black-10;
+    margin-bottom: 1.5rem;
+    
+    .container-fluid {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+    
+    &__title {
+        color: variables.$color-text-darker;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        font-size: 1.75rem;
+        
+        i.bi {
+            font-size: 1.5rem;
+            color: variables.$color-primary;
+            margin-right: 0.5rem;
+        }
+    }
+    
+    &__subtitle {
+        font-size: 1rem;
+        color: variables.$color-text-muted;
+        margin-bottom: 0;
+    }
+    
+    &__description {
+        font-size: 0.9rem;
+        color: variables.$color-text-muted;
+    }
+    
+    &__actions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        
+        .btn {
+            white-space: nowrap;
+            font-weight: 500;
+            padding: 0.5rem 1.25rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            
+            &.btn-primary {
+                background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%);
+                border: none;
+                box-shadow: 0 2px 8px variables.$color-primary-20;
+                
+                &:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 12px variables.$color-primary-40;
+                }
+            }
+            
+            &.btn-outline-primary {
+                color: variables.$color-primary;
+                border-color: variables.$color-primary;
+                
+                &:hover {
+                    background-color: variables.$color-primary;
+                    color: variables.$color-white;
+                }
+            }
+            
+            &.btn-outline-secondary {
+                &:hover {
+                    background-color: variables.$color-grey-600;
+                    color: variables.$color-white;
+                }
+            }
+        }
+    }
+}
+
+// Modo escuro
+[data-theme=dark] {
+    .page-titulo {
+        background-color: variables.$color-dark-theme-bg;
+        border-bottom-color: variables.$color-dark-theme-border;
+        
+        &__title {
+            color: variables.$color-dark-theme-text;
+            
+            i.bi {
+                color: variables.$color-dark-theme-primary;
+            }
+        }
+        
+        &__subtitle,
+        &__description {
+            color: variables.$color-dark-theme-text-muted;
+        }
+    }
+}
+
+// ===========================
+// Componente: card.html
+// ===========================
+.card-component {
+    background-color: variables.$color-white;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px variables.$color-black-10;
+    transition: all 0.3s ease;
+    height: 100%;
+    
+    .card-header {
+        background-color: transparent;
+        border-bottom: 1px solid variables.$color-light-border;
+        padding: 1.25rem;
+        
+        .card-title {
+            color: variables.$color-text-primary;
+            font-weight: 600;
+            margin: 0;
+            
+            i.bi {
+                color: variables.$color-primary;
+                margin-right: 0.5rem;
+            }
+        }
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+        color: variables.$color-text-primary;
+        
+        h2, h3, h4 {
+            font-weight: 700;
+            color: variables.$color-text-darker;
+        }
+        
+        .text-muted {
+            color: variables.$color-text-muted !important;
+        }
+    }
+    
+    .card-footer {
+        background-color: transparent;
+        border-top: 1px solid variables.$color-light-border;
+        padding: 1rem 1.5rem;
+        
+        a {
+            color: variables.$color-primary;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            
+            &:hover {
+                color: variables.$color-primary-hover;
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+.card-clickable {
+    cursor: pointer;
+    
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 20px variables.$color-black-20;
+    }
+}
+
+// Variantes de cor com bordas laterais GROSSAS e coloridas
+.card-variant-primary {
+    border-left: 5px solid variables.$color-primary;
+    
+    .card-header .card-title i.bi {
+        color: variables.$color-primary;
+    }
+}
+
+.card-variant-success {
+    border-left: 5px solid variables.$color-success;
+    
+    .card-header .card-title i.bi {
+        color: variables.$color-success;
+    }
+}
+
+.card-variant-warning {
+    border-left: 5px solid variables.$color-warning;
+    
+    .card-header .card-title i.bi {
+        color: variables.$color-warning;
+    }
+}
+
+.card-variant-danger {
+    border-left: 5px solid variables.$color-error;
+    
+    .card-header .card-title i.bi {
+        color: variables.$color-error;
+    }
+}
+
+.card-variant-info {
+    border-left: 5px solid variables.$color-info;
+    
+    .card-header .card-title i.bi {
+        color: variables.$color-info;
+    }
+}
+
+// Modo escuro
+[data-theme=dark] {
+    .card-component {
+        background-color: variables.$color-dark-theme-bg-secondary;
+        
+        .card-header {
+            border-bottom-color: variables.$color-dark-theme-border;
+        }
+        
+        .card-title {
+            color: variables.$color-dark-theme-text;
+        }
+        
+        .card-body {
+            color: variables.$color-dark-theme-text;
+        }
+        
+        .card-footer {
+            border-top-color: variables.$color-dark-theme-border;
+            color: variables.$color-dark-theme-text-muted;
+        }
+    }
+}
+
+// ===========================
+// Utilitários gerais
+// ===========================
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem 0;
+}
+
+// Cards de relatório na index
+.report-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important;
+    }
+    
+    .report-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+}
+
+// Ajustes de responsividade
+@media (max-width: 992px) {
+    .page-titulo {
+        &__actions {
+            margin-top: 1rem;
+            justify-content: flex-start !important;
+        }
+    }
+}
+
+@media (max-width: 576px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .page-titulo {
+        &__title {
+            font-size: 1.5rem;
+        }
+        
+        &__actions {
+            flex-direction: column;
+            width: 100%;
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    }
+}

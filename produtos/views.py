@@ -157,6 +157,8 @@ class ProductCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView)
         context = super().get_context_data(**kwargs)
         context['title'] = 'Novo Produto'
         context['action'] = 'create'
+        context['submit_button_text'] = 'Criar Produto'
+        context['cancel_url'] = reverse_lazy(PRODUCT_LIST_URL)
         return context
 
 
@@ -179,6 +181,8 @@ class ProductUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView)
         context = super().get_context_data(**kwargs)
         context['title'] = f'Editar Produto: {self.object.name}'
         context['action'] = 'update'
+        context['submit_button_text'] = 'Salvar Alterações'
+        context['cancel_url'] = reverse_lazy(PRODUCT_LIST_URL)
         return context
 
 

@@ -926,6 +926,45 @@ Blocos **específicos do Wagtail StreamField**:
 
 ---
 
+## 📐 **REESTRUTURAÇÃO ARQUITETURAL EM ANDAMENTO**
+
+### Status Atual: FASE 1 - Base Templates e Componentes Core ⚙️
+
+**O que foi implementado até agora:**
+
+1. ✅ **Documento de Arquitetura**: Criado `.github/ARQUITETURA.md` com visão completa do sistema
+2. ✅ **Estrutura de Components**: Criada pasta `siteares/templates/components/`
+3. ✅ **Reorganização de Templates**:
+   - `header.html` → `components/header.html`
+   - `footer.html` → `components/footer.html`
+   - `breadcrumb.html` → `components/breadcrumbs.html`
+4. ✅ **Novo base.html Modular**: Refatorado com blocos claros:
+   - `{% block header %}` - Cabeçalho e menu
+   - `{% block breadcrumbs %}` - Navegação hierárquica
+   - `{% block page_header %}` - Título opcional por página
+   - `{% block content %}` - Conteúdo principal
+   - `{% block footer %}` - Rodapé
+5. ✅ **Roadmap de 8 Fases**: Definido em `manage_todo_list`
+
+**Próximos Passos na FASE 1:**
+- [ ] Criar componentes em `blocks/templates/include/`:
+  - `titulo.html` (título de página versátil)
+  - `card.html` (cartões reutilizáveis)
+  - `table.html` (tabelas padronizadas)
+  - `form_layout.html` (layouts de formulário)
+  - `modal.html` (modais reutilizáveis)
+  - `alert.html` (alertas e notificações)
+- [ ] Refatorar páginas existentes para usar novos componentes
+- [ ] Validar que todos os templates funcionam com nova estrutura
+
+**IMPORTANTE**: 
+- TODOS os templates devem estender `base.html`
+- Use `{% include 'components/...' %}` para componentes de layout
+- Use `{% include 'include/...' %}` para componentes genéricos
+- **Temas ficam para ÚLTIMA FASE** (não priorizar agora)
+
+---
+
 ## Observações Importantes
 
 1. **SEMPRE** verificar duplicação de código antes de criar nova função

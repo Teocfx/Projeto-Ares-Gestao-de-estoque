@@ -1,30 +1,24 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static block_tags %}
 
 {% block title %}Relatório de Estoque - Sistema ARES{% endblock %}
 
 {% block body_class %}relatorios-page relatorios-estoque-page{% endblock %}
 
+{% block page_header %}
+{% include 'include/titulo.html' with titulo="Relatório de Estoque" subtitulo="Visualização detalhada do estoque atual" icon="boxes" show_actions=True %}
+    {% block titulo_actions %}
+        <a href="{% url 'relatorios:index' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Voltar
+        </a>
+        <button class="btn btn-primary" onclick="window.print()">
+            <i class="bi bi-printer me-1"></i>Imprimir
+        </button>
+    {% endblock %}
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid mt-4">
-    
-    <!-- Título da Página -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-0">
-                <i class="bi bi-boxes me-2"></i>Relatório de Estoque
-            </h1>
-            <p class="text-muted mb-0">Visualização detalhada do estoque atual</p>
-        </div>
-        <div>
-            <a href="{% url 'relatorios:index' %}" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left me-1"></i>Voltar
-            </a>
-            <button class="btn btn-primary" onclick="window.print()">
-                <i class="bi bi-printer me-1"></i>Imprimir
-            </button>
-        </div>
-    </div>
 
     <!-- Estatísticas Resumidas -->
     <div class="row g-3 mb-4">
@@ -190,35 +184,7 @@
     </div>
 
     <!-- Paginação -->
-    {% if products.has_other_pages %}
-    <nav class="mt-4" aria-label="Paginação">
-        <ul class="pagination justify-content-center">
-            {% if products.has_previous %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ products.previous_page_number }}{% for key, value in current_filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
-                    <i class="bi bi-chevron-left"></i>
-                </a>
-            </li>
-            {% endif %}
-            
-            {% for num in products.paginator.page_range %}
-            <li class="page-item {% if products.number == num %}active{% endif %}">
-                <a class="page-link" href="?page={{ num }}{% for key, value in current_filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
-                    {{ num }}
-                </a>
-            </li>
-            {% endfor %}
-            
-            {% if products.has_next %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ products.next_page_number }}{% for key, value in current_filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
-                    <i class="bi bi-chevron-right"></i>
-                </a>
-            </li>
-            {% endif %}
-        </ul>
-    </nav>
-    {% endif %}
+    {% include 'include/pagination.html' with page_obj=products show_info=True %}
 
 </div>
 {% endblock %}

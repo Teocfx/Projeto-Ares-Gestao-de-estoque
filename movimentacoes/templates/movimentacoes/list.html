@@ -1,23 +1,22 @@
 {% extends "base.html" %}
 {% load static %}
+{% load block_tags %}
 
 {% block title %}Movimentações - Sistema ARES{% endblock %}
 
 {% block body_class %}movimentacoes-page{% endblock %}
 
+{% block page_header %}
+{% include 'include/titulo.html' with titulo="Movimentações de Estoque" subtitulo="Histórico de entradas, saídas e ajustes" icon="arrow-left-right" show_actions=True %}
+    {% block titulo_actions %}
+        <a href="{% url 'movimentacoes:create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i>Nova Movimentação
+        </a>
+    {% endblock %}
+{% endblock %}
+
 {% block content %}
-<div class="container-fluid mt-4">
-        <!-- Cabeçalho -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <h2><i class="fas fa-exchange-alt me-2"></i>Movimentações de Estoque</h2>
-            </div>
-            <div class="col-md-6 text-end">
-                <a href="{% url 'movimentacoes:create' %}" class="btn btn-primary">
-                    <i class="fas fa-plus me-2"></i>Nova Movimentação
-                </a>
-            </div>
-        </div>
+<div class="container-fluid">
 
         <!-- Filtros -->
         <div class="filter-card">
@@ -106,36 +105,12 @@
 
                 <!-- Paginação -->
                 {% if is_paginated %}
-                <nav aria-label="Paginação de movimentações">
-                    <ul class="pagination justify-content-center">
-                        {% if page_obj.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page=1{{ request.GET.urlencode }}">Primeira</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{{ request.GET.urlencode }}">Anterior</a>
-                        </li>
-                        {% endif %}
-
-                        <li class="page-item active">
-                            <span class="page-link">{{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
-                        </li>
-
-                        {% if page_obj.has_next %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{{ request.GET.urlencode }}">Próxima</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{{ request.GET.urlencode }}">Última</a>
-                        </li>
-                        {% endif %}
-                    </ul>
-                </nav>
+                    {% include 'include/pagination.html' with page_obj=page_obj show_info=True %}
                 {% endif %}
 
                 {% else %}
                 <div class="text-center py-5">
-                    <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+                    <i class="bi bi-inbox display-1 text-muted mb-3"></i>
                     <h5>Nenhuma movimentação encontrada</h5>
                     <p class="text-muted">
                         {% if request.GET %}
@@ -146,7 +121,7 @@
                         {% endif %}
                     </p>
                     <a href="{% url 'movimentacoes:create' %}" class="btn btn-primary">
-                        <i class="fas fa-plus me-2"></i>Registrar Primeira Movimentação
+                        <i class="bi bi-plus-circle me-2"></i>Registrar Primeira Movimentação
                     </a>
                 </div>
                 {% endif %}

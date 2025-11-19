@@ -1,29 +1,21 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static block_tags %}
 
 {% block title %}Relatórios - Sistema ARES{% endblock %}
 
 {% block body_class %}relatorios-page{% endblock %}
 
-{% block content %}
+{% block page_header %}
+{% include 'include/titulo.html' with titulo="Central de Relatórios" icon="chart-bar" show_actions=True %}
+    {% block titulo_actions %}
+        <a href="{% url 'relatorios:generate' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-2"></i>Gerar Novo Relatório
+        </a>
+    {% endblock %}
+{% endblock %}
 
-    <!-- Conteúdo Principal -->
-    <div class="container-fluid mt-4">
-        
-        <!-- Cabeçalho -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h2 class="mb-0">
-                        <i class="fas fa-chart-bar me-2 text-primary"></i>
-                        Central de Relatórios
-                    </h2>
-                    <a href="{% url 'relatorios:generate' %}" class="btn btn-primary">
-                        <i class="fas fa-plus me-2"></i>Gerar Novo Relatório
-                    </a>
-                </div>
-            </div>
-        </div>
+{% block content %}
+<div class="container-fluid mt-4">
 
         <!-- Estatísticas Rápidas -->
         <div class="row mb-4">
@@ -31,7 +23,7 @@
                 <div class="card border-0 shadow-sm">
                     <div class="card-header">
                         <h6 class="mb-0">
-                            <i class="fas fa-tachometer-alt me-2"></i>Visão Geral do Sistema
+                            <i class="bi bi-speedometer2 me-2"></i>Visão Geral do Sistema
                         </h6>
                     </div>
                     <div class="card-body">
@@ -58,7 +50,7 @@
         <div class="row mb-4">
             <div class="col-12">
                 <h5 class="mb-3">
-                    <i class="fas fa-file-alt me-2"></i>Relatórios Disponíveis
+                    <i class="bi bi-file-earmark-text me-2"></i>Relatórios Disponíveis
                 </h5>
             </div>
             
@@ -67,7 +59,7 @@
                 <div class="card report-card border-0 shadow-sm h-100" onclick="window.location.href='{% url 'relatorios:estoque' %}'">
                     <div class="card-body text-center d-flex flex-column">
                         <div class="report-icon text-primary">
-                            <i class="fas fa-boxes"></i>
+                            <i class="bi bi-boxes"></i>
                         </div>
                         <h6 class="fw-bold">Relatório de Estoque</h6>
                         <p class="text-muted small mb-3 flex-grow-1">
@@ -85,14 +77,14 @@
                 <div class="card report-card border-0 shadow-sm h-100" onclick="window.location.href='{% url 'relatorios:movimentacoes' %}'">
                     <div class="card-body text-center d-flex flex-column">
                         <div class="report-icon text-success">
-                            <i class="fas fa-exchange-alt"></i>
+                            <i class="bi bi-arrow-left-right"></i>
                         </div>
                         <h6 class="fw-bold">Relatório de Movimentações</h6>
                         <p class="text-muted small mb-3 flex-grow-1">
                             Histórico de entradas, saídas e ajustes de estoque
                         </p>
                         <div class="btn btn-outline-success btn-sm w-100 mt-auto">
-                            <i class="fas fa-eye me-1"></i>Visualizar
+                            <i class="bi bi-eye me-1"></i>Visualizar
                         </div>
                     </div>
                 </div>
@@ -103,14 +95,14 @@
                 <div class="card report-card border-0 shadow-sm h-100" onclick="window.location.href='{% url 'relatorios:vencimentos' %}'">
                     <div class="card-body text-center d-flex flex-column">
                         <div class="report-icon text-warning">
-                            <i class="fas fa-calendar-times"></i>
+                            <i class="bi bi-calendar-x"></i>
                         </div>
                         <h6 class="fw-bold">Relatório de Vencimentos</h6>
                         <p class="text-muted small mb-3 flex-grow-1">
                             Produtos próximos ao vencimento e já vencidos
                         </p>
                         <div class="btn btn-outline-warning btn-sm w-100 mt-auto">
-                            <i class="fas fa-eye me-1"></i>Visualizar
+                            <i class="bi bi-eye me-1"></i>Visualizar
                         </div>
                     </div>
                 </div>
@@ -121,14 +113,14 @@
                 <div class="card report-card border-0 shadow-sm h-100" onclick="window.location.href='{% url 'relatorios:generate' %}'">
                     <div class="card-body text-center d-flex flex-column">
                         <div class="report-icon text-info">
-                            <i class="fas fa-cogs"></i>
+                            <i class="bi bi-gear"></i>
                         </div>
                         <h6 class="fw-bold">Relatório Personalizado</h6>
                         <p class="text-muted small mb-3 flex-grow-1">
                             Criar relatório com filtros e configurações específicas
                         </p>
                         <div class="btn btn-info btn-sm w-100 mt-auto">
-                            <i class="fas fa-plus me-1"></i>Criar Novo
+                            <i class="bi bi-plus-circle me-1"></i>Criar Novo
                         </div>
                     </div>
                 </div>
@@ -142,7 +134,7 @@
                 <div class="card border-0 shadow-sm">
                     <div class="card-header">
                         <h6 class="mb-0">
-                            <i class="fas fa-history me-2"></i>Seus Relatórios Recentes
+                            <i class="bi bi-clock-history me-2"></i>Seus Relatórios Recentes
                         </h6>
                     </div>
                     <div class="card-body p-0">
@@ -177,12 +169,12 @@
                                         <td>
                                             <a href="{% url 'relatorios:detail' report.pk %}" 
                                                class="btn btn-outline-primary btn-sm">
-                                                <i class="fas fa-eye"></i>
+                                                <i class="bi bi-eye"></i>
                                             </a>
                                             {% if report.is_ready %}
                                                 <a href="{% url 'relatorios:download' report.pk %}" 
                                                    class="btn btn-outline-success btn-sm">
-                                                    <i class="fas fa-download"></i>
+                                                    <i class="bi bi-download"></i>
                                                 </a>
                                             {% endif %}
                                         </td>
@@ -200,13 +192,13 @@
             <div class="col-12">
                 <div class="card border-0 shadow-sm">
                     <div class="card-body text-center py-5">
-                        <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
+                        <i class="bi bi-file-earmark-text display-1 text-muted mb-3"></i>
                         <h5 class="text-muted">Nenhum relatório gerado ainda</h5>
                         <p class="text-muted mb-4">
                             Comece criando seu primeiro relatório usando uma das opções acima
                         </p>
                         <a href="{% url 'relatorios:generate' %}" class="btn btn-primary">
-                            <i class="fas fa-plus me-2"></i>Gerar Primeiro Relatório
+                            <i class="bi bi-plus-circle me-2"></i>Gerar Primeiro Relatório
                         </a>
                     </div>
                 </div>

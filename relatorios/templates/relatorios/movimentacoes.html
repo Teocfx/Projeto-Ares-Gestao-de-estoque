@@ -1,30 +1,24 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static block_tags %}
 
 {% block title %}Relatório de Movimentações - Sistema ARES{% endblock %}
 
 {% block body_class %}relatorios-page relatorios-movimentacoes-page{% endblock %}
 
+{% block page_header %}
+{% include 'include/titulo.html' with titulo="Relatório de Movimentações" subtitulo="Histórico de entradas e saídas de estoque" icon="arrow-left-right" show_actions=True %}
+    {% block titulo_actions %}
+        <a href="{% url 'relatorios:index' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Voltar
+        </a>
+        <button class="btn btn-primary" onclick="window.print()">
+            <i class="bi bi-printer me-1"></i>Imprimir
+        </button>
+    {% endblock %}
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid mt-4">
-    
-    <!-- Título da Página -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-0">
-                <i class="bi bi-arrow-left-right me-2"></i>Relatório de Movimentações
-            </h1>
-            <p class="text-muted mb-0">Histórico de entradas e saídas de estoque</p>
-        </div>
-        <div>
-            <a href="{% url 'relatorios:index' %}" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left me-1"></i>Voltar
-            </a>
-            <button class="btn btn-primary" onclick="window.print()">
-                <i class="bi bi-printer me-1"></i>Imprimir
-            </button>
-        </div>
-    </div>
 
     <!-- Estatísticas Resumidas -->
     <div class="row g-3 mb-4">
@@ -214,35 +208,7 @@
     </div>
 
     <!-- Paginação -->
-    {% if movements.has_other_pages %}
-    <nav class="mt-4" aria-label="Paginação">
-        <ul class="pagination justify-content-center">
-            {% if movements.has_previous %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ movements.previous_page_number }}{% for key, value in current_filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
-                    <i class="bi bi-chevron-left"></i>
-                </a>
-            </li>
-            {% endif %}
-            
-            {% for num in movements.paginator.page_range %}
-            <li class="page-item {% if movements.number == num %}active{% endif %}">
-                <a class="page-link" href="?page={{ num }}{% for key, value in current_filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
-                    {{ num }}
-                </a>
-            </li>
-            {% endfor %}
-            
-            {% if movements.has_next %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ movements.next_page_number }}{% for key, value in current_filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
-                    <i class="bi bi-chevron-right"></i>
-                </a>
-            </li>
-            {% endif %}
-        </ul>
-    </nav>
-    {% endif %}
+    {% include 'include/pagination.html' with page_obj=movements show_info=True %}
 
 </div>
 {% endblock %}

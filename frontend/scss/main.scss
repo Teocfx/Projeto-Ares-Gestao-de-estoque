@@ -5,6 +5,7 @@
 @use  './sprite.scss';
 @use  './swiper.scss';
 @use  './classes-personalizadas.scss';
+@use  './components.scss'; // Componentes reutilizáveis (titulo, card, pagination, etc.)
 
 // Apps de Gestão de Estoque
 @use './core/index.scss' as core;
