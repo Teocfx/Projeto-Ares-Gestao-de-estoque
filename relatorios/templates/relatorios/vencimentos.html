@@ -1,0 +1,416 @@
+{% extends "base.html" %}
+{% load static block_tags %}
+
+{% block title %}Relatório de Vencimentos - Sistema ARES{% endblock %}
+
+{% block body_class %}relatorios-page relatorios-vencimentos-page{% endblock %}
+
+{% block page_header %}
+    {% include 'include/titulo.html' with titulo="Relatório de Vencimentos" subtitulo="Produtos próximos ao vencimento ou vencidos" icon="calendar-x" %}
+    <div class="d-flex gap-2 mt-3">
+        <a href="{% url 'relatorios:index' %}" class="btn btn-outline-secondary no-print">
+            <i class="bi bi-arrow-left me-1"></i>Voltar
+        </a>
+        <a href="{% url 'relatorios:download_vencimentos_pdf' %}?{{ request.GET.urlencode }}" class="btn btn-danger no-print">
+            <i class="bi bi-file-pdf me-1"></i>Download PDF
+        </a>
+        <button class="btn btn-primary no-print" onclick="gerarRelatorioImpressao()">
+            <i class="bi bi-printer me-1"></i>Imprimir Relatório
+        </button>
+    </div>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+
+    <!-- Informações de Impressão (visível apenas na impressão) -->
+    <div class="print-info" style="display: none;">
+        <strong>Data de Impressão:</strong> <script>document.write(new Date().toLocaleString('pt-BR'));</script><br>
+        <strong>Usuário:</strong> {{ user.get_full_name|default:user.username }}
+    </div>
+    <style>
+        @media print {
+            .print-info {
+                display: block !important;
+                font-size: 10pt;
+                color: #666;
+                margin-bottom: 1rem;
+                text-align: right;
+            }
+        }
+    </style>
+
+    <!-- Estatísticas Resumidas -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-list-check display-6 text-primary"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Total</h6>
+                            <h3 class="mb-0">{{ stats.total }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm border-danger">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-x-circle display-6 text-danger"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Vencidos</h6>
+                            <h3 class="mb-0 text-danger">{{ stats.expired_count }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm border-danger">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-exclamation-triangle display-6 text-danger"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Críticos (7 dias)</h6>
+                            <h3 class="mb-0 text-danger">{{ stats.critical_count }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm border-warning">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-exclamation-circle display-6 text-warning"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Atenção (30 dias)</h6>
+                            <h3 class="mb-0 text-warning">{{ stats.warning_count }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="days" class="form-label">Período de Análise</label>
+                    <select class="form-select" id="days" name="days">
+                        <option value="7" {% if days_ahead == 7 %}selected{% endif %}>7 dias</option>
+                        <option value="15" {% if days_ahead == 15 %}selected{% endif %}>15 dias</option>
+                        <option value="30" {% if days_ahead == 30 %}selected{% endif %}>30 dias</option>
+                        <option value="60" {% if days_ahead == 60 %}selected{% endif %}>60 dias</option>
+                        <option value="90" {% if days_ahead == 90 %}selected{% endif %}>90 dias</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="expired" name="expired" 
+                               value="true" {% if include_expired %}checked{% endif %}>
+                        <label class="form-check-label" for="expired">
+                            Incluir produtos já vencidos
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-funnel me-1"></i>Filtrar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Produtos Vencidos -->
+    {% if expired %}
+    <div class="card border-0 shadow-sm mb-4 border-danger">
+        <div class="card-header bg-danger text-white">
+            <h5 class="mb-0">
+                <i class="bi bi-x-circle me-2"></i>Produtos Vencidos
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th class="fw-medium">Produto</th>
+                            <th class="fw-medium">Categoria</th>
+                            <th class="fw-medium">Estoque</th>
+                            <th class="fw-medium">Data de Vencimento</th>
+                            <th class="fw-medium">Dias Vencido</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in expired %}
+                        <tr class="table-danger">
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.category.name }}</td>
+                            <td>{{ product.current_stock }} {{ product.unit.name }}</td>
+                            <td>{{ product.expiry_date|date:"d/m/Y" }}</td>
+                            <td class="fw-bold text-danger">
+                                {{ product.expiry_date|timesince }} atrás
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Produtos Críticos (7 dias) -->
+    {% if critical %}
+    <div class="card border-0 shadow-sm mb-4 border-danger">
+        <div class="card-header bg-danger bg-opacity-75">
+            <h5 class="mb-0 text-dark">
+                <i class="bi bi-exclamation-triangle me-2"></i>Críticos - Vencem em 7 dias
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th class="fw-medium">Produto</th>
+                            <th class="fw-medium">Categoria</th>
+                            <th class="fw-medium">Estoque</th>
+                            <th class="fw-medium">Data de Vencimento</th>
+                            <th class="fw-medium">Dias Restantes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in critical %}
+                        <tr class="table-danger table-danger-light">
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.category.name }}</td>
+                            <td>{{ product.current_stock }} {{ product.unit.name }}</td>
+                            <td>{{ product.expiry_date|date:"d/m/Y" }}</td>
+                            <td class="fw-bold text-danger">
+                                {{ product.expiry_date|timeuntil }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Produtos Atenção (8-30 dias) -->
+    {% if warning %}
+    <div class="card border-0 shadow-sm border-warning">
+        <div class="card-header bg-warning bg-opacity-75">
+            <h5 class="mb-0 text-dark">
+                <i class="bi bi-exclamation-circle me-2"></i>Atenção - Vencem em 8-30 dias
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th class="fw-medium">Produto</th>
+                            <th class="fw-medium">Categoria</th>
+                            <th class="fw-medium">Estoque</th>
+                            <th class="fw-medium">Data de Vencimento</th>
+                            <th class="fw-medium">Dias Restantes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in warning %}
+                        <tr class="table-warning table-warning-light">
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.category.name }}</td>
+                            <td>{{ product.current_stock }} {{ product.unit.name }}</td>
+                            <td>{{ product.expiry_date|date:"d/m/Y" }}</td>
+                            <td class="fw-medium text-warning-emphasis">
+                                {{ product.expiry_date|timeuntil }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Mensagem caso não haja produtos -->
+    {% if not products %}
+    <div class="card border-0 shadow-sm">
+        <div class="card-body text-center py-5 text-muted">
+            <i class="bi bi-check-circle fs-1 text-success d-block mb-3"></i>
+            <h5>Excelente!</h5>
+            <p class="mb-0">Não há produtos próximos ao vencimento no período selecionado.</p>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+{% block extra_js %}
+<script>
+function gerarRelatorioImpressao() {
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    
+    const header = `
+        <div style="text-align: center; margin-bottom: 30px; border-bottom: 3px solid #C8102E; padding-bottom: 15px;">
+            <h1 style="color: #C8102E; margin: 0; font-size: 28px;">Sistema ARES</h1>
+            <h2 style="color: #333; margin: 10px 0; font-size: 20px;">Relatório de Vencimentos</h2>
+            <p style="color: #666; margin: 5px 0;">
+                Gerado em: ${new Date().toLocaleString('pt-BR')}<br>
+                Usuário: {{ user.get_full_name|default:user.username }}
+            </p>
+        </div>
+    `;
+    
+    const stats = `
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px;">
+            <div style="border: 1px solid #ddd; padding: 15px; text-align: center; border-radius: 5px;">
+                <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Total Produtos</div>
+                <div style="font-size: 24px; font-weight: bold;">{{ total }}</div>
+            </div>
+            <div style="border: 1px solid #ddd; padding: 15px; text-align: center; border-radius: 5px;">
+                <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Vencidos</div>
+                <div style="font-size: 24px; font-weight: bold; color: #dc3545;">{{ expired_count }}</div>
+            </div>
+            <div style="border: 1px solid #ddd; padding: 15px; text-align: center; border-radius: 5px;">
+                <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Críticos (0-7 dias)</div>
+                <div style="font-size: 24px; font-weight: bold; color: #ff6b6b;">{{ critical_count }}</div>
+            </div>
+            <div style="border: 1px solid #ddd; padding: 15px; text-align: center; border-radius: 5px;">
+                <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Atenção (8-30 dias)</div>
+                <div style="font-size: 24px; font-weight: bold; color: #ffc107;">{{ warning_count }}</div>
+            </div>
+        </div>
+    `;
+    
+    // Extrair produtos vencidos
+    let expiredRows = '';
+    const expiredSection = document.querySelector('.bg-danger');
+    if (expiredSection) {
+        const expiredTable = expiredSection.closest('.card').querySelector('tbody');
+        if (expiredTable) {
+            expiredRows = Array.from(expiredTable.querySelectorAll('tr')).map(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length === 0) return '';
+                return `
+                    <tr style="background-color: #f8d7da;">
+                        <td style="padding: 8px; border: 1px solid #ddd;">${cells[0]?.textContent.trim()}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">${cells[1]?.textContent.trim()}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${cells[2]?.textContent.trim()}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">${cells[3]?.textContent.trim()}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; color: #dc3545; font-weight: bold;">${cells[4]?.textContent.trim()}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+    }
+    
+    // Extrair produtos críticos
+    let criticalRows = '';
+    const criticalSection = document.querySelector('.bg-danger.bg-opacity-50');
+    if (criticalSection) {
+        const criticalTable = criticalSection.closest('.card').querySelector('tbody');
+        if (criticalTable) {
+            criticalRows = Array.from(criticalTable.querySelectorAll('tr')).map(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length === 0) return '';
+                return `
+                    <tr style="background-color: #ffe0e0;">
+                        <td style="padding: 8px; border: 1px solid #ddd;">${cells[0]?.textContent.trim()}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">${cells[1]?.textContent.trim()}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${cells[2]?.textContent.trim()}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">${cells[3]?.textContent.trim()}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; color: #ff6b6b; font-weight: bold;">${cells[4]?.textContent.trim()}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+    }
+    
+    // Extrair produtos de atenção
+    let warningRows = '';
+    const warningSection = document.querySelector('.bg-warning');
+    if (warningSection) {
+        const warningTable = warningSection.closest('.card').querySelector('tbody');
+        if (warningTable) {
+            warningRows = Array.from(warningTable.querySelectorAll('tr')).map(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length === 0) return '';
+                return `
+                    <tr style="background-color: #fff3cd;">
+                        <td style="padding: 8px; border: 1px solid #ddd;">${cells[0]?.textContent.trim()}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">${cells[1]?.textContent.trim()}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${cells[2]?.textContent.trim()}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">${cells[3]?.textContent.trim()}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; color: #ffc107; font-weight: bold;">${cells[4]?.textContent.trim()}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+    }
+    
+    const table = `
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+            <thead style="background: #f5f5f5;">
+                <tr>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Produto</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Categoria</th>
+                    <th style="padding: 10px; border: 1px solid #ddd; text-align: right;">Estoque</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Vencimento</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${expiredRows}
+                ${criticalRows}
+                ${warningRows}
+            </tbody>
+        </table>
+    `;
+    
+    const footer = `
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #ddd; text-align: center; color: #666; font-size: 12px;">
+            <p>Sistema ARES - Gestão de Estoque | Relatório de Vencimentos</p>
+            <div style="margin-top: 40px; border-top: 1px solid #333; padding-top: 10px; max-width: 300px; margin: 40px auto 0;">
+                Assinatura do Responsável
+            </div>
+        </div>
+    `;
+    
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html><head><meta charset="UTF-8">
+        <title>Relatório de Vencimentos</title>
+        <style>body{font-family:Arial,sans-serif;margin:40px;color:#333}@media print{body{margin:20px}.no-print{display:none}}</style>
+        </head><body>${header}${stats}${table}${footer}
+        <div class="no-print" style="text-align:center;margin-top:30px">
+            <button onclick="window.print()" style="padding:10px 30px;background:#C8102E;color:white;border:none;border-radius:5px;cursor:pointer;font-size:16px">Imprimir</button>
+            <button onclick="window.close()" style="padding:10px 30px;background:#6c757d;color:white;border:none;border-radius:5px;cursor:pointer;font-size:16px;margin-left:10px">Fechar</button>
+        </div></body></html>
+    `);
+    printWindow.document.close();
+}
+</script>
+{% endblock %}
+
+{% endblock %}

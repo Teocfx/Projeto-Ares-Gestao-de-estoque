@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% load static %}
+{% load block_tags %}
+
+{% block title %}Movimentações - Sistema ARES{% endblock %}
+
+{% block body_class %}movimentacoes-page{% endblock %}
+
+{% block content %}
+<!-- Título da página com botão ao lado -->
+<div class="page-titulo titulo-container mb-4">
+    <div class="container-fluid">
+        <div class="row align-items-center py-3">
+            <div class="col-lg-8">
+                <h1 class="page-titulo__heading mb-1">
+                    <i class="bi bi-arrow-left-right text-primary me-2"></i>Movimentações de Estoque
+                </h1>
+                <p class="page-titulo__subtitle text-muted mb-0">Histórico de entradas, saídas e ajustes</p>
+            </div>
+            <div class="col-lg-4">
+                <div class="page-titulo__actions d-flex justify-content-lg-end gap-2 mt-3 mt-lg-0">
+                    <a href="{% url 'movimentacoes:create' %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-1"></i>Nova Movimentação
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+
+        <!-- Filtros -->
+        <div class="filter-card">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" name="search" class="form-control" 
+                           placeholder="Buscar produto, documento..." 
+                           value="{{ request.GET.search }}">
+                </div>
+                <div class="col-md-3">
+                    <select name="type" class="form-select">
+                        <option value="">Todos os tipos</option>
+                        <option value="ENTRADA" {% if request.GET.type == 'ENTRADA' %}selected{% endif %}>Entrada</option>
+                        <option value="SAIDA" {% if request.GET.type == 'SAIDA' %}selected{% endif %}>Saída</option>
+                        <option value="AJUSTE" {% if request.GET.type == 'AJUSTE' %}selected{% endif %}>Ajuste</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="date" name="date_from" class="form-control" 
+                           placeholder="Data início" value="{{ request.GET.date_from }}">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-secondary w-100">
+                        <i class="fas fa-search me-1"></i>Filtrar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tabela de Movimentações -->
+        <div class="card">
+            <div class="card-body">
+                {% if movements %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Tipo</th>
+                                <th>Produto</th>
+                                <th class="text-end">Quantidade</th>
+                                <th>Documento</th>
+                                <th>Usuário</th>
+                                <th class="text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for movement in movements %}
+                            <tr>
+                                <td>{{ movement.created_at|date:"d/m/Y H:i" }}</td>
+                                <td>
+                                    {% if movement.type == 'ENTRADA' %}
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-arrow-down me-1"></i>Entrada
+                                        </span>
+                                    {% elif movement.type == 'SAIDA' %}
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-arrow-up me-1"></i>Saída
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="fas fa-sync me-1"></i>Ajuste
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <strong>{{ movement.product.name }}</strong><br>
+                                    <small class="text-muted">SKU: {{ movement.product.sku }}</small>
+                                </td>
+                                <td class="text-end">
+                                    <strong>{{ movement.quantity }} {{ movement.product.unit.name }}</strong>
+                                </td>
+                                <td>{{ movement.document|default:"-" }}</td>
+                                <td>{{ movement.user.get_full_name|default:movement.user.username }}</td>
+                                <td class="text-center">
+                                    <a href="{% url 'movimentacoes:detail' movement.pk %}" 
+                                       class="btn btn-sm btn-info" title="Detalhes">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Paginação -->
+                {% if is_paginated %}
+                    {% include 'include/pagination.html' with page_obj=page_obj show_info=True %}
+                {% endif %}
+
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox display-1 text-muted mb-3"></i>
+                    <h5>Nenhuma movimentação encontrada</h5>
+                    <p class="text-muted">
+                        {% if request.GET %}
+                        Tente ajustar os filtros ou
+                        <a href="{% url 'movimentacoes:list' %}">limpar os filtros</a>
+                        {% else %}
+                        Comece registrando uma nova movimentação
+                        {% endif %}
+                    </p>
+                    <a href="{% url 'movimentacoes:create' %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-2"></i>Registrar Primeira Movimentação
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

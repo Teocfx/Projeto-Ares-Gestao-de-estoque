@@ -1,0 +1,113 @@
+@use '../variables';
+/**
+ * Admin Wagtail - Tema Padrão
+ * Customizações para o painel administrativo do Wagtail
+ */
+
+// Logo ARES
+.ares-logo {
+    max-height: 50px;
+    width: auto;
+    margin: 0 auto;
+    display: block;
+}
+
+.ares-login-logo {
+    max-width: 200px;
+    margin: 0 auto 2rem;
+    display: block;
+}
+
+// Sidebar customization
+[data-wagtail-sidebar] {
+    background-color: variables.$color-primary !important;
+    
+    .sidebar-logo {
+        padding: 1rem;
+        text-align: center;
+        border-bottom: 1px solid variables.$color-grey-300;
+    }
+    
+    .nav-link {
+        color: variables.$color-text-secondary !important;
+        transition: all 0.3s ease;
+        
+        &:hover, &.active {
+            background-color: variables.$color-primary-hover !important;
+            color: variables.$color-grey-200 !important;
+        }
+    }
+}
+
+// Botões customizados
+.button-primary,
+.button.button-primary {
+    background-color: variables.$color-secondary !important;
+    border-color: variables.$color-secondary !important;
+    
+    &:hover {
+        background-color: variables.$color-primary-hover !important;
+        border-color: variables.$color-primary-hover !important;
+    }
+}
+
+.button-secondary {
+    background-color: variables.$color-grey-300 !important;
+    color: variables.$color-text-primary !important;
+    border-color: variables.$color-light-border !important;
+    
+    &:hover {
+        background-color: variables.$color-bg-light-grey !important;
+    }
+}
+
+// Status badges
+.status-tag {
+    &.primary {
+        background-color: variables.$color-primary;
+        color: variables.$color-grey-200;
+    }
+    
+    &.success {
+        background-color: variables.$color-success;
+        color: variables.$color-grey-200;
+    }
+    
+    &.warning {
+        background-color: variables.$color-warning;
+        color: variables.$color-grey-200;
+    }
+    
+    &.error {
+        background-color: variables.$color-error;
+        color: variables.$color-grey-200;
+    }
+}
+
+// Cards e listagens
+.listing {
+    background-color: variables.$color-grey-200;
+    border: 1px solid variables.$color-light-border;
+    border-radius: 4px;
+    
+    th {
+        background-color: variables.$color-grey-300;
+        color: variables.$color-text-primary;
+        border-bottom: 2px solid variables.$color-light-border;
+    }
+    
+    tr:hover {
+        background-color: variables.$color-bg-light-grey;
+    }
+}
+
+// Headers
+.header {
+    background-color: variables.$color-grey-200;
+    border-bottom: 1px solid variables.$color-light-border;
+    box-shadow: variables.$color-black-10;
+    
+    .title {
+        color: variables.$color-text-primary;
+    }
+}

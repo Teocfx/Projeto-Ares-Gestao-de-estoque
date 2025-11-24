@@ -1,0 +1,194 @@
+@use '../variables';
+/**
+ * Autenticação - Login - Tema Padrão
+ * Página de login do sistema
+ */
+
+body.login-page {
+    background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+    .navbar {
+        z-index: 1021;
+        
+        // Garantir contraste no mobile
+        .navbar-brand,
+        .nav-link {
+            color: variables.$color-white !important;
+        }
+        
+        .navbar-toggler {
+            border-color: variables.$color-white;
+            
+            .navbar-toggler-icon {
+                filter: brightness(0) invert(1);
+            }
+        }
+    }
+}
+
+.login-container {
+    background-color: variables.$color-white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px variables.$color-black-50;
+    padding: 3rem 2.5rem;
+    width: 100%;
+    max-width: 450px;
+    animation: slideUp 0.5s ease-out;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    
+    .login-logo {
+        max-width: 180px;
+        margin-bottom: 1.5rem;
+    }
+    
+    h1 {
+        color: variables.$color-text-primary;
+        font-size: 1.75rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    p {
+        color: variables.$color-text-secondary;
+        font-size: 0.95rem;
+    }
+}
+
+.login-form {
+    .form-group {
+        margin-bottom: 1.5rem;
+        position: relative;
+        
+        label {
+            display: block;
+            color: variables.$color-text-primary;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid variables.$color-light-border;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: variables.$color-white;
+            color: variables.$color-grey-900;
+            
+            &:focus {
+                outline: none;
+                border-color: variables.$color-primary;
+                box-shadow: 0 0 0 3px variables.$color-primary-10;
+            }
+            
+            &::placeholder {
+                color: variables.$color-grey-600;
+            }
+        }
+        
+        &.focused label {
+            color: variables.$color-primary;
+        }
+    }
+    
+    .btn-login {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%);
+        color: variables.$color-grey-200;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(198, 40, 40, 0.3);
+        
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(198, 40, 40, 0.4);
+        }
+        
+        &:active {
+            transform: translateY(0);
+        }
+    }
+}
+
+.forgot-password {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid variables.$color-light-border;
+    
+    a {
+        color: variables.$color-primary;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.3s ease;
+        
+        &:hover {
+            color: variables.$color-primary-hover;
+            text-decoration: underline;
+        }
+    }
+}
+
+.system-info {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: variables.$color-text-secondary;
+    font-size: 0.85rem;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    
+    &.alert-danger {
+        background-color: #ffebee;
+        border: 1px solid variables.$color-error;
+        color: variables.$color-error;
+    }
+    
+    &.alert-success {
+        background-color: #e8f5e9;
+        border: 1px solid variables.$color-success;
+        color: variables.$color-success;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// Responsivo
+@media (max-width: 480px) {
+    .login-container {
+        margin: 1rem;
+        padding: 2rem 1.5rem;
+    }
+    
+    .login-header h1 {
+        font-size: 1.5rem;
+    }
+}

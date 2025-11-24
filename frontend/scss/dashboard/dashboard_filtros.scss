@@ -1,0 +1,364 @@
+@use '../variables';
+
+/**
+ * Estilos para Filtros Avançados do Dashboard
+ * Padrão BEM
+ */
+
+// Badge de filtros ativos
+.dashboard-filters {
+    &__badge {
+        font-size: 0.65rem;
+        min-width: 1.2rem;
+        height: 1.2rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        animation: pulse-badge 0.3s ease-in-out;
+    }
+}
+
+@keyframes pulse-badge {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+// Loading overlay
+.dashboard-chart {
+    &__loading {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(2px);
+        
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+    }
+}
+
+// Dropdown de períodos
+.dashboard-period-dropdown {
+    &__menu {
+        min-width: 280px;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    &__header {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 0.5rem 1rem;
+        margin: 0;
+    }
+    
+    &__item {
+        padding: 0.5rem 1rem;
+        transition: all 0.2s ease;
+        
+        &:hover {
+            background-color: rgba(0, 123, 255, 0.1);
+            transform: translateX(5px);
+        }
+        
+        &.active {
+            background-color: rgba(0, 123, 255, 0.15);
+            font-weight: 600;
+            border-left: 3px solid #007bff;
+        }
+        
+        i {
+            width: 1.25rem;
+            text-align: center;
+        }
+    }
+}
+
+// Painel de filtros avançados
+.dashboard-advanced-filters {
+    background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    
+    &__section {
+        margin-bottom: 1rem;
+    }
+    
+    &__label {
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        
+        i {
+            margin-right: 0.5rem;
+            color: #6c757d;
+        }
+    }
+    
+    &__input,
+    &__select {
+        font-size: 0.875rem;
+        
+        &:focus {
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+    }
+}
+
+// Responsividade Mobile
+@media (max-width: 768px) {
+    // Colapsar período personalizado em telas pequenas
+    .dashboard-period-custom {
+        flex-direction: column;
+        gap: 0.5rem !important;
+        
+        input[type="date"] {
+            width: 100% !important;
+        }
+        
+        .text-muted {
+            display: none;
+        }
+    }
+    
+    // Filtros avançados em mobile
+    .dashboard-advanced-filters {
+        .row {
+            > [class*="col-"] {
+                margin-bottom: 1rem;
+            }
+        }
+    }
+    
+    // Dropdown full-width em mobile
+    .dashboard-period-dropdown__menu {
+        min-width: 100%;
+        max-width: 100vw;
+    }
+    
+    // Ajustar card header em mobile
+    .card-header {
+        .d-flex {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+    }
+}
+
+@media (max-width: 576px) {
+    // Botões de ação em mobile empilhados
+    .dashboard-advanced-filters {
+        &__actions {
+            .d-flex {
+                flex-direction: column;
+                
+                .btn {
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
+
+// Animações de transição
+.collapse {
+    transition: height 0.3s ease;
+}
+
+// Melhorias de acessibilidade
+.form-control:focus,
+.form-select:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}
+
+// Estados de loading
+canvas {
+    transition: opacity 0.3s ease;
+}
+
+// Hover states para melhor UX
+.btn {
+    transition: all 0.2s ease;
+    
+    &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+// =====================================
+// SISTEMA DE TAGS/CHIPS PARA FILTROS
+// =====================================
+
+.dashboard-filter-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    cursor: default;
+    transition: all 0.2s ease;
+    
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+    
+    .btn-close {
+        width: 0.75rem;
+        height: 0.75rem;
+        padding: 0;
+        background-size: 0.75rem;
+        opacity: 0.6;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        
+        &:hover {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+    }
+    
+    i {
+        font-size: 1rem;
+    }
+}
+
+// Animações para tags
+@keyframes fadeInScale {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeOutScale {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+}
+
+// Container de tags
+#selected-types-container,
+#selected-categories-container {
+    min-height: 2.5rem;
+    padding: 0.25rem;
+    border-radius: 0.375rem;
+    background-color: rgba(0, 0, 0, 0.02);
+    border: 1px dashed rgba(0, 0, 0, 0.1);
+    
+    &:empty::before {
+        content: "Nenhum item selecionado";
+        color: #999;
+        font-size: 0.875rem;
+        font-style: italic;
+    }
+}
+
+// =====================================
+// RELATÓRIOS PERSONALIZADOS
+// =====================================
+
+.report-preset-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15);
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+        
+        i.display-4 {
+            font-size: 3rem;
+            opacity: 0.8;
+        }
+        
+        .card-title {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .card-text {
+            font-size: variables.$font-size-small;
+            min-height: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .btn {
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+            
+            &:hover {
+                transform: none;
+            }
+        }
+    }
+}
+
+// Cores específicas para cada preset
+.report-preset-card {
+    &[data-preset="estoque"] {
+        .card-body {
+            background: linear-gradient(135deg, rgba(13, 110, 253, 0.05) 0%, rgba(13, 110, 253, 0.01) 100%);
+        }
+    }
+    
+    &[data-preset="movimentacoes"] {
+        .card-body {
+            background: linear-gradient(135deg, rgba(25, 135, 84, 0.05) 0%, rgba(25, 135, 84, 0.01) 100%);
+        }
+    }
+    
+    &[data-preset="vencimentos"] {
+        .card-body {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.05) 0%, rgba(255, 193, 7, 0.01) 100%);
+        }
+    }
+    
+    &[data-preset="financeiro"] {
+        .card-body {
+            background: linear-gradient(135deg, rgba(13, 202, 240, 0.05) 0%, rgba(13, 202, 240, 0.01) 100%);
+        }
+    }
+}
+
+// Relatórios customizados (tem botão excluir)
+.report-preset-card[data-custom-id] {
+    .btn-link {
+        padding: 0.25rem;
+        font-size: 1rem;
+        text-decoration: none;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+    
+    &:hover .btn-link {
+        opacity: 1;
+    }
+}

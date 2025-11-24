@@ -1,0 +1,153 @@
+// Ordem de importação: variáveis → mixins → temas → resto
+@use './variables.scss';
+@use './mixins' as mixins;
+@use  './themes' as themes;
+@use  './sprite.scss';
+@use  './swiper.scss';
+@use  './classes-personalizadas.scss';
+@use  './components.scss'; // Componentes reutilizáveis (titulo, card, pagination, etc.)
+@use  './print.scss'; // Estilos de impressão
+
+// Apps de Gestão de Estoque
+@use './core/index.scss' as core;
+@use './admin/index.scss' as admin;
+@use './autenticacao/index.scss' as autenticacao;
+@use './dashboard/index.scss' as dashboard;
+@use './produtos/index.scss' as produtos;
+@use './movimentacoes/index.scss' as movimentacoes;
+@use './relatorios/index.scss' as relatorios;
+@use './search/index.scss' as search;
+@use './siteares/index.scss' as siteares;
+@use './home/index.scss' as home;
+@use './breadcrumb.scss';
+@use './breadcrumb_escuro.scss';
+@use './cookieconsent.scss';
+
+// Project-specific partials added by assistant: widgets and banners
+@use './_widgets.scss' as widgets;
+@use './_widgets_dark.scss' as widgets_dark;
+// @use './_banners.scss' as banners;
+
+/*Arquivo para customizar o bootstrap*/
+@use './customBT';
+
+$bootstrap-icons-font-dir: "bootstrap-icons/font/fonts";
+
+@import "~bootstrap/scss/bootstrap";
+@import "~bootstrap-icons/font/bootstrap-icons";
+
+$global-font-family: 'Inter', sans-serif;
+
+$global-link-color: #396BBB !default;
+$global-link-hover-color: #30599B !default;
+
+// 2. Import default variables and available mixins.
+@import "~uikit/src/scss/variables-theme.scss";
+@import "~uikit/src/scss/mixins-theme.scss";
+@import "./rawline-font.scss";
+
+// 3. Your custom mixin overwrites of ukit.
+@mixin hook-card() { color: variables.$color-black; }
+
+@import "uikit/src/scss/uikit-theme.scss";
+
+
+body {
+    background-color: variables.$color-white;
+    font-family: 'Inter', sans-serif;
+}
+
+[data-theme=dark] {
+    body {
+        background-color: variables.$color-black !important;
+    }
+}
+
+.row > * {
+    @media (max-width: 375px) {
+        padding-right: 0px;
+        padding-left: 0px;
+    }
+}
+
+@media (max-width: 500px) {
+    .container, .container-fluid {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+    
+    * {
+        max-width: 100%;
+    }
+}
+
+html, body {
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    max-width: 100%;
+    width: 100%;
+}
+#site-conteudo-main {
+    flex: 1;
+    background-color: variables.$color-white !important;
+}
+
+[data-theme=dark] {
+  #site-conteudo-main {
+      background-color: variables.$color-black !important;
+  }
+}
+
+.richtext-image.left,
+.image-left,
+.richtext-image.right,
+.image-right,
+.richtext-image.full-width,
+.image-inline {
+    max-width: 370px;
+    max-height: 370px;
+    margin: 24px;
+}
+.richtext-image.left,
+.image-left {
+    float: left;
+}
+.richtext-image.right,
+.image-right {
+    float: right;
+}
+
+.richtext-image.fullwidth,
+.image-inline {
+    float: none;
+}
+
+.video-container-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.video-responsive-container {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 800px; 
+  padding-top: 56.25%; 
+}
+
+.video-responsive-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}

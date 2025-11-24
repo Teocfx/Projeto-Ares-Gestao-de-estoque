@@ -1,0 +1,64 @@
+@use '../variables';
+/**
+ * Admin Wagtail - Tema Escuro
+ * Customizações para o painel administrativo do Wagtail em modo escuro
+ */
+
+[data-theme="dark"] {
+    // Sidebar em modo escuro
+    [data-wagtail-sidebar] {
+        background-color: variables.$color-grey-300 !important;
+        border-right: 1px solid variables.$color-light-border;
+        
+        .nav-link {
+            color: variables.$color-text-secondary !important;
+            
+            &:hover, &.active {
+                background-color: variables.$color-primary !important;
+                color: variables.$color-text-primary !important;
+            }
+        }
+    }
+    
+    // Botões em modo escuro
+    .button-primary,
+    .button.button-primary {
+        background-color: variables.$color-primary !important;
+        border-color: variables.$color-primary !important;
+        
+        &:hover {
+            background-color: variables.$color-primary-hover !important;
+        }
+    }
+    
+    .button-secondary {
+        background-color: variables.$color-bg-light-grey !important;
+        color: variables.$color-text-primary !important;
+        border-color: variables.$color-light-border !important;
+        
+        &:hover {
+            background-color: variables.$color-grey-300 !important;
+        }
+    }
+    
+    // Cards e listagens em modo escuro
+    .listing {
+        background-color: variables.$color-grey-300;
+        border-color: variables.$color-light-border;
+        
+        th {
+            background-color: variables.$color-bg-light-grey;
+            color: variables.$color-text-primary;
+        }
+        
+        tr:hover {
+            background-color: variables.$color-grey-200;
+        }
+    }
+    
+    // Headers em modo escuro
+    .header {
+        background-color: variables.$color-grey-300;
+        border-bottom-color: variables.$color-light-border;
+    }
+}

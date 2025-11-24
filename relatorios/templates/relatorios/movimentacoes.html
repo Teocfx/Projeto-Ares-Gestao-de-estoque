@@ -1,0 +1,328 @@
+{% extends "base.html" %}
+{% load static block_tags %}
+
+{% block title %}Relatório de Movimentações - Sistema ARES{% endblock %}
+
+{% block body_class %}relatorios-page relatorios-movimentacoes-page{% endblock %}
+
+{% block page_header %}
+    {% include 'include/titulo.html' with titulo="Relatório de Movimentações" subtitulo="Histórico de entradas e saídas de estoque" icon="arrow-left-right" %}
+    <div class="d-flex gap-2 mt-3">
+        <a href="{% url 'relatorios:index' %}" class="btn btn-outline-secondary no-print">
+            <i class="bi bi-arrow-left me-1"></i>Voltar
+        </a>
+        <a href="{% url 'relatorios:download_movimentacoes_pdf' %}?{{ request.GET.urlencode }}" class="btn btn-danger no-print">
+            <i class="bi bi-file-pdf me-1"></i>Download PDF
+        </a>
+        <button class="btn btn-primary no-print" onclick="gerarRelatorioImpressao()">
+            <i class="bi bi-printer me-1"></i>Imprimir Relatório
+        </button>
+    </div>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+
+    <!-- Informações de Impressão (visível apenas na impressão) -->
+    <div class="print-info" style="display: none;">
+        <strong>Data de Impressão:</strong> <script>document.write(new Date().toLocaleString('pt-BR'));</script><br>
+        <strong>Usuário:</strong> {{ user.get_full_name|default:user.username }}
+    </div>
+    <style>
+        @media print {
+            .print-info {
+                display: block !important;
+                font-size: 10pt;
+                color: #666;
+                margin-bottom: 1rem;
+                text-align: right;
+            }
+        }
+    </style>
+
+    <!-- Estatísticas Resumidas -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-list-ul display-6 text-primary"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Total</h6>
+                            <h3 class="mb-0">{{ stats.total_movements }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-arrow-down-circle display-6 text-success"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Entradas</h6>
+                            <h3 class="mb-0">{{ stats.entradas }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-arrow-up-circle display-6 text-danger"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Saídas</h6>
+                            <h3 class="mb-0">{{ stats.saidas }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-gear display-6 text-warning"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Ajustes</h6>
+                            <h3 class="mb-0">{{ stats.ajustes }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label for="date_from" class="form-label">Data Inicial</label>
+                    <input type="date" class="form-control" id="date_from" name="date_from" 
+                           value="{{ current_filters.date_from }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="date_to" class="form-label">Data Final</label>
+                    <input type="date" class="form-control" id="date_to" name="date_to" 
+                           value="{{ current_filters.date_to }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="type" class="form-label">Tipo</label>
+                    <select class="form-select" id="type" name="type">
+                        <option value="">Todos</option>
+                        {% for code, label in movement_types %}
+                        <option value="{{ code }}" {% if current_filters.type == code %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="product" class="form-label">Produto</label>
+                    <select class="form-select" id="product" name="product">
+                        <option value="">Todos</option>
+                        {% for prod in products %}
+                        <option value="{{ prod.id }}" {% if current_filters.product == prod.id|stringformat:"s" %}selected{% endif %}>
+                            {{ prod.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-funnel me-1"></i>Filtrar
+                    </button>
+                    <a href="{% url 'relatorios:movimentacoes' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle me-1"></i>Limpar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabela de Movimentações -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th class="fw-medium">Data/Hora</th>
+                            <th class="fw-medium">Produto</th>
+                            <th class="fw-medium">Tipo</th>
+                            <th class="fw-medium">Quantidade</th>
+                            <th class="fw-medium">Documento</th>
+                            <th class="fw-medium">Usuário</th>
+                            <th class="fw-medium">Observações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for mov in movements %}
+                        <tr>
+                            <td class="text-nowrap">
+                                {{ mov.created_at|date:"d/m/Y" }}<br>
+                                <small class="text-muted">{{ mov.created_at|time:"H:i" }}</small>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-box me-2 text-muted"></i>
+                                    {{ mov.product.name }}
+                                </div>
+                            </td>
+                            <td>
+                                {% if mov.type == 'ENTRADA' %}
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-arrow-down-circle me-1"></i>Entrada
+                                    </span>
+                                {% elif mov.type == 'SAIDA' %}
+                                    <span class="badge bg-danger">
+                                        <i class="bi bi-arrow-up-circle me-1"></i>Saída
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="bi bi-gear me-1"></i>Ajuste
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td class="fw-medium">{{ mov.quantity }} {{ mov.product.unit.name }}</td>
+                            <td>
+                                {% if mov.document %}
+                                    <code class="text-muted">{{ mov.document }}</code>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ mov.user.get_full_name|default:mov.user.username }}</td>
+                            <td>
+                                {% if mov.notes %}
+                                    <small class="text-muted">{{ mov.notes|truncatewords:8 }}</small>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+                                Nenhuma movimentação encontrada no período selecionado.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Paginação -->
+    {% include 'include/pagination.html' with page_obj=movements show_info=True %}
+
+</div>
+
+{% block extra_js %}
+<script>
+function gerarRelatorioImpressao() {
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    
+    const header = `
+        <div style="text-align: center; margin-bottom: 30px; border-bottom: 3px solid #C8102E; padding-bottom: 15px;">
+            <h1 style="color: #C8102E; margin: 0; font-size: 28px;">Sistema ARES</h1>
+            <h2 style="color: #333; margin: 10px 0; font-size: 20px;">Relatório de Movimentações</h2>
+            <p style="color: #666; margin: 5px 0;">
+                Período: {{ current_filters.date_from }} a {{ current_filters.date_to }}<br>
+                Gerado em: ${new Date().toLocaleString('pt-BR')}<br>
+                Usuário: {{ user.get_full_name|default:user.username }}
+            </p>
+        </div>
+    `;
+    
+    const stats = `
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px;">
+            <div style="border: 1px solid #ddd; padding: 15px; text-align: center; border-radius: 5px;">
+                <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Total</div>
+                <div style="font-size: 24px; font-weight: bold;">{{ stats.total_movements }}</div>
+            </div>
+            <div style="border: 1px solid #ddd; padding: 15px; text-align: center; border-radius: 5px;">
+                <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Entradas</div>
+                <div style="font-size: 24px; font-weight: bold; color: #28a745;">{{ stats.entradas }}</div>
+            </div>
+            <div style="border: 1px solid #ddd; padding: 15px; text-align: center; border-radius: 5px;">
+                <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Saídas</div>
+                <div style="font-size: 24px; font-weight: bold; color: #dc3545;">{{ stats.saidas }}</div>
+            </div>
+            <div style="border: 1px solid #ddd; padding: 15px; text-align: center; border-radius: 5px;">
+                <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Ajustes</div>
+                <div style="font-size: 24px; font-weight: bold; color: #ffc107;">{{ stats.ajustes }}</div>
+            </div>
+        </div>
+    `;
+    
+    const tableRows = Array.from(document.querySelectorAll('.table tbody tr')).map(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length === 0) return '';
+        return `
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;">${cells[0]?.textContent.trim()}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">${cells[1]?.textContent.trim()}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">${cells[2]?.textContent.trim()}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${cells[3]?.textContent.trim()}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">${cells[4]?.textContent.trim()}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">${cells[5]?.textContent.trim()}</td>
+            </tr>
+        `;
+    }).join('');
+    
+    const table = `
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+            <thead style="background: #f5f5f5;">
+                <tr>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Data</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Tipo</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Produto</th>
+                    <th style="padding: 10px; border: 1px solid #ddd; text-align: right;">Quantidade</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Documento</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Usuário</th>
+                </tr>
+            </thead>
+            <tbody>${tableRows}</tbody>
+        </table>
+    `;
+    
+    const footer = `
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #ddd; text-align: center; color: #666; font-size: 12px;">
+            <p>Sistema ARES - Gestão de Estoque | Relatório de Movimentações</p>
+            <div style="margin-top: 40px; border-top: 1px solid #333; padding-top: 10px; max-width: 300px; margin: 40px auto 0;">
+                Assinatura do Responsável
+            </div>
+        </div>
+    `;
+    
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html><head><meta charset="UTF-8">
+        <title>Relatório de Movimentações</title>
+        <style>body{font-family:Arial,sans-serif;margin:40px;color:#333}@media print{body{margin:20px}.no-print{display:none}}</style>
+        </head><body>${header}${stats}${table}${footer}
+        <div class="no-print" style="text-align:center;margin-top:30px">
+            <button onclick="window.print()" style="padding:10px 30px;background:#C8102E;color:white;border:none;border-radius:5px;cursor:pointer;font-size:16px">Imprimir</button>
+            <button onclick="window.close()" style="padding:10px 30px;background:#6c757d;color:white;border:none;border-radius:5px;cursor:pointer;font-size:16px;margin-left:10px">Fechar</button>
+        </div></body></html>
+    `);
+    printWindow.document.close();
+}
+</script>
+{% endblock %}
+{% endblock %}

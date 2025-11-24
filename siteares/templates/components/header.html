@@ -1,0 +1,90 @@
+{% load static navigation_tags wagtailcore_tags wagtailsettings_tags socialaccount %}
+
+<div class="header-wrapper d-none d-lg-block">
+  <div class="container">
+    <div class="header-layout row">
+      {# Logo #}
+      <div class="col-auto d-flex align-items-center">
+        <a href="/" aria-label="Início" class="text-decoration-none">
+          <img class="header-logo" src="{% static 'img/logo_banner.svg' %}" alt="{{ settings.core.SiteSettings.title_suffix }}">
+        </a>
+      </div>
+
+      {# Busca #}
+      <div class="col-auto d-flex align-items-center">
+        <form action="{% url 'search' %}" class="d-flex" role="search" method="get">
+          <input class="header-input-search" 
+                 type="text"
+                 placeholder="Buscar produtos, movimentações..."
+                 aria-label="Buscar no sistema" 
+                 name="query" 
+                 value="{{ request.GET.query }}">
+          <button class="header-btn-search" type="submit">
+            <div class="row g-0">
+              <div class="col-auto d-flex align-items-center header-btn-search-icon">
+                <i class="bi bi-search"></i>
+              </div>
+              <div class="col-auto header-btn-search-text">
+                <span>Pesquisar</span>
+              </div>
+            </div>
+          </button>
+        </form>
+      </div>
+
+      {# Acessibilidade #}
+      <div class="col-auto d-flex align-items-center">
+        <div class="header-acessibilidade row g-0">
+          <div class="col-auto">
+            <a id="theme-toggle" class="header-acessibilidade--contraste" href="#" aria-label="Alternar tema">
+              alto contraste
+            </a>
+          </div>
+          <div class="col-auto">
+            <a class="header-acessibilidade--vlibras" 
+               href="https://www.vlibras.com.br/" 
+               target="_blank"
+               aria-label="VLibras - Tradutor de Libras">
+              vlibras
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {# Ferramentas de Zoom #}
+      <div class="col-auto d-flex align-items-center">
+        <div class="header-tools header-acessibilidade row g-0">
+          <div class="col-auto">
+            <a class="header-acessibilidade--fonts" 
+               href="javascript:(function(){document.body.style.zoom = (parseFloat(document.body.style.zoom || 1) - 0.1)})()"
+               aria-label="Diminuir fonte">
+              A-
+            </a>
+          </div>
+          <div class="col-auto">
+            <a class="header-acessibilidade--fonts" 
+               href="javascript:(function(){document.body.style.zoom = (parseFloat(document.body.style.zoom || 1) + 0.1)})()"
+               aria-label="Aumentar fonte">
+              A+
+            </a>
+          </div>
+          <div class="col-auto">
+            <a class="header-acessibilidade--fonts" 
+               href="javascript:(function(){document.body.style.zoom = 1})()"
+               aria-label="Resetar fonte">
+              A
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {# Perfil / Login #}
+      {% include 'include/perfil.html' with classes="col-auto d-flex align-items-center" %}
+
+    </div>
+  </div>
+</div>
+
+{# Menu Principal #}
+{% get_site_root as site_root %}
+{% top_menu parent=site_root calling_page=self %}

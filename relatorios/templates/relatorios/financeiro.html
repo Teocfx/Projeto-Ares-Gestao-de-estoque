@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+
+{% block title %}Relatório Financeiro - Sistema ARES{% endblock %}
+
+{% block body_class %}relatorios-page relatorios-financeiro-page{% endblock %}
+
+{% block page_header %}
+{% include 'include/titulo.html' with titulo="Relatório Financeiro" subtitulo="Valor do estoque por categoria" icon="currency-dollar" show_actions=True %}
+    {% block titulo_actions %}
+        <a href="{% url 'relatorios:index' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Voltar
+        </a>
+        <a href="{% url 'relatorios:download_financeiro_pdf' %}?{{ request.GET.urlencode }}" class="btn btn-danger">
+            <i class="bi bi-file-pdf me-1"></i>Download PDF
+        </a>
+        <button class="btn btn-primary" onclick="window.print()">
+            <i class="bi bi-printer me-1"></i>Imprimir
+        </button>
+    {% endblock %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    
+    <!-- Cards de Estatísticas -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="rounded-circle bg-primary-subtle p-3">
+                                <i class="bi bi-cash-stack text-primary fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <div class="text-muted small">Valor Total do Estoque</div>
+                            <h4 class="mb-0">R$ {{ stats.total_value|floatformat:2 }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="rounded-circle bg-success-subtle p-3">
+                                <i class="bi bi-boxes text-success fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <div class="text-muted small">Total de Produtos</div>
+                            <h4 class="mb-0">{{ stats.total_products }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="rounded-circle bg-info-subtle p-3">
+                                <i class="bi bi-tags text-info fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <div class="text-muted small">Categorias</div>
+                            <h4 class="mb-0">{{ stats.total_categories }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filtros -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label for="category" class="form-label">Categoria</label>
+                    <select name="category" id="category" class="form-select">
+                        <option value="">Todas as categorias</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if current_filters.category == cat.id|stringformat:"s" %}selected{% endif %}>
+                            {{ cat.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-8 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="bi bi-funnel me-1"></i>Filtrar
+                    </button>
+                    <a href="{% url 'relatorios:financeiro' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle me-1"></i>Limpar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Tabela de Categorias -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-transparent border-bottom">
+            <h5 class="mb-0">
+                <i class="bi bi-bar-chart me-2"></i>Valor por Categoria
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Categoria</th>
+                            <th class="text-center">Produtos</th>
+                            <th class="text-end">Valor Total</th>
+                            <th class="text-end pe-4">% do Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for data in categories_data %}
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-tag me-2 text-primary"></i>
+                                    <strong>{{ data.category.name }}</strong>
+                                </div>
+                                {% if data.category.description %}
+                                <small class="text-muted d-block ms-4">{{ data.category.description }}</small>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-secondary-subtle text-secondary">
+                                    {{ data.products_count }}
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                <strong class="text-success">R$ {{ data.total_value|floatformat:2 }}</strong>
+                            </td>
+                            <td class="text-end pe-4">
+                                {% widthratio data.total_value stats.total_value 100 as percentage %}
+                                <div class="d-flex align-items-center justify-content-end">
+                                    <div class="progress me-2" style="width: 100px; height: 8px;">
+                                        <div class="progress-bar bg-primary" role="progressbar" 
+                                             style="width: {{ percentage }}%" 
+                                             aria-valuenow="{{ percentage }}" 
+                                             aria-valuemin="0" 
+                                             aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                    <span class="text-muted small">{{ percentage }}%</span>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <!-- Produtos da Categoria (expansível) -->
+                        <tr class="collapse" id="products-{{ data.category.id }}">
+                            <td colspan="4" class="bg-light">
+                                <div class="p-3">
+                                    <h6 class="mb-3">Produtos em {{ data.category.name }}</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-bordered bg-white mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Produto</th>
+                                                    <th class="text-center">Estoque</th>
+                                                    <th class="text-end">Preço Unit.</th>
+                                                    <th class="text-end">Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for product in data.products %}
+                                                <tr>
+                                                    <td>
+                                                        <strong>{{ product.name }}</strong>
+                                                        <small class="text-muted d-block">SKU: {{ product.sku }}</small>
+                                                    </td>
+                                                    <td class="text-center">{{ product.current_stock }} {{ product.unit.name }}</td>
+                                                    <td class="text-end">R$ {{ product.unit_price|default:"0.00"|floatformat:2 }}</td>
+                                                    <td class="text-end">
+                                                        {% widthratio product.current_stock 1 1 as stock_int %}
+                                                        {% widthratio product.unit_price|default:"0" 1 1 as price_float %}
+                                                        {% widthratio stock_int price_float 1 as product_total %}
+                                                        <strong>R$ {{ product_total|floatformat:2 }}</strong>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+                                <p class="mb-0">Nenhum dado financeiro disponível</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    {% if categories_data %}
+                    <tfoot class="table-light">
+                        <tr>
+                            <td class="ps-4"><strong>TOTAL GERAL</strong></td>
+                            <td class="text-center"><strong>{{ stats.total_products }}</strong></td>
+                            <td class="text-end"><strong class="text-success">R$ {{ stats.total_value|floatformat:2 }}</strong></td>
+                            <td class="text-end pe-4"><strong>100%</strong></td>
+                        </tr>
+                    </tfoot>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Expandir/colapsar produtos da categoria
+document.addEventListener('DOMContentLoaded', function() {
+    const categoryRows = document.querySelectorAll('tbody tr:not(.collapse)');
+    
+    categoryRows.forEach(row => {
+        if (!row.querySelector('td[colspan]')) {
+            row.style.cursor = 'pointer';
+            row.addEventListener('click', function() {
+                const nextRow = this.nextElementSibling;
+                if (nextRow && nextRow.classList.contains('collapse')) {
+                    const bsCollapse = new bootstrap.Collapse(nextRow, {
+                        toggle: true
+                    });
+                }
+            });
+        }
+    });
+});
+</script>
+{% endblock %}

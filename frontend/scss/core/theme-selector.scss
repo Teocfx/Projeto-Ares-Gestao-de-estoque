@@ -1,0 +1,128 @@
+@use '../variables';
+/**
+ * Theme Selector Widget
+ * Estilos para o widget flutuante de seleção de temas
+ */
+
+.theme-selector-widget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    
+    .theme-toggle-btn {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: variables.$color-primary;
+        border: none;
+        color: variables.$color-white;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px variables.$color-black-20;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        &:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px variables.$color-black-30;
+        }
+        
+        &:active {
+            transform: scale(0.95);
+        }
+        
+        .theme-icon {
+            display: none;
+            
+            &.theme-icon-default {
+                display: inline-block;
+            }
+        }
+    }
+    
+    .theme-options {
+        position: absolute;
+        bottom: 70px;
+        right: 0;
+        background: variables.$color-white;
+        border: 1px solid variables.$color-light-border;
+        border-radius: 12px;
+        padding: 8px;
+        min-width: 160px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(10px);
+        transition: all 0.3s ease;
+        
+        &.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .theme-option {
+            width: 100%;
+            padding: 12px 16px;
+            border: none;
+            background: transparent;
+            color: variables.$color-text-primary;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            
+            &:hover {
+                background: variables.$color-grey-300;
+            }
+            
+            &.active {
+                background: variables.$color-primary;
+                color: white;
+            }
+        }
+    }
+}
+
+// Responsive: mobile
+@media (max-width: 768px) {
+    .theme-selector-widget {
+        bottom: 16px;
+        right: 16px;
+        
+        .theme-toggle-btn {
+            width: 48px;
+            height: 48px;
+            font-size: 20px;
+        }
+        
+        .theme-options {
+            bottom: 60px;
+            min-width: 140px;
+        }
+    }
+}
+
+// Animação de entrada
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.theme-selector-widget {
+    animation: fadeInUp 0.5s ease;
+}

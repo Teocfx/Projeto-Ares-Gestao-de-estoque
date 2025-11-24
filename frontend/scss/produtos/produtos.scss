@@ -1,0 +1,195 @@
+@use '../variables';
+/**
+ * Produtos - Tema Padrão
+ * Listagem e gerenciamento de produtos
+ */
+
+body.produtos-page {
+    background-color: variables.$color-grey-300;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.produtos-page {
+    // Navbar
+    .navbar {
+        background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%);
+        box-shadow: 0 2px 8px variables.$color-black-10;
+        z-index: 1021;
+    }
+    
+    // Cards
+    .card {
+        background-color: variables.$color-white;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px variables.$color-black-10;
+    }
+    
+    // Botões
+    .btn-primary {
+        background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%);
+        border: none;
+        box-shadow: 0 2px 8px variables.$color-primary-20;
+        transition: all 0.3s ease;
+        
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px variables.$color-primary-40;
+        }
+    }
+    
+    // Tabelas
+    .table {
+        color: variables.$color-grey-900;
+        
+        thead {
+            background-color: variables.$color-grey-800;
+            
+            th {
+                color: variables.$color-primary !important;
+                font-weight: 600;
+                border-bottom: 2px solid variables.$color-grey-700;
+                padding: 1rem 0.75rem;
+                
+                a {
+                    color: variables.$color-primary !important;
+                    
+                    &:hover {
+                        color: variables.$color-primary !important;
+                    }
+                }
+            }
+        }
+        
+        tbody {
+            tr {
+                transition: background-color 0.2s ease;
+                border-bottom: 1px solid variables.$color-grey-300;
+                
+                &:hover {
+                    background-color: variables.$color-bg-light-grey;
+                }
+                
+                td {
+                    padding: 1rem 0.75rem;
+                    vertical-align: middle;
+                }
+            }
+        }
+    }
+    
+    // Botões de ação na tabela
+    .btn-action {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        
+        &:not(:last-child) {
+            margin-right: 0.375rem;
+        }
+        
+        &:hover {
+            transform: translateY(-1px);
+        }
+    }
+    
+    // Badges de status
+    .badge {
+        padding: 0.5rem 0.875rem;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.8125rem;
+        
+        &.bg-danger {
+            background-color: variables.$color-error !important;
+        }
+        
+        &.bg-warning {
+            background-color: variables.$color-warning !important;
+            color: variables.$color-text-primary;
+        }
+        
+        &.bg-success {
+            background-color: variables.$color-success !important;
+        }
+        
+        &.bg-info {
+            background-color: variables.$color-info !important;
+        }
+    }
+    
+    // Filtros e busca
+    .filter-bar {
+        background-color: variables.$color-grey-200;
+        border-radius: 8px;
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 1px 4px variables.$color-black-10;
+        
+        .form-control {
+            border-color: variables.$color-light-border;
+            
+            &:focus {
+                border-color: variables.$color-primary;
+                box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.1);
+            }
+        }
+    }
+    
+    // Botões de ação
+    .btn-group {
+        .btn {
+            &.btn-outline-info {
+                color: variables.$color-info;
+                border-color: variables.$color-info;
+                
+                &:hover {
+                    background-color: variables.$color-info;
+                    color: variables.$color-white;
+                }
+            }
+            
+            &.btn-outline-primary {
+                color: variables.$color-primary;
+                border-color: variables.$color-primary;
+                
+                &:hover {
+                    background-color: variables.$color-primary;
+                    color: variables.$color-white;
+                }
+            }
+            
+            &.btn-outline-danger {
+                color: variables.$color-error;
+                border-color: variables.$color-error;
+                
+                &:hover {
+                    background-color: variables.$color-error;
+                    color: variables.$color-white;
+                }
+            }
+        }
+    }
+    
+    // Paginação
+    .pagination {
+        .page-item {
+            .page-link {
+                color: variables.$color-primary;
+                border-color: variables.$color-light-border;
+                
+                &:hover {
+                    background-color: variables.$color-bg-light-grey;
+                    border-color: variables.$color-primary;
+                }
+            }
+            
+            &.active .page-link {
+                background-color: variables.$color-primary;
+                border-color: variables.$color-primary;
+                color: variables.$color-white;
+            }
+        }
+    }
+}

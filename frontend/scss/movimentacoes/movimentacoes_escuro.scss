@@ -1,0 +1,124 @@
+@use '../variables';
+/**
+ * Movimentações - Tema Escuro
+ * Registros em modo escuro
+ */
+
+[data-theme="dark"] {
+    body.movimentacoes-page {
+        background-color: variables.$dark-bg;
+    }
+    
+    .movimentacoes-page {
+        // Navbar preta com borda branca
+        .navbar {
+            background: variables.$dark-surface !important;
+            border-bottom: 2px solid variables.$color-white;
+            box-shadow: 0 2px 8px variables.$color-black-50;
+        }
+        
+        .card-form {
+            background-color: variables.$dark-surface;
+            box-shadow: 0 2px 12px variables.$color-black-30;
+            
+            .card-header {
+                background: variables.$theme-primary-darkmode;
+                color: variables.$color-white;
+                border-bottom: 1px solid variables.$dark-border;
+                
+                h4 {
+                    color: variables.$color-white;
+                }
+            }
+            
+            .card-body {
+                color: variables.$dark-text-primary;
+            }
+        }
+        
+        .product-info {
+            background: variables.$dark-surface-alt;
+            border-color: variables.$dark-border;
+            
+            .info-row {
+                border-bottom-color: variables.$dark-border;
+                
+                strong {
+                    color: variables.$dark-text-primary;
+                }
+                
+                span {
+                    color: variables.$dark-text-secondary;
+                }
+            }
+        }
+        
+        .stock-indicator {
+            &.stock-ok {
+                background-color: rgba(76, 175, 80, 0.15);
+                border-color: #4CAF50;
+                color: #4CAF50;
+            }
+            
+            &.stock-baixo {
+                background-color: rgba(255, 193, 7, 0.15);
+                border-color: #FFC107;
+                color: #FFC107;
+            }
+            
+            &.stock-critico {
+                background-color: rgba(239, 83, 80, 0.15);
+                border-color: #EF5350;
+                color: #EF5350;
+            }
+        }
+        
+        .form-control, .form-select {
+            background-color: variables.$dark-surface-alt;
+            color: variables.$dark-text-primary;
+            border-color: variables.$dark-border;
+            
+            &:focus {
+                border-color: variables.$theme-primary-darkmode;
+                box-shadow: 0 0 0 3px variables.$color-primary-20;
+            }
+        }
+        
+        label {
+            color: variables.$dark-text-primary;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, variables.$theme-primary-darkmode 0%, variables.$theme-primary-darkmode-hover 100%);
+            box-shadow: 0 2px 8px variables.$color-primary-20;
+            
+            &:hover {
+                box-shadow: 0 4px 12px variables.$color-primary-40;
+            }
+        }
+        
+        .btn-secondary {
+            background-color: variables.$dark-surface-alt;
+            border-color: variables.$dark-border;
+            color: variables.$dark-text-primary;
+            
+            &:hover {
+                background-color: variables.$dark-surface;
+            }
+        }
+        
+        .breadcrumb {
+            .breadcrumb-item {
+                color: variables.$dark-text-secondary;
+                
+                a {
+                    color: variables.$theme-primary-darkmode;
+                }
+                
+                &.active {
+                    color: variables.$dark-text-primary;
+                }
+            }
+        }
+    }
+}

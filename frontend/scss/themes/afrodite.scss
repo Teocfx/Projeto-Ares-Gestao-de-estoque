@@ -1,0 +1,24 @@
+/**
+ * ============================================
+ * THEME AFRODITE - Deusa do Amor
+ * Paleta: Rosa/Roxo + Variações
+ * ============================================
+ */
+:root,
+[data-theme="afrodite"] {
+
+  --theme-primary: #ab47bc;
+  --theme-primary-hover: #8e24aa;
+  --theme-primary-light: #ba68c8;
+  --theme-primary-dark: #6a1b9a;
+  --theme-secondary: #9c27b0;
+  --theme-accent: #ce93d8;
+  [data-theme=dark] {
+    --theme-primary: #ce93d8;
+    --theme-primary-hover: #ba68c8;
+    --theme-primary-light: #e1bee7;
+    --theme-primary-dark: #ab47bc;
+    --theme-secondary: #ba68c8;
+    --theme-accent: #e1bee7;
+  }
+}

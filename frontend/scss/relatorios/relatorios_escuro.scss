@@ -1,0 +1,409 @@
+@use '../variables';
+/**
+ * Relatórios - Tema Escuro
+ * Central de relatórios em modo escuro
+ */
+
+[data-theme="dark"] {
+    body.relatorios-page {
+        background-color: variables.$dark-bg;
+    }
+    
+    .relatorios-page {
+        // Títulos principais
+        h2, h5, h6 {
+            color: variables.$color-white !important;
+            
+            i {
+                color: variables.$color-white !important;
+            }
+        }
+        
+        // Navbar preta com borda branca
+        .navbar {
+            background: variables.$dark-surface !important;
+            border-bottom: 2px solid variables.$color-white;
+            box-shadow: 0 2px 8px variables.$color-black-50;
+        }
+        
+        .report-card {
+            background-color: variables.$dark-surface;
+            border-color: variables.$dark-border;
+            box-shadow: 0 2px 8px variables.$color-black-30;
+            
+            &:hover {
+                box-shadow: 0 8px 24px variables.$color-black-50;
+                border-color: variables.$theme-primary-darkmode;
+            }
+            
+            h6 {
+                color: variables.$dark-text-primary;
+            }
+            
+            p {
+                color: variables.$dark-text-secondary;
+            }
+        }
+        
+        .card {
+            background-color: variables.$dark-surface;
+            box-shadow: 0 2px 12px variables.$color-black-30;
+            
+            .card-header {
+                border-bottom-color: variables.$dark-border;
+                
+                h6 {
+                    color: variables.$dark-text-primary;
+                }
+            }
+            
+            .card-body {
+                color: variables.$dark-text-primary;
+            }
+        }
+        
+        .stats-grid {
+            .stat-item {
+                .stat-value {
+                    color: variables.$theme-primary-darkmode;
+                }
+                
+                .stat-label {
+                    color: variables.$dark-text-secondary;
+                }
+            }
+        }
+        
+        .table {
+            color: variables.$dark-text-primary;
+            
+            thead {
+                background-color: variables.$dark-surface-alt;
+                
+                th {
+                    color: variables.$dark-text-primary;
+                }
+            }
+            
+            tbody {
+                tr:hover {
+                    background-color: variables.$dark-surface-alt;
+                }
+                
+                td {
+                    color: variables.$dark-text-primary;
+                }
+            }
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, variables.$theme-primary-darkmode 0%, variables.$theme-primary-darkmode-hover 100%);
+            box-shadow: 0 2px 8px variables.$color-primary-20;
+            
+            &:hover {
+                box-shadow: 0 4px 12px variables.$color-primary-40;
+            }
+        }
+        
+        .empty-state {
+            i, h5, p {
+                color: variables.$dark-text-secondary;
+            }
+        }
+    }
+    
+    // ========================================
+    // PÁGINA DE GERAÇÃO DE RELATÓRIOS - MODO ESCURO
+    // ========================================
+    
+    .relatorios-generate-page {
+        
+        // Card Dicas - Modo Escuro
+        .card-dicas {
+            background-color: variables.$dark-surface !important;
+            border-color: variables.$dark-border !important;
+            
+            &:hover {
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+            }
+            
+            .text-dicas-titulo {
+                color: variables.$dark-text-primary !important;
+            }
+            
+            .text-dicas-lista {
+                color: variables.$dark-text-secondary !important;
+                
+                li::marker {
+                    color: variables.$theme-primary-darkmode;
+                }
+            }
+        }
+        
+        // Card Relatórios Rápidos - Modo Escuro
+        .card-relatorios-rapidos {
+            background-color: variables.$dark-surface !important;
+            border-color: variables.$dark-border !important;
+            
+            .relatorio-rapido-item {
+                &:hover {
+                    background-color: variables.$dark-surface-alt !important;
+                }
+                
+                .fw-medium {
+                    color: variables.$dark-text-primary !important;
+                }
+                
+                .text-muted {
+                    color: variables.$dark-text-secondary !important;
+                }
+            }
+        }
+        
+        // Formulário - Modo Escuro
+        .form-label {
+            color: variables.$dark-text-primary !important;
+        }
+        
+        .form-control,
+        .form-select {
+            background-color: variables.$dark-surface-alt !important;
+            border-color: variables.$dark-border !important;
+            color: variables.$dark-text-primary !important;
+            
+            &:focus {
+                background-color: variables.$dark-surface-alt !important;
+                border-color: variables.$theme-primary-darkmode !important;
+                box-shadow: 0 0 0 0.25rem rgba(198, 40, 40, 0.25);
+            }
+            
+            &::placeholder {
+                color: variables.$dark-text-secondary !important;
+            }
+        }
+        
+        // Seções do formulário - Modo Escuro
+        .mb-4 > h6 {
+            color: variables.$dark-text-secondary !important;
+            border-bottom-color: variables.$dark-border !important;
+        }
+        
+        // Container de categorias - Modo Escuro
+        #selected-categories-container {
+            background-color: variables.$dark-surface-alt !important;
+            border-color: variables.$dark-border !important;
+            
+            &:focus-within {
+                border-color: variables.$theme-primary-darkmode !important;
+            }
+            
+            &:empty::before {
+                color: variables.$dark-text-secondary !important;
+            }
+        }
+        
+        // Badge de categoria - Modo Escuro
+        .dashboard-filter-tag {
+            background-color: rgba(198, 40, 40, 0.2) !important;
+            color: variables.$theme-primary-darkmode !important;
+            border-color: variables.$theme-primary-darkmode !important;
+        }
+        
+        // Tipos de relatório - Modo Escuro
+        .list-group-item {
+            background-color: variables.$dark-surface !important;
+            border-color: variables.$dark-border !important;
+            color: variables.$dark-text-primary !important;
+            
+            &:hover {
+                background-color: variables.$dark-surface-alt !important;
+            }
+            
+            h6 {
+                color: variables.$dark-text-primary !important;
+            }
+            
+            small {
+                color: variables.$dark-text-secondary !important;
+            }
+        }
+        
+        // Cards gerais - Modo Escuro
+        .card {
+            background-color: variables.$dark-surface !important;
+            border-color: variables.$dark-border !important;
+        }
+        
+        // Card header - Modo Escuro
+        .card-header {
+            background-color: transparent !important;
+            border-bottom-color: variables.$dark-border !important;
+            
+            h5, h6 {
+                color: variables.$dark-text-primary !important;
+            }
+        }
+        
+        // Card body - Modo Escuro
+        .card-body {
+            background-color: variables.$dark-surface !important;
+            color: variables.$dark-text-primary !important;
+        }
+        
+        // Textos gerais
+        p, span, div {
+            &.text-muted {
+                color: variables.$dark-text-secondary !important;
+            }
+        }
+        
+        // Botões - ajustes específicos para modo escuro
+        .btn {
+            &:hover {
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+            }
+        }
+    }
+    
+    // ========================================
+    // PÁGINA DE VENCIMENTOS - MODO ESCURO
+    // ========================================
+    
+    .relatorios-vencimentos-page {
+        background-color: variables.$dark-bg !important;
+        
+        // Cards de estatísticas
+        .card {
+            background-color: variables.$dark-surface !important;
+            border-color: variables.$dark-border !important;
+            
+            .card-body {
+                color: variables.$dark-text-primary !important;
+                
+                h6, .text-muted {
+                    color: variables.$color-white !important;
+                    opacity: 0.9;
+                }
+                
+                h3, h2, h1 {
+                    color: variables.$color-white !important;
+                }
+                
+                i {
+                    opacity: 0.9;
+                }
+            }
+        }
+        
+        // Tabelas
+        .table {
+            color: variables.$dark-text-primary !important;
+            
+            thead {
+                background-color: variables.$dark-surface-alt !important;
+                
+                th {
+                    color: variables.$color-white !important;
+                    border-bottom-color: variables.$dark-border !important;
+                }
+            }
+            
+            tbody {
+                tr {
+                    border-bottom-color: variables.$dark-border !important;
+                    
+                    &:hover {
+                        background-color: variables.$dark-surface-alt !important;
+                    }
+                    
+                    td {
+                        color: variables.$color-white !important;
+                        border-bottom-color: variables.$dark-border !important;
+                    }
+                    
+                    // Remover fundo amarelo das linhas table-warning
+                    &.table-warning, &.table-warning-light {
+                        background-color: variables.$dark-surface !important;
+                        
+                        td {
+                            color: variables.$color-grey-700 !important;
+                        }
+                        
+                        &:hover {
+                            background-color: variables.$dark-surface-alt !important;
+                        }
+                    }
+                    
+                    // Remover fundo vermelho das linhas table-danger
+                    &.table-danger, &.table-danger-light {
+                        background-color: variables.$dark-surface !important;
+                        
+                        td {
+                            color: variables.$color-white !important;
+                        }
+                        
+                        &:hover {
+                            background-color: variables.$dark-surface-alt !important;
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Badges
+        .badge {
+            &.bg-danger {
+                background-color: #EF5350 !important;
+                color: variables.$color-white !important;
+            }
+            
+            &.bg-warning {
+                background-color: #FFC107 !important;
+                color: variables.$dark-bg !important;
+            }
+            
+            &.bg-success {
+                background-color: #4CAF50 !important;
+                color: variables.$color-white !important;
+            }
+        }
+        
+        // Empty state
+        .text-center {
+            i {
+                opacity: 0.7;
+            }
+            
+            p.text-muted {
+                color: variables.$color-white !important;
+                opacity: 0.85;
+            }
+        }
+        
+        // Card headers coloridos - ajustar contraste
+        .card-header {
+            &.bg-danger {
+                background-color: #dc3545 !important;
+                
+                h5 {
+                    color: variables.$color-white !important;
+                }
+            }
+            
+            &.bg-warning {
+                background-color: #ffc107 !important;
+                
+                h5 {
+                    color: #212529 !important; // Texto escuro para contraste
+                }
+            }
+            
+            &.bg-danger.bg-opacity-75,
+            &.bg-warning.bg-opacity-75 {
+                h5 {
+                    color: #212529 !important; // Texto escuro para melhor contraste
+                }
+            }
+        }
+    }
+}

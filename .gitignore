@@ -1,0 +1,37 @@
+.DS_Store
+*.pyc
+*.log
+*.swp
+*.retry
+.env
+.idea
+.vscode
+*~
+/logs
+/data
+.~*
+common/CACHE
+/backend/gestaoestoque/local.py
+db.sqlite3
+node_modules
+venv
+.venv
+__pycache__
+.vagrant/
+/.vagrant/
+/Vagrantfile.local
+!.gitignore
+/static
+frontend/bundles/
+webpack-stats.json
+theme/static/
+frontend/sprite/sprite.png
+frontend/css/sprite.scss
+media/
+
+# Diretórios criados por testes
+test-media/
+test-static/
+
+# Configurações locais do desenvolvedor
+.github/copilot-local.md

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title|default:"Nova Movimentação" }} - Sistema ARES{% endblock %}
+
+{% block body_class %}movimentacoes-page{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Informações do Produto (dinâmicas via JS) -->
+            <div id="productInfo" class="card mb-4" style="display: none;">
+                <div class="card-body">
+                    <h6 class="card-title"><i class="bi bi-info-circle me-2"></i>Informações do Produto</h6>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <strong>Estoque Atual:</strong>
+                            <div id="currentStock" class="badge bg-primary">-</div>
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Estoque Mínimo:</strong>
+                            <div id="minStock">-</div>
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Status:</strong>
+                            <div id="stockStatus">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {% include 'include/form_layout.html' with form=form titulo=title subtitulo="Registre entradas, saídas ou ajustes de estoque" action="" method="post" btn_submit_text=submit_button_text btn_cancel_url=cancel_url %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    {# Scripts movidos para: frontend/js/movimentacoes/movimentacoes.js #}
+{% endblock %}

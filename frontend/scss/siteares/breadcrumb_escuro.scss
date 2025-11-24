@@ -1,0 +1,39 @@
+@use '../variables';
+
+/**
+ * Breadcrumb - Modo Escuro
+ * Navegação estrutural em tema escuro
+ */
+
+[data-theme="dark"] {
+    .breadcrumb-container {
+        background-color: variables.$dark-surface;
+        border-bottom: 1px solid variables.$dark-border;
+    }
+    
+    .breadcrumb {
+        .breadcrumb-item {
+            color: variables.$dark-text-secondary;
+            
+            + .breadcrumb-item::before {
+                color: variables.$dark-border;
+            }
+            
+            a {
+                color: variables.$theme-primary-darkmode;
+                
+                &:hover {
+                    color: variables.$theme-primary-darkmode-hover;
+                }
+                
+                &:focus-visible {
+                    outline-color: variables.$theme-primary-darkmode;
+                }
+            }
+            
+            &.active {
+                color: variables.$dark-text-primary;
+            }
+        }
+    }
+}

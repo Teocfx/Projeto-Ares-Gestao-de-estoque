@@ -1,0 +1,103 @@
+{% extends "relatorios/pdf/base.html" %}
+
+{% block content %}
+<!-- Estatísticas Gerais -->
+<div class="stats-box no-break">
+    <h3>Resumo do Estoque</h3>
+    <table style="width: 100%; margin-bottom: 0;">
+        <tr>
+            <td style="border: none;"><strong>Total de Produtos:</strong> {{ stats.total_products }}</td>
+            <td style="border: none;"><strong>Valor Total:</strong> R$ {{ stats.total_value|floatformat:2 }}</td>
+        </tr>
+        <tr>
+            <td style="border: none;"><strong>Produtos Críticos:</strong> <span class="text-danger">{{ stats.critical_count }}</span></td>
+            <td style="border: none;"><strong>Produtos em Baixa:</strong> <span class="text-warning">{{ stats.low_count }}</span></td>
+        </tr>
+    </table>
+</div>
+
+<!-- Gráfico de Status do Estoque -->
+<div class="chart-container no-break">
+    <div class="chart-title">📊 Distribuição por Status</div>
+    <div class="bar-chart">
+        {% if stats.total_products > 0 %}
+        {% widthratio stats.critical_count stats.total_products 100 as critical_percent %}
+        {% widthratio stats.low_count stats.total_products 100 as low_percent %}
+        {% endif %}
+        
+        <div class="bar-row">
+            <div class="bar-label">Críticos ({{ stats.critical_count }})</div>
+            <div class="bar-container">
+                <div class="bar-fill" style="width: {{ critical_percent }}%; background: linear-gradient(90deg, #dc3545 0%, #bd2130 100%);">
+                    {% if critical_percent > 10 %}
+                    {{ critical_percent }}%
+                    {% endif %}
+                </div>
+            </div>
+            <div style="margin-left: 10px; font-size: 9pt; width: 50px;">{{ critical_percent }}%</div>
+        </div>
+        
+        <div class="bar-row">
+            <div class="bar-label">Baixos ({{ stats.low_count }})</div>
+            <div class="bar-container">
+                <div class="bar-fill" style="width: {{ low_percent }}%; background: linear-gradient(90deg, #ffc107 0%, #e0a800 100%);">
+                    {% if low_percent > 10 %}
+                    {{ low_percent }}%
+                    {% endif %}
+                </div>
+            </div>
+            <div style="margin-left: 10px; font-size: 9pt; width: 50px;">{{ low_percent }}%</div>
+        </div>
+        
+        {% if stats.total_products > 0 %}
+        {% widthratio stats.ok_count stats.total_products 100 as ok_percent %}
+        <div class="bar-row">
+            <div class="bar-label">OK ({{ stats.ok_count }})</div>
+            <div class="bar-container">
+                <div class="bar-fill" style="width: {{ ok_percent }}%; background: linear-gradient(90deg, #28a745 0%, #218838 100%);">
+                    {% if ok_percent > 10 %}
+                    {{ ok_percent }}%
+                    {% endif %}
+                </div>
+            </div>
+            <div style="margin-left: 10px; font-size: 9pt; width: 50px;">{{ ok_percent }}%</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Listagem de Produtos -->
+<h3>Produtos em Estoque</h3>
+<table>
+    <thead>
+        <tr>
+            <th>SKU</th>
+            <th>Produto</th>
+            <th>Categoria</th>
+            <th style="text-align: center;">Estoque</th>
+            <th style="text-align: center;">Est. Mín.</th>
+            <th style="text-align: center;">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in products %}
+        <tr>
+            <td>{{ product.sku }}</td>
+            <td><strong>{{ product.name }}</strong></td>
+            <td>{{ product.category.name }}</td>
+            <td style="text-align: center;">{{ product.current_stock }} {{ product.unit.name }}</td>
+            <td style="text-align: center;">{{ product.min_stock }}</td>
+            <td style="text-align: center;">
+                {% if product.current_stock == 0 %}
+                    <span class="badge badge-danger">CRÍTICO</span>
+                {% elif product.current_stock <= product.min_stock %}
+                    <span class="badge badge-warning">BAIXO</span>
+                {% else %}
+                    <span class="badge badge-success">OK</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

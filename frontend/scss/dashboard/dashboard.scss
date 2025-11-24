@@ -1,0 +1,219 @@
+@use '../variables';
+/**
+ * Dashboard - Tema Padrão
+ * Página principal do sistema
+ */
+
+body.dashboard-page {
+    background-color: variables.$color-grey-300;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+// Card de boas-vindas com gradiente
+.bg-gradient-primary {
+    background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%) !important;
+    color: variables.$color-white !important;
+    
+    h1, h2, h3, h4, h5, h6, p, strong {
+        color: variables.$color-white !important;
+    }
+}
+
+.dashboard-page {
+    // Navbar
+    .navbar {
+        background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%);
+        box-shadow: 0 2px 8px variables.$color-black-10;
+        padding: 1rem 0;
+        z-index: 1021;
+        
+        .navbar-brand {
+            color: variables.$color-white;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .nav-link {
+            color: variables.$color-white;
+            opacity: 0.9;
+            transition: all 0.3s ease;
+            
+            &:hover, &.active {
+                color: variables.$color-white;
+                opacity: 1;
+                background-color: variables.$color-primary-12;
+                border-radius: 4px;
+            }
+        }
+    }
+    
+    // Cards gerais
+    .card {
+        background-color: variables.$color-white;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px variables.$color-black-10;
+        transition: all 0.3s ease;
+        
+        &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 20px variables.$color-black-20;
+        }
+        
+        .card-header {
+            background-color: transparent;
+            border-bottom: 1px solid variables.$color-light-border;
+            padding: 1.25rem;
+            
+            h6 {
+                color: variables.$color-text-primary;
+                font-weight: 600;
+                margin: 0;
+            }
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+    }
+    
+    // Cards de métricas
+    .metric-card {
+        background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-light 100%);
+        color: variables.$color-white;
+        border: none;
+        
+        .display-4 {
+            opacity: 0.9;
+        }
+        
+        &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px variables.$color-primary-40;
+        }
+    }
+    
+    // Cards de alerta
+    .alert-card {
+        border-left: 4px solid variables.$color-error;
+        
+        &.warning {
+            border-left-color: variables.$color-warning;
+        }
+        
+        &.success {
+            border-left-color: variables.$color-success;
+        }
+    }
+    
+    // Status do estoque
+    .stock-critical {
+        color: variables.$color-error;
+        font-weight: 700;
+        
+        .badge {
+            background-color: variables.$color-error;
+        }
+    }
+    
+    .stock-low {
+        color: variables.$color-warning;
+        font-weight: 700;
+        
+        .badge {
+            background-color: variables.$color-warning;
+        }
+    }
+    
+    .stock-ok {
+        color: variables.$color-success;
+        font-weight: 700;
+        
+        .badge {
+            background-color: variables.$color-success;
+        }
+    }
+    
+    // Tabelas
+    .table {
+        color: variables.$color-text-primary;
+        
+        thead {
+            background-color: variables.$color-grey-300;
+            
+            th {
+                color: variables.$color-text-primary;
+                font-weight: 600;
+                border-bottom: 2px solid variables.$color-light-border;
+            }
+        }
+        
+        tbody {
+            tr {
+                transition: background-color 0.2s ease;
+                
+                &:hover {
+                    background-color: variables.$color-bg-light-grey;
+                }
+            }
+            
+            td {
+                border-color: variables.$color-grey-300;
+            }
+        }
+    }
+    
+    // Botões
+    .btn-primary {
+        border: none;
+        box-shadow: 0 2px 8px variables.$color-primary-20;
+        transition: all 0.3s ease;
+        
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px variables.$color-primary-40;
+        }
+    }
+    
+    .btn-outline-primary {
+        color: variables.$color-primary;
+        border-color: variables.$color-primary;
+        
+        &:hover {
+            background-color: variables.$color-primary;
+            color: variables.$color-white;
+        }
+    }
+    
+    // Botões light (usado em cards com fundo escuro/vermelho)
+    .btn-light {
+        background-color: variables.$color-white;
+        color: variables.$color-grey-900;
+        border: none;
+        font-weight: 600;
+        box-shadow: 0 2px 8px variables.$color-black-20;
+        transition: all 0.3s ease;
+        
+        &:hover {
+            background-color: variables.$color-grey-100;
+            color: variables.$color-grey-900;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px variables.$color-black-30;
+        }
+    }
+    
+    .btn-outline-light {
+        color: variables.$color-white;
+        border-color: variables.$color-white;
+        background-color: transparent;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        
+        &:hover {
+            background-color: variables.$color-white;
+            color: variables.$color-primary;
+            border-color: variables.$color-white;
+            transform: translateY(-2px);
+        }
+    }
+}

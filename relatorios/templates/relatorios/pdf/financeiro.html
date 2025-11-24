@@ -1,0 +1,116 @@
+{% extends "relatorios/pdf/base.html" %}
+
+{% block content %}
+<!-- Estatísticas Gerais -->
+<div class="stats-box no-break">
+    <h3>Resumo Financeiro</h3>
+    <table style="width: 100%; margin-bottom: 0;">
+        <tbody>
+        <tr>
+            <td style="border: none;"><strong>Valor Total do Estoque:</strong> <span class="text-success">R$ {{ stats.total_value|floatformat:2 }}</span></td>
+            <td style="border: none;"><strong>Total de Produtos:</strong> {{ stats.total_products }}</td>
+        </tr>
+        <tr>
+            <td style="border: none;"><strong>Categorias Analisadas:</strong> {{ stats.total_categories }}</td>
+            <td style="border: none;"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Gráfico de Distribuição -->
+<div class="chart-container no-break">
+    <div class="chart-title">📊 Distribuição de Valor por Categoria</div>
+    <div class="bar-chart">
+        {% for data in categories_data %}
+        <div class="bar-row">
+            <div class="bar-label">{{ data.category.name }}</div>
+            <div class="bar-container">
+                {% widthratio data.total_value stats.total_value 100 as percentage %}
+                <div class="bar-fill" style="width: {{ percentage }}%;">
+                    {% if percentage > 10 %}
+                    R$ {{ data.total_value|floatformat:0 }}
+                    {% endif %}
+                </div>
+            </div>
+            <div style="margin-left: 10px; font-size: 9pt; width: 50px;">{{ percentage }}%</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Valor por Categoria -->
+<h3>Distribuição de Valor por Categoria</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Categoria</th>
+            <th style="text-align: center;">Produtos</th>
+            <th style="text-align: right;">Valor Total</th>
+            <th style="text-align: right;">% do Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for data in categories_data %}
+        <tr>
+            <td><strong>{{ data.category.name }}</strong></td>
+            <td style="text-align: center;">{{ data.products_count }}</td>
+            <td style="text-align: right;" class="text-success">R$ {{ data.total_value|floatformat:2 }}</td>
+            <td style="text-align: right;">
+                {% widthratio data.total_value stats.total_value 100 as percentage %}
+                {{ percentage }}%
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr style="background-color: #f5f5f5; font-weight: bold;">
+            <td>TOTAL GERAL</td>
+            <td style="text-align: center;">{{ stats.total_products }}</td>
+            <td style="text-align: right;" class="text-success">R$ {{ stats.total_value|floatformat:2 }}</td>
+            <td style="text-align: right;">100%</td>
+        </tr>
+    </tfoot>
+</table>
+
+<!-- Detalhamento por Categoria -->
+{% for data in categories_data %}
+<div class="page-break"></div>
+<h3>📦 {{ data.category.name }} - Detalhamento</h3>
+<table>
+    <thead>
+        <tr>
+            <th>SKU</th>
+            <th>Produto</th>
+            <th style="text-align: center;">Estoque</th>
+            <th style="text-align: right;">Preço Unit.</th>
+            <th style="text-align: right;">Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in data.products %}
+        <tr>
+            <td>{{ product.sku }}</td>
+            <td><strong>{{ product.name }}</strong></td>
+            <td style="text-align: center;">{{ product.current_stock }} {{ product.unit.name }}</td>
+            <td style="text-align: right;">R$ {{ product.unit_price|default:"0.00"|floatformat:2 }}</td>
+            <td style="text-align: right;" class="text-success">
+                {% widthratio product.current_stock 1 1 as stock_int %}
+                {% widthratio product.unit_price|default:"0" 1 1 as price_float %}
+                {% widthratio stock_int price_float 1 as product_total %}
+                R$ {{ product_total|floatformat:2 }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr style="background-color: #f5f5f5; font-weight: bold;">
+            <td colspan="2">Subtotal - {{ data.category.name }}</td>
+            <td style="text-align: center;">{{ data.products_count }} itens</td>
+            <td></td>
+            <td style="text-align: right;" class="text-success">R$ {{ data.total_value|floatformat:2 }}</td>
+        </tr>
+    </tfoot>
+</table>
+{% endfor %}
+{% endblock %}

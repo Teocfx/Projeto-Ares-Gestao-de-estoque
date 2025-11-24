@@ -1,0 +1,158 @@
+@use '../variables';
+/**
+ * Produtos - Tema Escuro
+ * Listagem e gerenciamento em modo escuro
+ */
+
+[data-theme="dark"] {
+    body.produtos-page {
+        background-color: variables.$dark-bg;
+    }
+    
+    .produtos-page {
+        // Título da página
+        h1, h2, h3 {
+            color: variables.$dark-text-primary !important;
+            
+            i {
+                color: variables.$theme-primary-darkmode !important;
+            }
+        }
+        
+        .text-muted {
+            color: variables.$dark-text-secondary !important;
+        }
+        
+        // Navbar preta com borda branca
+        .navbar {
+            background: variables.$dark-surface !important;
+            border-bottom: 2px solid variables.$color-white;
+            box-shadow: 0 2px 8px variables.$color-black-50;
+            
+            .navbar-brand {
+                color: variables.$color-white;
+            }
+            
+            .nav-link {
+                color: variables.$color-white;
+                
+                &:hover, &.active {
+                    color: variables.$color-white;
+                    background-color: variables.$color-black-30;
+                }
+            }
+        }
+        
+        .card {
+            background-color: variables.$dark-surface;
+            box-shadow: 0 2px 12px variables.$color-black-30;
+            
+            &:hover {
+                box-shadow: 0 4px 20px variables.$color-black-50;
+            }
+            
+            .card-header {
+                border-bottom-color: variables.$dark-border;
+                
+                h6 {
+                    color: variables.$dark-text-primary;
+                }
+            }
+            
+            .card-body {
+                color: variables.$dark-text-primary;
+            }
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, variables.$theme-primary-darkmode 0%, variables.$theme-primary-darkmode-hover 100%);
+            box-shadow: 0 2px 8px variables.$color-primary-20;
+            
+            &:hover {
+                box-shadow: 0 4px 12px variables.$color-primary-40;
+            }
+        }
+        
+        // Código SKU
+        code {
+            background-color: variables.$dark-surface-alt !important;
+            color: variables.$theme-primary-darkmode !important;
+            border: 1px solid variables.$dark-border;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+        
+        .table {
+            color: variables.$dark-text-primary;
+            
+            thead {
+                background-color: variables.$dark-surface-alt;
+                border-bottom: 2px solid variables.$dark-border;
+                
+                th {
+                    color: variables.$dark-text-primary !important;
+                    background-color: variables.$color-black;
+                    font-weight: 600;
+                    
+                    a {
+                        color: variables.$dark-text-primary !important;
+                        
+                        &:hover {
+                            color: variables.$theme-primary-darkmode !important;
+                        }
+                    }
+                }
+            }
+            
+            tbody {
+                tr:hover {
+                    background-color: variables.$dark-surface-alt;
+                }
+                
+                td {
+                    color: variables.$dark-text-primary;
+                }
+            }
+        }
+        
+        .filter-bar {
+            background-color: variables.$dark-surface;
+            box-shadow: 0 1px 4px variables.$color-black-30;
+            border: 1px solid variables.$dark-border;
+            
+            .form-control, .form-select {
+                background-color: variables.$dark-surface-alt !important;
+                color: variables.$dark-text-primary !important;
+                border-color: variables.$dark-border !important;
+                
+                &:focus {
+                    background-color: variables.$dark-surface-alt !important;
+                    border-color: variables.$theme-primary-darkmode !important;
+                    box-shadow: 0 0 0 3px variables.$color-primary-20 !important;
+                }
+                
+                option {
+                    background-color: variables.$dark-surface !important;
+                    color: variables.$dark-text-primary !important;
+                }
+            }
+        }
+        
+        .pagination {
+            .page-item .page-link {
+                background-color: variables.$dark-surface;
+                color: variables.$dark-text-primary;
+                border-color: variables.$dark-border;
+                
+                &:hover {
+                    background-color: variables.$dark-surface-alt;
+                }
+            }
+            
+            .page-item.active .page-link {
+                background-color: variables.$theme-primary-darkmode;
+                color: variables.$color-white;
+            }
+        }
+    }
+}

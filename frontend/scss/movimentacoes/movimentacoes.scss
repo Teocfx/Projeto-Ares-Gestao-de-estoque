@@ -1,0 +1,188 @@
+@use '../variables';
+/**
+ * Movimentações - Tema Padrão
+ * Registros de entrada e saída de estoque
+ */
+
+body.movimentacoes-page {
+    background-color: variables.$color-grey-300;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.movimentacoes-page {
+    // Navbar
+    .navbar {
+        background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%);
+        box-shadow: 0 2px 8px variables.$color-black-10;
+        z-index: 1021;
+    }
+    
+    // Formulário
+    .card-form {
+        background-color: variables.$color-white;
+        box-shadow: 0 2px 12px variables.$color-black-10;
+        border-radius: 12px;
+        
+        .card-header {
+            background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%);
+            color: variables.$color-white;
+            padding: 1.5rem;
+            border-radius: 12px 12px 0 0;
+            
+            h4 {
+                margin: 0;
+                font-weight: 600;
+            }
+        }
+        
+        .card-body {
+            padding: 2rem;
+        }
+    }
+    
+    // Informações do produto
+    .product-info {
+        background: variables.$color-bg-light-grey;
+        border: 2px solid variables.$color-light-border;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        
+        &.show {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid variables.$color-grey-300;
+            
+            &:last-child {
+                border-bottom: none;
+            }
+            
+            strong {
+                color: variables.$color-grey-900;
+            }
+            
+            span {
+                color: variables.$color-grey-700;
+            }
+        }
+    }
+    
+    // Indicadores de estoque
+    .stock-indicator {
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-weight: 700;
+        display: inline-block;
+        
+        &.stock-ok {
+            background-color: rgba(46, 125, 50, 0.1);
+            color: variables.$color-success;
+            border: 2px solid variables.$color-success;
+        }
+        
+        &.stock-baixo {
+            background-color: rgba(245, 124, 0, 0.1);
+            color: variables.$color-warning;
+            border: 2px solid variables.$color-warning;
+        }
+        
+        &.stock-critico {
+            background-color: rgba(198, 40, 40, 0.1);
+            color: variables.$color-error;
+            border: 2px solid variables.$color-error;
+        }
+    }
+    
+    // Formulário
+    .form-control, .form-select {
+        border: 2px solid variables.$color-light-border;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+        background-color: variables.$color-white;
+        color: variables.$color-grey-900;
+        
+        &:focus {
+            border-color: variables.$color-primary;
+            box-shadow: 0 0 0 3px variables.$color-primary-10;
+            outline: none;
+        }
+    }
+    
+    label {
+        color: variables.$color-grey-900;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    
+    // Botões
+    .btn-primary {
+        background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%);
+        border: none;
+        padding: 0.875rem 2rem;
+        font-weight: 600;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px variables.$color-primary-20;
+        transition: all 0.3s ease;
+        
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px variables.$color-primary-40;
+        }
+    }
+    
+    .btn-secondary {
+        background-color: variables.$color-grey-200;
+        color: variables.$color-grey-900;
+        border: 2px solid variables.$color-light-border;
+        padding: 0.875rem 2rem;
+        font-weight: 600;
+        border-radius: 8px;
+        
+        &:hover {
+            background-color: variables.$color-grey-300;
+        }
+    }
+    
+    // Breadcrumb
+    .breadcrumb {
+        background-color: transparent;
+        padding: 0.75rem 0;
+        
+        .breadcrumb-item {
+            color: variables.$color-grey-600;
+            
+            a {
+                color: variables.$color-primary;
+                text-decoration: none;
+                
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+            
+            &.active {
+                color: variables.$color-grey-900;
+            }
+        }
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

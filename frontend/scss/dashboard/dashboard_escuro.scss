@@ -1,0 +1,249 @@
+@use '../variables';
+/**
+ * Dashboard - Tema Escuro
+ * Página principal em modo escuro
+ */
+
+[data-theme="dark"] {
+    body.dashboard-page {
+        background-color: variables.$dark-bg;
+    }
+    
+    .dashboard-page {
+        // Força texto branco puro em TODOS os elementos
+        color: variables.$color-white !important;
+        
+        // Navbar preta com borda branca
+        .navbar {
+            background: variables.$dark-surface !important;
+            border-bottom: 2px solid variables.$color-white;
+            box-shadow: 0 2px 8px variables.$color-black-50;
+            
+            .navbar-brand {
+                color: variables.$color-white;
+            }
+            
+            .nav-link {
+                color: variables.$color-white;
+                
+                &:hover, &.active {
+                    color: variables.$color-white;
+                    background-color: variables.$color-black-30;
+                }
+            }
+        }
+        
+        // Card de boas-vindas (bg-gradient-primary) no tema escuro
+        .bg-gradient-primary {
+            background: variables.$dark-surface !important;
+            border: 2px solid variables.$color-white !important;
+            color: variables.$color-white !important;
+            
+            h1, h2, h3, h4, h5, h6, p, strong {
+                color: variables.$color-white !important;
+            }
+        }
+        
+        .card {
+            background-color: variables.$dark-surface;
+            box-shadow: 0 2px 12px variables.$color-black-30;
+            
+            &:hover {
+                box-shadow: 0 4px 20px variables.$color-black-50;
+            }
+            
+            .card-header {
+                border-bottom-color: variables.$dark-border;
+                
+                h6, .card-title, h5 {
+                    color: variables.$color-white !important;
+                }
+            }
+            
+            .card-body {
+                color: variables.$color-white !important;
+                
+                // TODOS os elementos de texto em branco
+                h1, h2, h3, h4, h5, h6, p, span, div, strong, b {
+                    color: variables.$color-white !important;
+                }
+                
+                // Títulos e labels
+                .text-xs, .text-uppercase, small {
+                    color: variables.$color-white !important;
+                }
+                
+                // Números grandes
+                .h5, .h4, .h3, .h2, .h1, .display-4, .display-6, .font-weight-bold, .fw-bold {
+                    color: variables.$color-white !important;
+                }
+                
+                // Cores de status
+                .text-primary {
+                    color: variables.$theme-primary-darkmode !important;
+                }
+                
+                .text-success {
+                    color: #4CAF50 !important;
+                }
+                
+                .text-warning {
+                    color: #FFC107 !important;
+                }
+                
+                .text-danger {
+                    color: #EF5350 !important;
+                }
+                
+                .text-muted, .text-gray-800 {
+                    color: variables.$color-white !important;
+                    opacity: 0.85;
+                }
+            }
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, variables.$theme-primary-darkmode 0%, variables.$theme-primary-darkmode-hover 100%);
+            
+            &:hover {
+                box-shadow: 0 8px 24px variables.$color-primary-40;
+            }
+        }
+        
+        .table {
+            color: variables.$color-white !important;
+            
+            thead {
+                background-color: variables.$dark-surface-alt;
+                
+                th {
+                    color: variables.$color-grey-900 !important;
+                }
+            }
+            
+            tbody {
+                tr {
+                    &:hover {
+                        background-color: variables.$dark-surface-alt;
+                    }
+                    
+                    td {
+                        color: variables.$color-white !important;
+                        border-bottom-color: variables.$dark-border !important;
+                    }
+                }
+            }
+        }
+        
+        .btn-primary {
+            box-shadow: 0 2px 8px variables.$color-primary-20;
+            
+            &:hover {
+                box-shadow: 0 4px 12px variables.$color-primary-40;
+            }
+        }
+        
+        // Botões light no tema escuro
+        .btn-light {
+            background-color: variables.$dark-surface-alt;
+            color: variables.$dark-text-primary;
+            border: 1px solid variables.$dark-border;
+            
+            &:hover {
+                background-color: variables.$dark-surface;
+                color: variables.$color-white !important;
+                border-color: variables.$color-white;
+            }
+        }
+        
+        .btn-outline-light {
+            color: variables.$color-white;
+            border-color: variables.$color-white;
+            background-color: transparent;
+            
+            &:hover {
+                background-color: variables.$color-white;
+                color: variables.$dark-bg;
+                border-color: variables.$color-white;
+            }
+        }
+        
+        // Botões outline no tema escuro
+        .btn-outline-primary {
+            color: variables.$theme-primary-darkmode;
+            border-color: variables.$theme-primary-darkmode;
+            
+            &:hover {
+                background-color: variables.$theme-primary-darkmode;
+                color: variables.$color-white !important;
+            }
+        }
+        
+        .btn-outline-warning {
+            color: #FFC107;
+            border-color: #FFC107;
+            
+            &:hover {
+                background-color: #FFC107;
+                color: variables.$dark-bg;
+            }
+        }
+        
+        .btn-outline-danger {
+            color: #EF5350;
+            border-color: #EF5350;
+            
+            &:hover {
+                background-color: #EF5350;
+                color: variables.$color-white !important;
+            }
+        }
+        
+        .btn-outline-secondary {
+            color: variables.$color-white !important;
+            border-color: variables.$dark-border;
+            
+            &:hover {
+                background-color: variables.$dark-surface-alt;
+                color: variables.$color-white !important;
+                border-color: variables.$dark-border;
+            }
+        }
+        
+        // List group items (produtos baixo/vencendo)
+        .list-group-item {
+            background-color: variables.$dark-surface !important;
+            border-color: variables.$dark-border !important;
+            color: variables.$color-white !important;
+            
+            h6, .fw-medium, strong {
+                color: variables.$color-white !important;
+            }
+            
+            small, .text-muted {
+                color: variables.$color-white !important;
+                opacity: 0.85;
+            }
+            
+            &:hover {
+                background-color: variables.$dark-surface-alt !important;
+            }
+        }
+        
+        // Cards de relatórios personalizados
+        .report-preset-card {
+            background-color: variables.$dark-surface !important;
+            
+            .card-body {
+                h6, .card-title, .fw-bold {
+                    color: variables.$color-white !important;
+                }
+                
+                p, .card-text, small {
+                    color: variables.$color-white !important;
+                    opacity: 0.85;
+                }
+            }
+        }
+    }
+}

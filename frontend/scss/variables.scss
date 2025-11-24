@@ -1,0 +1,354 @@
+/**
+ * ============================================
+ * VARIABLES.SCSS - Sistema de Temas e Variáveis
+ * ============================================
+ * 
+ * Estrutura:
+ * 1. Imports dos Temas (CSS Custom Properties)
+ * 2. Cores Fixas (Preto, Branco, Cinza, etc.)
+ * 3. Variáveis SCSS (Material Design)
+ * 4. Mixins responsivos
+ * 
+ * Temas Disponíveis:
+ * - Ares (Vermelho) - Guerra
+ * - Athena (Azul) - Sabedoria
+ * - Gaia (Verde) - Terra
+ * - Afrodite (Rosa/Roxo) - Amor
+ * - Zeus (Amarelo/Laranja) - Rei dos Deuses
+ */
+
+@use 'sass:math';
+
+/* ===================================
+   TEMAS DESABILITADOS
+   Sistema de temas será implementado no futuro
+   =================================== */
+
+// ============================================================
+// PRETO E BRANCO
+// ============================================================
+$color-white: #ffffff;
+$color-black: #000000;
+
+
+// ============================================================
+// OPACIDADES DE PRETO (Fixas)
+// ============================================================
+$color-black-10: #0000001A;
+$color-black-20: #00000033;
+$color-black-30: #0000004D;
+$color-black-40: #00000066;
+$color-black-50: #00000080;
+$color-black-60: #00000099;
+$color-black-70: #000000B3;
+$color-black-80: #000000CC;
+
+
+// ============================================================
+// ESCALA DE CINZA (Material Design - Fixos)
+// ============================================================
+$color-grey-50:  #F9F9F9;
+$color-grey-100: #f6f6f6;
+$color-grey-150: #f4f4f4;
+$color-grey-200: #eeeeee;
+$color-grey-210: #d9d9d9;
+$color-grey-220: #d3d3d3;
+$color-grey-300: #e0e0e0;
+$color-grey-400: #bdbdbd;
+$color-grey-410: #bebebe;
+$color-grey-500: #9e9e9e;
+$color-grey-600: #757575;
+$color-grey-700: #616161;
+$color-grey-800: #424242;
+$color-grey-900: #212121;
+
+
+// ============================================================
+// PRIMARY (Paleta Vermelha Oficial)
+// ============================================================
+$color-primary: #C8102E;
+$color-primary-dark: #9B0C23;
+$color-primary-darker: #78091B;
+
+$color-primary-active: #C8102E38; // versão com transparência
+$color-primary-hover: $color-primary-dark;    // coerente com dark
+
+// Opacidades do Primary (RGBA)
+$color-primary-05: rgba(200, 16, 46, 0.05);
+$color-primary-06: rgba(200, 16, 46, 0.06);
+$color-primary-07: rgba(200, 16, 46, 0.07);
+$color-primary-10: rgba(200, 16, 46, 0.1);
+$color-primary-12: rgba(200, 16, 46, 0.12);
+$color-primary-20: rgba(200, 16, 46, 0.2);
+$color-primary-30: rgba(200, 16, 46, 0.3);
+$color-primary-40: rgba(200, 16, 46, 0.4);
+$color-primary-50: rgba(200, 16, 46, 0.5);
+$color-primary-70: rgba(200, 16, 46, 0.7);
+
+$color-primary-light: #E74A5B;
+$color-primary-lighter: #F29BA6;
+
+$color-on-primary: #ffffff;
+
+
+// ============================================================
+// SECONDARY (Legado)
+// ============================================================
+$color-secondary: #FFC532;
+$color-secondary-dark: #E9A600;
+$color-secondary-darker: #B38600;
+
+$color-secondary-light: #FFE08A;
+$color-secondary-lighter: #FFF2C2;
+
+$color-secondary-contrast: #000000;
+
+
+// ============================================================
+// BACKGROUND & SURFACE (Legado)
+// ============================================================
+$color-background: #f5f5f5;
+$color-on-background: #000000;
+
+$color-surface: #ffffff;
+$color-on-surface: #000000;
+
+
+// ============================================================
+// ESTADOS SEMÂNTICOS (Legado)
+// ============================================================
+$color-error: #C8102E;
+$color-on-error: #ffffff;
+
+$color-success: #2E7D32;
+$color-on-success: #ffffff;
+
+$color-warning: #FFB300;
+$color-on-warning: #000000;
+
+$color-info: #0288D1;
+$color-on-info: #ffffff;
+
+
+// ============================================================
+// DARK THEME
+// ============================================================
+$dark-bg: #121212;
+$dark-surface: #1E1E1E;
+$dark-surface-alt: #2A2A2A;
+
+$dark-text-primary: #F5F5F5;
+$dark-text-secondary: #BDBDBD;
+$dark-border: #3A3A3A;
+
+// Dark Theme Variants
+$color-text-body-dark: #333333;
+$color-dark-theme-text: #F5F5F5;
+$color-dark-theme-text-secondary: #505050;
+$color-dark-theme-border: #333333; 
+$color-dark-theme-border-light: #B3B3B3;
+
+
+// Vermelho adaptado para dark mode
+$theme-primary-darkmode: #FF4D5E;
+$theme-primary-darkmode-hover: #FF6F7B;
+
+
+// ============================================================
+// INFORMAÇÕES DA EMPRESA
+// ============================================================
+$company-info-bg: linear-gradient(to right, #fdecee, #fff8f9); 
+$company-info-img-box-shadow: 22px 22px 0px #f7d7dc;
+$company-info-img-box-shadow-dark: 21px 21px 0px $color-black, 21px 21px 0px 1px $color-white;
+
+// Caixa elíptica
+$caixa-eliptica-box-shadow: linear-gradient(157.66deg, rgba(200, 16, 46, 0) 14.56%, rgba(200, 16, 46, 0.35) 148.92%);
+$caixa-eliptica-box-shadow-dark: 21px 21px 0px $color-black, 21px 21px 0px 1px $color-white;
+
+$caixa-eliptica-background-default: #F9D5DA; // Rosa pastel neutro
+$caixa-eliptica-background-default-dark: #0A0A0A;
+
+$shadow-offset: 28px;
+
+
+// ============================================================
+// LEGADO MATERIAL DESIGN / OUTROS
+// ============================================================
+$primary-color: $color-primary;
+$top-icons: invert(100%);
+$top-background-busca: #4e0f0f;
+
+$quick-access-color: rgb(155, 48, 48);
+$quick-access-hover-bg: #d4b3b3;
+
+
+// ============================================================
+// GRADIENTES 
+// ============================================================
+$color-gradient-inicio: $color-primary-dark;  
+$color-gradient-fim: $color-primary-darker;     
+
+
+
+// ============================================================
+// UIKit
+// ============================================================
+$global-link-color: #DA7D02;
+
+
+// ============================================================
+// CORES ESPECÍFICAS PARA COMPONENTES
+// ============================================================
+$color-dark-bg: #222;
+$color-dark-bg-alt: #3b3b3b;
+
+$color-light-blue: #E9A5AF;
+$color-light-bg: #F7F7FD;
+$color-light-bg-hover: #e6e6f1;
+$color-light-border: #f1f3f5;
+
+$color-dark-bg-alt: #3b3b3b;
+$color-dark-theme-bg: #222;
+$color-dark-theme-bg-secondary: #2a2a2a;
+$color-dark-theme-primary: #FF4D5E;
+$color-dark-theme-primary-hover: #FF6F7B;
+$color-dark-theme-text: #F5F5F5;
+$color-dark-theme-text-secondary: #505050;
+$color-dark-theme-border: #333333;
+$color-dark-theme-border-light: #B3B3B3;
+$color-dark-theme-text-muted: #777777;
+
+$color-timeline-secondary: #F3E6E8;
+
+$color-text-dark: #333;
+$color-text-darker: #343a40;
+$color-text-muted: #666666;
+
+$color-border-light: #a0a0a0;
+
+$color-bg-light-grey: #f8f9fa;
+$color-bg-table-header: #e9ecef;
+$color-text-table-header: #212121; // Correção para contraste
+
+// Badges admin
+$color-badge-mode-bg: #2196F3;
+$color-badge-size-bg: #4CAF50;
+
+// Cookie Consent
+$color-cookie-bg: #fff6f7;
+$color-cookie-secondary-bg: #f7e1e4;
+$color-cookie-secondary-hover-bg: #e8cdd2;
+
+$color-cookie-category-bg: #f5e2e5;
+$color-cookie-category-hover-bg: #e9c9ce;
+
+$color-cookie-overlay: rgba(255, 219, 219, 0.85); // Overlay do modal
+
+$color-cookie-toggle-readonly: #e5c9cf;
+$color-cookie-toggle-off: #d3a5ae;
+
+
+// Shadows
+$box-shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+
+// ============================================================
+// NAVBAR / LINKS
+// ============================================================
+$color-link-navbar: #dcb7b7;
+$color-link-navbar-hover: $color-white;
+
+$color-link-navbar-mobile: $color-grey-700;
+$color-link-navbar-hover-mobile: $color-grey-700;
+
+
+// ============================================================
+// FONTES / TAMANHOS
+// ============================================================
+$font-size-itens-menu: 20px;
+$font-size-itens-sub-menu: 20px;
+$font-size-small: 0.813rem; // 13px - usado em textos pequenos e descrições
+
+
+// ============================================================
+// FOOTER
+// ============================================================
+$footer-color: $color-primary;
+
+
+// ============================================================
+// OVERLAYS / OPACITIES
+// ============================================================
+$color-overlay-8: rgba(0, 0, 0, 0.08);
+$color-overlay-10: rgba(0, 0, 0, 0.1);
+$color-overlay-20: rgba(0, 0, 0, 0.2);
+$color-overlay-25: rgba(0, 0, 0, 0.25);
+$color-overlay-30: rgba(0, 0, 0, 0.3);
+$color-overlay-40: rgba(0, 0, 0, 0.4);
+$color-overlay-50: rgba(0, 0, 0, 0.5);
+$color-overlay-60: rgba(0, 0, 0, 0.6);
+
+
+// ============================================================
+// COMPONENTES DIVERSOS
+// ============================================================
+$color-title-redes-sociais: $color-primary;
+
+$color-agenda-column-border: $color-black-20;
+$color-agenda-column-shadow: $color-black-40;
+$color-agenda-column-btn: #b89494;
+
+// Shadows consolidados
+$color-warning-shadow-dark: rgba($color-warning, 0.3);
+$color-banner-shadow-hover: rgba(0, 0, 0, 0.15);
+
+$color-card-shadow-light: rgba(0, 0, 0, 0.1);
+$color-card-shadow: $color-black-10;
+$color-card-shadow-hover: #00000026;
+
+$swiper-background-color: $color-grey-220;
+$swiper-thumbs-background-color: #444;
+
+$border-radius-search: 36px;
+$border-radius-md: 0.5rem;
+$border-radius-lg: 0.75rem;
+
+$color-site-menu-navbar-collapse-border: $color-black-20;
+$color-site-menu-navbar-collapse-shadow: $color-black-30;
+
+$color-site-menu-nav-tools-border: #00000026;
+
+$background: $color-primary-hover;
+$color-text-primary: #333333;
+$color-text-secondary: #555555;
+
+// Aviso barra publicação (tema escuro)
+$color-aviso-barra-border-dark: #afafaf;
+$color-aviso-barra-shadow-dark: #afafaf;
+
+$widget-icon-size: 2rem;
+$widget-icon-bg: $primary-color !default;
+$widget-icon-bg-light: $color-white !default;
+$widget-title-color: $color-on-surface !default;
+
+$widget-border-radius: 9999px;
+$card-gap: 1rem !default;
+$aviso-aspect: math.div(1, 1);
+
+
+// ============================================================
+// MIXINS RESPONSIVOS
+// ============================================================
+@mixin media-breakpoint-down($breakpoint) {
+  @if $breakpoint == xs {
+    @media (max-width: 575.98px) { @content; }
+  } @else if $breakpoint == sm {
+    @media (max-width: 767.98px) { @content; }
+  } @else if $breakpoint == md {
+    @media (max-width: 991.98px) { @content; }
+  } @else if $breakpoint == lg {
+    @media (max-width: 1199.98px) { @content; }
+  } @else if $breakpoint == xl {
+    @media (max-width: 1399.98px) { @content; }
+  }
+}

@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+{% load static %}
+{% load block_tags %}
+
+{% block title %}Produtos - Sistema de Gestão de Estoque ARES{% endblock %}
+
+{% block body_class %}produtos-page{% endblock %}
+
+{% block page_header %}
+    <div class="page-titulo titulo-container mb-4">
+        <div class="container-fluid">
+            <div class="row align-items-center py-3">
+                <!-- Título e descrição -->
+                <div class="col-lg-8">
+                    <div class="page-titulo__content">
+                        <h1 class="page-titulo__title titulo-1 h2 mb-2 d-flex align-items-center">
+                            <i class="bi bi-box-seam me-2"></i>
+                            Produtos
+                        </h1>
+                        <p class="page-titulo__subtitle text-muted mb-1">
+                            Gerencie o catálogo de produtos
+                        </p>
+                    </div>
+                </div>
+                <!-- Ações (botões) -->
+                <div class="col-lg-4">
+                    <div class="page-titulo__actions d-flex justify-content-lg-end gap-2">
+                        <a href="{% url 'produtos:create' %}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-1"></i>Novo Produto
+                        </a>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'produtos:category_list' %}">
+                                    <i class="bi bi-tags me-2"></i>Categorias
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'produtos:unit_list' %}">
+                                    <i class="bi bi-rulers me-2"></i>Unidades
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'produtos:export' %}?{{ request.GET.urlencode }}">
+                                    <i class="bi bi-download me-2"></i>Exportar CSV
+                                </a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Cards de Estatísticas -->
+    <div class="row mb-4">
+        <!-- Total de Produtos -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total de Produtos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ stats.total_products|default:"0" }}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-box-seam display-4 text-primary opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estoque Crítico -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Estoque Crítico
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ stats.critical_stock|default:"0" }}
+                            </div>
+                            <small class="text-muted">Sem estoque</small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-exclamation-triangle-fill display-4 text-danger opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estoque Baixo -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Estoque Baixo
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ stats.low_stock|default:"0" }}
+                            </div>
+                            <small class="text-muted">Abaixo do mínimo</small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-exclamation-circle-fill display-4 text-warning opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Valor Total -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Valor Total
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                R$ {{ stats.total_stock_value|floatformat:2 }}
+                            </div>
+                            <small class="text-muted">Estoque atual</small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-currency-dollar display-4 text-success opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulário de busca e filtros -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3" id="search-form">
+                <div class="col-md-4">
+                    {{ search_form.search }}
+                </div>
+                <div class="col-md-2">
+                    {{ search_form.category }}
+                </div>
+                <div class="col-md-2">
+                    {{ search_form.unit }}
+                </div>
+                <div class="col-md-2">
+                    {{ search_form.stock_status }}
+                </div>
+                <div class="col-md-1">
+                    {{ search_form.active }}
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Ações em lote -->
+    <div class="card mb-4" id="bulk-actions" style="display: none;">
+        <div class="card-body">
+            <form id="bulk-action-form">
+                {% csrf_token %}
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label">Ação</label>
+                        <select name="action" class="form-select" required>
+                            <option value="">Selecione uma ação</option>
+                            <option value="activate">Ativar produtos</option>
+                            <option value="deactivate">Desativar produtos</option>
+                            <option value="update_min_stock">Atualizar estoque mínimo</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3" id="min-stock-field" style="display: none;">
+                        <label class="form-label">Novo Estoque Mínimo</label>
+                        <input type="number" name="new_min_stock" class="form-control" step="0.01" min="0">
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-warning me-2">Executar</button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="cancelBulkAction()">Cancelar</button>
+                    </div>
+                    <div class="col-md-3 text-end">
+                        <small class="text-muted">
+                            <span id="selected-count">0</span> produto(s) selecionado(s)
+                        </small>
+                    </div>
+                </div>
+                <input type="hidden" name="selected_products" id="selected-products">
+            </form>
+        </div>
+    </div>
+
+    <!-- Lista de produtos -->
+    <div class="card">
+        <div class="card-body">
+            {% if products %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th width="40">
+                                    <input type="checkbox" id="select-all" class="form-check-input">
+                                </th>
+                                <th>
+                                    <a href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}order_by=sku&direction={% if current_order == 'sku' and current_direction == 'asc' %}desc{% else %}asc{% endif %}" 
+                                       class="text-decoration-none text-dark">
+                                        Código
+                                        {% if current_order == 'sku' %}
+                                            <i class="bi bi-chevron-{% if current_direction == 'asc' %}up{% else %}down{% endif %}"></i>
+                                        {% endif %}
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}order_by=name&direction={% if current_order == 'name' and current_direction == 'asc' %}desc{% else %}asc{% endif %}" 
+                                       class="text-decoration-none text-dark">
+                                        Nome
+                                        {% if current_order == 'name' %}
+                                            <i class="bi bi-chevron-{% if current_direction == 'asc' %}up{% else %}down{% endif %}"></i>
+                                        {% endif %}
+                                    </a>
+                                </th>
+                                <th>Categoria</th>
+                                <th>Estoque</th>
+                                <th>Status</th>
+                                <th>Valor Unit.</th>
+                                <th>Validade</th>
+                                <th width="120">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in products %}
+                            <tr {% if not product.is_active %}class="text-muted"{% endif %}>
+                                <td>
+                                    <input type="checkbox" name="product_ids" value="{{ product.id }}" 
+                                           class="form-check-input product-checkbox">
+                                </td>
+                                <td>
+                                    <code class="text-primary">{{ product.sku }}</code>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div>
+                                            <strong>{{ product.name }}</strong>
+                                            {% if product.description %}
+                                                <br><small class="text-muted">{{ product.description|truncatechars:50 }}</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark">{{ product.category.name }}</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <span class="me-2">{{ product.current_stock|floatformat:2 }} {{ product.unit.name }}</span>
+                                        {% if product.min_stock > 0 %}
+                                            <small class="text-muted">(min: {{ product.min_stock|floatformat:2 }})</small>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if product.stock_status == 'CRITICO' %}
+                                        <span class="badge bg-danger">
+                                            <i class="bi bi-exclamation-triangle me-1"></i>Crítico
+                                        </span>
+                                    {% elif product.stock_status == 'BAIXO' %}
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="bi bi-exclamation-circle me-1"></i>Baixo
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check-circle me-1"></i>OK
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if product.unit_price %}
+                                        R$ {{ product.unit_price|floatformat:2 }}
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if product.expiry_date %}
+                                        {% if product.expiry_status == 'VENCIDO' %}
+                                            <span class="badge bg-danger">Vencido</span>
+                                        {% elif product.expiry_status == 'PROXIMO' %}
+                                            <span class="badge bg-warning text-dark">Próximo</span>
+                                        {% else %}
+                                            <span class="text-success">{{ product.expiry_date|date:"d/m/Y" }}</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        <a href="{% url 'produtos:detail' product.pk %}" class="btn btn-sm btn-info btn-action" title="Visualizar">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{% url 'produtos:update' product.pk %}" class="btn btn-sm btn-warning btn-action" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="{% url 'produtos:delete' product.pk %}" class="btn btn-sm btn-danger btn-action" title="Excluir">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Paginação -->
+                {% if is_paginated %}
+                    {% include 'include/pagination.html' with page_obj=page_obj show_info=True %}
+                {% endif %}
+
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-box display-1 text-muted"></i>
+                    <h4 class="text-muted mt-3">Nenhum produto encontrado</h4>
+                    <p class="text-muted">
+                        {% if request.GET.search or request.GET.category or request.GET.unit %}
+                            Tente ajustar os filtros de busca ou 
+                            <a href="{% url 'produtos:list' %}" class="text-decoration-none">limpar todos os filtros</a>
+                        {% else %}
+                            Comece adicionando seu primeiro produto
+                        {% endif %}
+                    </p>
+                    {% if not request.GET.search and not request.GET.category and not request.GET.unit %}
+                    <a href="{% url 'produtos:create' %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-2"></i>Adicionar Produto
+                    </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}

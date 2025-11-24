@@ -1,0 +1,427 @@
+/**
+ * ARES - Customizações CSS do Wagtail Admin
+ * Sistema de Gestão de Estoque
+ */
+
+/* ========================================
+   VARIÁVEIS E CORES
+   ======================================== */
+:root {
+    /* Cores principais ARES */
+    --ares-primary: #2c3e50;
+    --ares-primary-dark: #1a252f;
+    --ares-primary-light: #34495e;
+    
+    --ares-success: #27ae60;
+    --ares-success-dark: #229954;
+    --ares-success-light: #2ecc71;
+    
+    --ares-warning: #f39c12;
+    --ares-danger: #e74c3c;
+    --ares-info: #3498db;
+    
+    /* Tons de cinza */
+    --ares-gray-50: #f9f9f9;
+    --ares-gray-100: #f0f0f0;
+    --ares-gray-200: #e0e0e0;
+    --ares-gray-300: #d0d0d0;
+    --ares-gray-700: #555;
+    --ares-gray-900: #333;
+}
+
+
+/* ========================================
+   SIDEBAR E NAVEGAÇÃO
+   ======================================== */
+
+/* Sidebar principal */
+[data-wagtail-sidebar] {
+    background: linear-gradient(180deg, var(--ares-primary) 0%, var(--ares-primary-dark) 100%);
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Links do sidebar */
+[data-wagtail-sidebar] a {
+    color: rgba(255, 255, 255, 0.9);
+    transition: all 0.2s ease;
+}
+
+[data-wagtail-sidebar] a:hover {
+    background-color: var(--ares-primary-light);
+    color: #fff;
+    transform: translateX(2px);
+}
+
+/* Item ativo no menu */
+[data-wagtail-sidebar] .w-slim-sidebar__item--active a {
+    background-color: var(--ares-success);
+    color: #fff;
+    font-weight: 600;
+}
+
+/* Ícones do sidebar */
+[data-wagtail-sidebar] .icon {
+    opacity: 0.9;
+}
+
+[data-wagtail-sidebar] .w-slim-sidebar__item--active .icon {
+    opacity: 1;
+}
+
+
+/* ========================================
+   HEADER E BREADCRUMBS
+   ======================================== */
+
+.w-header {
+    background: #fff;
+    border-bottom: 3px solid var(--ares-primary);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.w-breadcrumbs a {
+    color: var(--ares-primary);
+}
+
+.w-breadcrumbs a:hover {
+    color: var(--ares-success);
+}
+
+
+/* ========================================
+   BOTÕES
+   ======================================== */
+
+/* Botão primário */
+.button.button-primary,
+.button-primary,
+button.button-primary,
+input[type="submit"].button-primary {
+    background-color: var(--ares-success);
+    border-color: var(--ares-success);
+    transition: all 0.2s ease;
+}
+
+.button.button-primary:hover,
+.button-primary:hover,
+button.button-primary:hover,
+input[type="submit"].button-primary:hover {
+    background-color: var(--ares-success-dark);
+    border-color: var(--ares-success-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+}
+
+/* Botão secundário */
+.button.button-secondary,
+.button-secondary {
+    background-color: var(--ares-primary);
+    border-color: var(--ares-primary);
+    color: #fff;
+}
+
+.button.button-secondary:hover,
+.button-secondary:hover {
+    background-color: var(--ares-primary-light);
+    border-color: var(--ares-primary-light);
+}
+
+/* Botão de perigo */
+.button.button-danger,
+.button-danger,
+.button.no {
+    background-color: var(--ares-danger);
+    border-color: var(--ares-danger);
+}
+
+.button.button-danger:hover,
+.button-danger:hover {
+    background-color: #c0392b;
+    border-color: #c0392b;
+}
+
+
+/* ========================================
+   CARDS E PAINÉIS
+   ======================================== */
+
+/* Cards do dashboard */
+.w-summary-card {
+    border-left: 4px solid var(--ares-primary);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.w-summary-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Painéis de conteúdo */
+.w-panel {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.w-panel__header {
+    background-color: var(--ares-gray-50);
+    border-bottom: 2px solid var(--ares-primary);
+}
+
+
+/* ========================================
+   TABELAS
+   ======================================== */
+
+/* Cabeçalho da tabela */
+.w-table thead th {
+    background-color: var(--ares-primary);
+    color: #fff;
+    font-weight: 600;
+}
+
+/* Linhas zebradas */
+.w-table tbody tr:nth-child(even) {
+    background-color: var(--ares-gray-50);
+}
+
+/* Hover nas linhas */
+.w-table tbody tr:hover {
+    background-color: var(--ares-gray-100);
+}
+
+
+/* ========================================
+   BADGES E STATUS
+   ======================================== */
+
+.w-status--primary,
+.w-badge--primary {
+    background-color: var(--ares-info);
+}
+
+.w-status--success,
+.w-badge--success {
+    background-color: var(--ares-success);
+}
+
+.w-status--warning,
+.w-badge--warning {
+    background-color: var(--ares-warning);
+}
+
+.w-status--danger,
+.w-badge--danger {
+    background-color: var(--ares-danger);
+}
+
+
+/* ========================================
+   FORMULÁRIOS
+   ======================================== */
+
+/* Campos de input */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+textarea,
+select {
+    border: 1px solid var(--ares-gray-300);
+    border-radius: 4px;
+    transition: border-color 0.2s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--ares-primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
+}
+
+/* Labels */
+label {
+    color: var(--ares-gray-900);
+    font-weight: 500;
+}
+
+/* Campos obrigatórios */
+.required label::after {
+    content: " *";
+    color: var(--ares-danger);
+}
+
+
+/* ========================================
+   MENSAGENS E ALERTAS
+   ======================================== */
+
+.messages .success {
+    background-color: var(--ares-success-light);
+    border-left: 4px solid var(--ares-success);
+}
+
+.messages .warning {
+    background-color: #fef5e7;
+    border-left: 4px solid var(--ares-warning);
+}
+
+.messages .error {
+    background-color: #fadbd8;
+    border-left: 4px solid var(--ares-danger);
+}
+
+.messages .info {
+    background-color: #d6eaf8;
+    border-left: 4px solid var(--ares-info);
+}
+
+
+/* ========================================
+   AÇÕES E LINKS
+   ======================================== */
+
+.w-action a,
+.listing a {
+    color: var(--ares-primary);
+    transition: color 0.2s ease;
+}
+
+.w-action a:hover,
+.listing a:hover {
+    color: var(--ares-success);
+}
+
+
+/* ========================================
+   PAGINAÇÃO
+   ======================================== */
+
+.pagination .current {
+    background-color: var(--ares-primary);
+    border-color: var(--ares-primary);
+}
+
+.pagination a:hover {
+    background-color: var(--ares-gray-100);
+}
+
+
+/* ========================================
+   BUSCA E FILTROS
+   ======================================== */
+
+.w-search-input {
+    border: 2px solid var(--ares-gray-300);
+    border-radius: 4px;
+}
+
+.w-search-input:focus {
+    border-color: var(--ares-primary);
+}
+
+
+/* ========================================
+   RESPONSIVIDADE
+   ======================================== */
+
+@media (max-width: 768px) {
+    [data-wagtail-sidebar] {
+        box-shadow: none;
+    }
+    
+    .w-header {
+        border-bottom-width: 2px;
+    }
+}
+
+
+/* ========================================
+   CUSTOMIZAÇÕES ESPECÍFICAS ARES
+   ======================================== */
+
+/* Dashboard de estoque */
+.ares-stock-status-critical {
+    color: var(--ares-danger);
+    font-weight: 700;
+}
+
+.ares-stock-status-low {
+    color: var(--ares-warning);
+    font-weight: 600;
+}
+
+.ares-stock-status-ok {
+    color: var(--ares-success);
+}
+
+/* Indicadores visuais */
+.ares-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.ares-indicator--critical {
+    background-color: var(--ares-danger);
+    box-shadow: 0 0 8px var(--ares-danger);
+}
+
+.ares-indicator--low {
+    background-color: var(--ares-warning);
+}
+
+.ares-indicator--ok {
+    background-color: var(--ares-success);
+}
+
+
+/* ========================================
+   ANIMAÇÕES
+   ======================================== */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.messages li {
+    animation: fadeIn 0.3s ease;
+}
+
+
+/* ========================================
+   ACESSIBILIDADE
+   ======================================== */
+
+/* Melhor contraste para links */
+a:focus {
+    outline: 2px solid var(--ares-primary);
+    outline-offset: 2px;
+}
+
+/* Skip links */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--ares-primary);
+    color: white;
+    padding: 8px;
+    text-decoration: none;
+    z-index: 100;
+}
+
+.skip-link:focus {
+    top: 0;
+}

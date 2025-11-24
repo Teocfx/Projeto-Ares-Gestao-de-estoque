@@ -1,0 +1,124 @@
+{% load static wagtailcore_tags wagtailuserbar %}
+{% load render_bundle from webpack_loader %}
+
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light" data-bs-theme="light">
+<head>
+    <meta charset="utf-8" />
+    <title>
+        {% block title %}
+        {% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %}
+        {% endblock %}
+        {% block title_suffix %}
+        {% wagtail_site as current_site %}
+        {% if current_site and current_site.site_name %}- {{ current_site.site_name }}{% endif %}
+        | {{ settings.core.SiteSettings.title_suffix }}
+        {% endblock %}
+    </title>
+
+    {% block branding_favicon %}
+        <link rel="shortcut icon" href="{% static 'img/favicon/favicon.ico' %}" />
+        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/favicon/apple-touch-icon.png' %}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon/favicon-32x32.png' %}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon/favicon-16x16.png' %}">
+        <link rel="manifest" href="{% static 'img/favicon/site.webmanifest' %}">
+    {% endblock %}
+
+    {% if page.search_description %}
+    <meta name="description" content="{{ page.search_description }}" />
+    {% endif %}
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    {# Cookie Consent Configuration - só adiciona se habilitado #}
+    {% if settings.core.SiteSettings.deve_exibir_cookies %}
+    <meta name="cookie-consent-config" content="enabled" data-has-analytics="{% if settings.core.SiteSettings.deve_exibir_cookies_analytics %}true{% else %}false{% endif %}" data-analytics-tag="{{ settings.core.SiteSettings.google_analytics_tag|default:'' }}">
+    {% endif %}
+
+    {# Force all links in the live preview panel to be opened in a new tab #}
+    {% if request.in_preview_panel %}
+    <base target="_blank">
+    {% endif %}
+
+    {# Global stylesheets #}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    {% block extra_css %}
+    {# Override this in templates to add extra stylesheets #}
+    {% endblock %}
+
+    {% render_bundle 'main' 'css' %}
+</head>
+
+<body class="tw:font-inter {% block body_class %}{% endblock %}">
+    {% wagtailuserbar %}
+
+    {# =========================== #}
+    {# CABEÇALHO E MENU PRINCIPAL  #}
+    {# =========================== #}
+    {% block header %}
+        {% include 'components/header.html' %}
+    {% endblock %}
+
+    {# =========================== #}
+    {# CONTEÚDO PRINCIPAL          #}
+    {# =========================== #}
+    <div id="site-conteudo-main">
+        
+        {# Breadcrumbs (navegação hierárquica) #}
+        {% block breadcrumbs %}
+            {% include 'components/breadcrumbs.html' %}
+        {% endblock %}
+        
+        {# Título da Página (opcional - cada página decide se usa) #}
+        {% block page_header %}
+            {# Templates filhos podem sobrescrever para adicionar título customizado #}
+        {% endblock %}
+        
+        {# Conteúdo Principal da Página #}
+        {% block content %}
+            {# Conteúdo específico de cada página #}
+        {% endblock %}
+    </div>
+
+    {# =========================== #}
+    {# RODAPÉ                      #}
+    {# =========================== #}
+    {% block footer %}
+        {% include 'components/footer.html' %}
+    {% endblock %}
+
+    {# Global javascript #}
+    {% render_bundle 'main' 'js' %}
+
+    {% block extra_js %}
+    {# Override this in templates to add extra javascript #}
+    {% endblock %}
+
+    {# Google Analytics - só carrega se configurado #}
+    {% if settings.core.SiteSettings.tem_google_analytics %}
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ settings.core.SiteSettings.google_analytics_tag }}"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '{{ settings.core.SiteSettings.google_analytics_tag }}');
+        </script>
+    {% endif %}
+
+    {# VLibras - Acessibilidade #}
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+</body>
+</html>
