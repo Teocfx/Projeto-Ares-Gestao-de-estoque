@@ -1,6 +1,6 @@
 // Ordem de importação: variáveis → mixins → temas → resto
-@use  './variables.scss';
-@use  './mixins' as mixins;
+@use './variables.scss';
+@use './mixins' as mixins;
 @use  './themes' as themes;
 @use  './sprite.scss';
 @use  './swiper.scss';
