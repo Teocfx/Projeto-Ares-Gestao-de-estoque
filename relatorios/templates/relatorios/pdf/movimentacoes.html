@@ -1,0 +1,55 @@
+{% extends "relatorios/pdf/base.html" %}
+
+{% block content %}
+<!-- Estatísticas -->
+<div class="stats-box no-break">
+    <h3>Resumo das Movimentações</h3>
+    <table style="width: 100%; margin-bottom: 0;">
+        <tbody>
+        <tr>
+            <td style="border: none;"><strong>Total de Movimentações:</strong> {{ stats.total_movements }}</td>
+            <td style="border: none;"><strong>Período:</strong> {{ current_filters.date_from }} a {{ current_filters.date_to }}</td>
+        </tr>
+        <tr>
+            <td style="border: none;"><strong>Entradas:</strong> <span class="text-success">{{ stats.entradas }}</span></td>
+            <td style="border: none;"><strong>Saídas:</strong> <span class="text-danger">{{ stats.saidas }}</span></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Listagem de Movimentações -->
+<h3>Movimentações Registradas</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Data</th>
+            <th>Tipo</th>
+            <th>Produto</th>
+            <th style="text-align: center;">Quantidade</th>
+            <th>Documento</th>
+            <th>Usuário</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for mov in movements %}
+        <tr>
+            <td>{{ mov.created_at|date:"d/m/Y H:i" }}</td>
+            <td>
+                {% if mov.type == "ENTRADA" %}
+                    <span class="text-success">⬆ ENTRADA</span>
+                {% elif mov.type == "SAIDA" %}
+                    <span class="text-danger">⬇ SAÍDA</span>
+                {% else %}
+                    <span class="text-warning">⚙ AJUSTE</span>
+                {% endif %}
+            </td>
+            <td><strong>{{ mov.product.name }}</strong></td>
+            <td style="text-align: center;">{{ mov.quantity }} {{ mov.product.unit.name }}</td>
+            <td>{{ mov.document|default:"-" }}</td>
+            <td>{{ mov.user.get_full_name|default:mov.user.username }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

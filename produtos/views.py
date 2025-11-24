@@ -18,6 +18,7 @@ from django.views.generic import (
 )
 from decimal import Decimal
 import json
+import csv
 
 from .models import Product, Category, Unit
 from .forms import (
@@ -450,3 +451,65 @@ def dashboard_products(request):
         'critical_products': list(critical_products),
         'low_stock_products': list(low_stock_products)
     })
+
+
+@login_required
+def export_products(request):
+    """Exportar produtos para CSV com filtros aplicados."""
+    from .forms import ProductSearchForm
+    
+    # Aplicar mesmos filtros da listagem
+    search_form = ProductSearchForm(request.GET)
+    queryset = Product.objects.filter(is_active=True).select_related('category', 'unit')
+    
+    if search_form.is_valid():
+        search = search_form.cleaned_data.get('search')
+        category = search_form.cleaned_data.get('category')
+        stock_status = search_form.cleaned_data.get('stock_status')
+        
+        if search:
+            queryset = queryset.filter(
+                Q(name__icontains=search) |
+                Q(sku__icontains=search) |
+                Q(description__icontains=search)
+            )
+        
+        if category:
+            queryset = queryset.filter(category=category)
+        
+        if stock_status == 'critical':
+            queryset = queryset.filter(current_stock=0)
+        elif stock_status == 'low':
+            queryset = queryset.filter(current_stock__gt=0, current_stock__lte=F('min_stock'))
+        elif stock_status == 'ok':
+            queryset = queryset.filter(current_stock__gt=F('min_stock'))
+    
+    # Criar resposta CSV
+    response = HttpResponse(content_type='text/csv; charset=utf-8')
+    response['Content-Disposition'] = 'attachment; filename="produtos_export.csv"'
+    response.write('\ufeff')  # BOM para Excel reconhecer UTF-8
+    
+    writer = csv.writer(response)
+    writer.writerow([
+        'SKU', 'Nome', 'Descrição', 'Categoria', 'Unidade',
+        'Estoque Atual', 'Estoque Mínimo', 'Preço Unitário', 
+        'Valor Total', 'Status', 'Validade'
+    ])
+    
+    for product in queryset:
+        total_value = product.current_stock * product.unit_price
+        writer.writerow([
+            product.sku,
+            product.name,
+            product.description,
+            product.category.name,
+            product.unit.name,
+            product.current_stock,
+            product.min_stock,
+            f'R$ {product.unit_price:.2f}',
+            f'R$ {total_value:.2f}',
+            product.stock_status,
+            product.expiry_date.strftime('%d/%m/%Y') if product.expiry_date else ''
+        ])
+    
+    return response

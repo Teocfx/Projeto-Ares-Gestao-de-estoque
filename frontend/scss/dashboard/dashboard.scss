@@ -165,7 +165,6 @@ body.dashboard-page {
     
     // Botões
     .btn-primary {
-        background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%);
         border: none;
         box-shadow: 0 2px 8px variables.$color-primary-20;
         transition: all 0.3s ease;

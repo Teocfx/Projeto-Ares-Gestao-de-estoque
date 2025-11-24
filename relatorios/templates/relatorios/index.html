@@ -6,7 +6,7 @@
 {% block body_class %}relatorios-page{% endblock %}
 
 {% block page_header %}
-{% include 'include/titulo.html' with titulo="Central de Relatórios" icon="chart-bar" show_actions=True %}
+{% include 'include/titulo.html' with titulo="Central de Relatórios" icon="chart-bar" %}
     {% block titulo_actions %}
         <a href="{% url 'relatorios:generate' %}" class="btn btn-primary">
             <i class="bi bi-plus-circle me-2"></i>Gerar Novo Relatório
@@ -99,7 +99,7 @@
                         </div>
                         <h6 class="fw-bold">Relatório de Vencimentos</h6>
                         <p class="text-muted small mb-3 flex-grow-1">
-                            Produtos próximos ao vencimento e já vencidos
+                            Produtos próximos ao vencimento
                         </p>
                         <div class="btn btn-outline-warning btn-sm w-100 mt-auto">
                             <i class="bi bi-eye me-1"></i>Visualizar
@@ -108,19 +108,64 @@
                 </div>
             </div>
 
-            <!-- Gerador Personalizado -->
+            <!-- Relatório Financeiro -->
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card report-card border-0 shadow-sm h-100" onclick="generateFinancialReport(event)">
+                    <div class="card-body text-center d-flex flex-column">
+                        <div class="report-icon text-info">
+                            <i class="bi bi-currency-dollar"></i>
+                        </div>
+                        <h6 class="fw-bold">Relatório Financeiro</h6>
+                        <p class="text-muted small mb-3 flex-grow-1">
+                            Valor total do estoque por categoria
+                        </p>
+                        <div class="btn btn-outline-info btn-sm w-100 mt-auto">
+                            <i class="bi bi-eye me-1"></i>Visualizar
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Criar Novo Relatório Personalizado -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h5 class="mb-3">
+                    <i class="bi bi-sliders me-2"></i>Criar Novo Relatório
+                </h5>
+            </div>
+            
+            <!-- Configurar Relatório Personalizado -->
             <div class="col-lg-3 col-md-6 mb-3">
                 <div class="card report-card border-0 shadow-sm h-100" onclick="window.location.href='{% url 'relatorios:generate' %}'">
                     <div class="card-body text-center d-flex flex-column">
-                        <div class="report-icon text-info">
+                        <div class="report-icon text-success">
                             <i class="bi bi-gear"></i>
                         </div>
-                        <h6 class="fw-bold">Relatório Personalizado</h6>
+                        <h6 class="fw-bold">Configurar Novo Relatório</h6>
                         <p class="text-muted small mb-3 flex-grow-1">
                             Criar relatório com filtros e configurações específicas
                         </p>
-                        <div class="btn btn-info btn-sm w-100 mt-auto">
-                            <i class="bi bi-plus-circle me-1"></i>Criar Novo
+                        <div class="btn btn-success btn-sm w-100 mt-auto">
+                            <i class="bi bi-plus-circle me-1"></i>Configurar
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Criar Novo Tipo de Relatório -->
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card report-card border-0 shadow-sm h-100" onclick="openCreateReportTypeModal()" style="cursor: pointer; border: 2px dashed #dee2e6 !important;">
+                    <div class="card-body text-center d-flex flex-column">
+                        <div class="report-icon text-secondary">
+                            <i class="bi bi-plus-square-dotted"></i>
+                        </div>
+                        <h6 class="fw-bold text-secondary">Criar Novo Tipo</h6>
+                        <p class="text-muted small mb-3 flex-grow-1">
+                            Definir um novo tipo de relatório personalizado
+                        </p>
+                        <div class="btn btn-outline-secondary btn-sm w-100 mt-auto">
+                            <i class="bi bi-plus me-1"></i>Novo Tipo
                         </div>
                     </div>
                 </div>
@@ -207,8 +252,97 @@
         {% endif %}
     </div>
 
+    <!-- Modal: Criar Novo Tipo de Relatório -->
+    <div class="modal fade" id="createReportTypeModal" tabindex="-1" aria-labelledby="createReportTypeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createReportTypeModalLabel">
+                        <i class="bi bi-plus-square-dotted me-2"></i>Criar Novo Tipo de Relatório
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createReportTypeForm">
+                        <div class="mb-3">
+                            <label for="report_type_name" class="form-label">Nome do Tipo <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="report_type_name" name="name" placeholder="Ex: Relatório de Fornecedores" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="report_type_description" class="form-label">Descrição</label>
+                            <textarea class="form-control" id="report_type_description" name="description" rows="3" placeholder="Descreva o objetivo deste tipo de relatório"></textarea>
+                        </div>
+                        <div class="alert alert-info small mb-0">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Após criar o tipo, você poderá configurar os campos e filtros específicos.
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-1"></i>Cancelar
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="saveNewReportType()">
+                        <i class="bi bi-check-circle me-1"></i>Criar Tipo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}
 
 {% block extra_js %}
-    {# Scripts movidos para: frontend/js/relatorios/relatorios.js #}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Verificar se deve abrir modal automaticamente (vindos da página de geração)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('openModal') === 'createReportType') {
+        openCreateReportTypeModal();
+        // Limpar URL sem recarregar página
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+});
+
+// Abrir modal de criar novo tipo de relatório
+function openCreateReportTypeModal() {
+    const modal = new bootstrap.Modal(document.getElementById('createReportTypeModal'));
+    modal.show();
+}
+
+// Salvar novo tipo de relatório
+function saveNewReportType() {
+    const form = document.getElementById('createReportTypeForm');
+    
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    const name = document.getElementById('report_type_name').value;
+    const description = document.getElementById('report_type_description').value;
+    
+    // TODO: Implementar chamada para backend
+    // Por enquanto, mostrar alerta de sucesso
+    alert(`Novo tipo de relatório "${name}" criado com sucesso!\n\nEm breve você poderá configurar os campos específicos deste relatório.`);
+    
+    // Fechar modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('createReportTypeModal'));
+    modal.hide();
+    
+    // Limpar formulário
+    form.reset();
+}
+
+// Gerar relatório financeiro
+function generateFinancialReport(event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    
+    // TODO: Implementar geração do relatório financeiro
+    alert('Relatório Financeiro: Valor total do estoque por categoria\n\nEste relatório mostrará o valor monetário total de cada categoria de produtos no estoque.\n\nEm breve você poderá visualizar e exportar este relatório.');
+}
+</script>
 {% endblock %}

@@ -32,4 +32,7 @@ urlpatterns = [
     path('api/bulk-action/', views.ProductBulkActionView.as_view(), name='bulk_action'),
     path('api/autocomplete/', views.product_autocomplete, name='autocomplete'),
     path('api/dashboard/', views.dashboard_products, name='dashboard_api'),
+    
+    # Exportação
+    path('exportar/', views.export_products, name='export'),
 ]

@@ -125,44 +125,35 @@ Não há dropdown aninhado para submenus.
             {% endif %}
           {% endfor %}
 
-            {% include 'include/perfil.html' with classes="nav-item site-menu-nav-login mt-3 d-lg-none" %}
+          <!-- ============================ PERFIL ============================ -->
+          {% include 'include/perfil.html' with classes="nav-item site-menu-nav-login d-lg-none" %}
 
-          <!-- ============================ TOOLS MOBILE ============================ -->
-          <li class="site-menu-nav-tools nav-item d-lg-none">
+          <!-- ============================ FERRAMENTAS ============================ -->
+          <li class="site-menu-nav-tools-divider nav-item d-lg-none">
             <hr class="dropdown-divider">
           </li>
 
           <!-- Acessibilidade -->
           <li class="site-menu-nav-tools nav-item d-lg-none">
-            <div>
-              <a id="theme-toggle-mobile" class="nav-link header-acessibilidade--contraste" href="#">
-                alto contraste
-              </a>
-            </div>
+            <a id="theme-toggle-mobile" class="site-menu-tool-link" href="#">
+              <i class="bi bi-circle-half me-2"></i>
+              Alto Contraste
+            </a>
           </li>
 
           <li class="site-menu-nav-tools nav-item d-lg-none">
-            <div>
-              <a
-                class="nav-link header-acessibilidade--vlibras"
-                href="https://www.vlibras.com.br/"
-                target="_blank">
-                vlibras
-              </a>
-            </div>
+            <a class="site-menu-tool-link" href="https://www.vlibras.com.br/" target="_blank">
+              <i class="bi bi-hand-index-thumb me-2"></i>
+              VLibras
+            </a>
           </li>
 
-          <!-- Tools -->
+          <!-- Tamanho da Fonte -->
           <li class="site-menu-nav-tools nav-item d-lg-none">
-            <div class="nav-link">
-              <div class="d-flex gap-2 justify-content-start">
-                <a class="header-acessibilidade--fonts tw:text-xl tw:font-bold"
-                  href="javascript:(function(){document.body.style.zoom = (parseFloat(document.body.style.zoom || 1) - 0.1)})()">A-</a>
-                <a class="header-acessibilidade--fonts tw:text-xl tw:font-bold"
-                  href="javascript:(function(){document.body.style.zoom = (parseFloat(document.body.style.zoom || 1) + 0.1)})()">A+</a>
-                <a class="header-acessibilidade--fonts tw:text-xl tw:font-bold"
-                  href="javascript:(function(){document.body.style.zoom = 1})()">A</a>
-              </div>
+            <div class="site-menu-tool-fonts-buttons">
+              <a class="site-menu-tool-font-btn" href="javascript:(function(){document.body.style.zoom = (parseFloat(document.body.style.zoom || 1) - 0.1)})()" aria-label="Diminuir fonte">A-</a>
+              <a class="site-menu-tool-font-btn" href="javascript:(function(){document.body.style.zoom = 1})()" aria-label="Resetar fonte">A</a>
+              <a class="site-menu-tool-font-btn" href="javascript:(function(){document.body.style.zoom = (parseFloat(document.body.style.zoom || 1) + 0.1)})()" aria-label="Aumentar fonte">A+</a>
             </div>
           </li>
         </ul>

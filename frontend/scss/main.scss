@@ -6,6 +6,7 @@
 @use  './swiper.scss';
 @use  './classes-personalizadas.scss';
 @use  './components.scss'; // Componentes reutilizáveis (titulo, card, pagination, etc.)
+@use  './print.scss'; // Estilos de impressão
 
 // Apps de Gestão de Estoque
 @use './core/index.scss' as core;
@@ -17,6 +18,7 @@
 @use './relatorios/index.scss' as relatorios;
 @use './search/index.scss' as search;
 @use './siteares/index.scss' as siteares;
+@use './home/index.scss' as home;
 @use './breadcrumb.scss';
 @use './breadcrumb_escuro.scss';
 @use './cookieconsent.scss';

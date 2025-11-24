@@ -11,6 +11,24 @@ body.login-page {
     align-items: center;
     justify-content: center;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+    .navbar {
+        z-index: 1021;
+        
+        // Garantir contraste no mobile
+        .navbar-brand,
+        .nav-link {
+            color: variables.$color-white !important;
+        }
+        
+        .navbar-toggler {
+            border-color: variables.$color-white;
+            
+            .navbar-toggler-icon {
+                filter: brightness(0) invert(1);
+            }
+        }
+    }
 }
 
 .login-container {

@@ -40,8 +40,8 @@
                                     <i class="bi bi-rulers me-2"></i>Unidades
                                 </a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#" onclick="exportProducts()">
-                                    <i class="bi bi-download me-2"></i>Exportar
+                                <li><a class="dropdown-item" href="{% url 'produtos:export' %}?{{ request.GET.urlencode }}">
+                                    <i class="bi bi-download me-2"></i>Exportar CSV
                                 </a></li>
                             </ul>
                         </div>
@@ -53,24 +53,96 @@
 {% endblock %}
 
 {% block content %}
-
-    <!-- Estatísticas rápidas -->
-    {% if stats %}
+<div class="container-fluid">
+    <!-- Cards de Estatísticas -->
     <div class="row mb-4">
-        <div class="col-md-3 mb-3">
-            {% include 'include/card.html' with titulo="Total de Produtos" conteudo="<h2>"|add:stats.total_products|add:"</h2>" variant="primary" icon="box" %}
+        <!-- Total de Produtos -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total de Produtos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ stats.total_products|default:"0" }}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-box-seam display-4 text-primary opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col-md-3 mb-3">
-            {% include 'include/card.html' with titulo="Estoque Crítico" conteudo="<h2>"|add:stats.critical_stock|add:"</h2>" variant="danger" icon="exclamation-triangle" %}
+
+        <!-- Estoque Crítico -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Estoque Crítico
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ stats.critical_stock|default:"0" }}
+                            </div>
+                            <small class="text-muted">Sem estoque</small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-exclamation-triangle-fill display-4 text-danger opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col-md-3 mb-3">
-            {% include 'include/card.html' with titulo="Estoque Baixo" conteudo="<h2>"|add:stats.low_stock|add:"</h2>" variant="warning" icon="exclamation-circle" %}
+
+        <!-- Estoque Baixo -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Estoque Baixo
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ stats.low_stock|default:"0" }}
+                            </div>
+                            <small class="text-muted">Abaixo do mínimo</small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-exclamation-circle-fill display-4 text-warning opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col-md-3 mb-3">
-            {% include 'include/card.html' with titulo="Valor Total" conteudo="<h2>R$ "|add:stats.total_stock_value|floatformat:2|add:"</h2>" variant="success" icon="currency-dollar" %}
+
+        <!-- Valor Total -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Valor Total
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                R$ {{ stats.total_stock_value|floatformat:2 }}
+                            </div>
+                            <small class="text-muted">Estoque atual</small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-currency-dollar display-4 text-success opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    {% endif %}
 
     <!-- Formulário de busca e filtros -->
     <div class="card mb-4">

@@ -1,0 +1,108 @@
+{% extends "relatorios/pdf/base.html" %}
+
+{% block content %}
+<!-- Estatísticas -->
+<div class="stats-box no-break">
+    <h3>Resumo de Vencimentos</h3>
+    <table style="width: 100%; margin-bottom: 0;">
+        <tbody>
+        <tr>
+            <td style="border: none;"><strong>Total de Produtos:</strong> {{ stats.total }}</td>
+            <td style="border: none;"><strong>Vencidos:</strong> <span class="text-danger">{{ stats.expired_count }}</span></td>
+        </tr>
+        <tr>
+            <td style="border: none;"><strong>Críticos (7 dias):</strong> <span class="text-warning">{{ stats.critical_count }}</span></td>
+            <td style="border: none;"><strong>Atenção (30 dias):</strong> {{ stats.warning_count }}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Produtos Vencidos -->
+{% if expired %}
+<h3 class="text-danger">⚠ Produtos Vencidos</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Produto</th>
+            <th>Categoria</th>
+            <th style="text-align: center;">Estoque</th>
+            <th style="text-align: center;">Vencimento</th>
+            <th style="text-align: center;">Dias Vencido</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in expired %}
+        <tr style="background-color: #ffebee;">
+            <td><strong>{{ product.name }}</strong></td>
+            <td>{{ product.category.name }}</td>
+            <td style="text-align: center;">{{ product.current_stock }} {{ product.unit.name }}</td>
+            <td style="text-align: center;">{{ product.expiry_date|date:"d/m/Y" }}</td>
+            <td style="text-align: center;" class="text-danger">
+                {{ product.expiry_date|timesince }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div class="page-break"></div>
+{% endif %}
+
+<!-- Produtos Críticos -->
+{% if critical %}
+<h3 class="text-warning">⚡ Produtos Críticos (Próximos 7 dias)</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Produto</th>
+            <th>Categoria</th>
+            <th style="text-align: center;">Estoque</th>
+            <th style="text-align: center;">Vencimento</th>
+            <th style="text-align: center;">Dias Restantes</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in critical %}
+        <tr style="background-color: #fff3e0;">
+            <td><strong>{{ product.name }}</strong></td>
+            <td>{{ product.category.name }}</td>
+            <td style="text-align: center;">{{ product.current_stock }} {{ product.unit.name }}</td>
+            <td style="text-align: center;">{{ product.expiry_date|date:"d/m/Y" }}</td>
+            <td style="text-align: center;" class="text-warning">
+                {{ product.expiry_date|timeuntil }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+<!-- Produtos em Atenção -->
+{% if warning %}
+<h3>📅 Produtos Requerem Atenção (Próximos 30 dias)</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Produto</th>
+            <th>Categoria</th>
+            <th style="text-align: center;">Estoque</th>
+            <th style="text-align: center;">Vencimento</th>
+            <th style="text-align: center;">Dias Restantes</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in warning %}
+        <tr>
+            <td><strong>{{ product.name }}</strong></td>
+            <td>{{ product.category.name }}</td>
+            <td style="text-align: center;">{{ product.current_stock }} {{ product.unit.name }}</td>
+            <td style="text-align: center;">{{ product.expiry_date|date:"d/m/Y" }}</td>
+            <td style="text-align: center;">
+                {{ product.expiry_date|timeuntil }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}
