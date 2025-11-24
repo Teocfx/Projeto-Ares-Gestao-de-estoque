@@ -479,11 +479,17 @@ def download_estoque_pdf(request):
     
     # Estatísticas
     total_value = sum(float(p.current_stock) * float(getattr(p, 'unit_price', 0) or 0) for p in products)
+    total_products = products.count()
+    critical_count = products.filter(current_stock=0).count()
+    low_count = products.filter(current_stock__gt=0, current_stock__lte=F('min_stock')).count()
+    ok_count = total_products - critical_count - low_count
+    
     stats = {
-        'total_products': products.count(),
+        'total_products': total_products,
         'total_value': total_value,
-        'critical_count': products.filter(current_stock=0).count(),
-        'low_count': products.filter(current_stock__gt=0, current_stock__lte=F('min_stock')).count(),
+        'critical_count': critical_count,
+        'low_count': low_count,
+        'ok_count': ok_count,
     }
     
     # Gerar PDF

@@ -18,6 +18,52 @@
     </table>
 </div>
 
+<!-- Gráfico de Urgência de Vencimentos -->
+<div class="chart-container no-break">
+    <div class="chart-title">📊 Distribuição por Urgência</div>
+    <div class="bar-chart">
+        {% widthratio stats.expired_count stats.total 100 as expired_percent %}
+        {% widthratio stats.critical_count stats.total 100 as critical_percent %}
+        {% widthratio stats.warning_count stats.total 100 as warning_percent %}
+        
+        <div class="bar-row">
+            <div class="bar-label">Vencidos ({{ stats.expired_count }})</div>
+            <div class="bar-container">
+                <div class="bar-fill" style="width: {{ expired_percent }}%; background: linear-gradient(90deg, #dc3545 0%, #bd2130 100%);">
+                    {% if expired_percent > 10 %}
+                    {{ expired_percent }}%
+                    {% endif %}
+                </div>
+            </div>
+            <div style="margin-left: 10px; font-size: 9pt; width: 50px;">{{ expired_percent }}%</div>
+        </div>
+        
+        <div class="bar-row">
+            <div class="bar-label">Críticos - 7 dias ({{ stats.critical_count }})</div>
+            <div class="bar-container">
+                <div class="bar-fill" style="width: {{ critical_percent }}%; background: linear-gradient(90deg, #fd7e14 0%, #e8590c 100%);">
+                    {% if critical_percent > 10 %}
+                    {{ critical_percent }}%
+                    {% endif %}
+                </div>
+            </div>
+            <div style="margin-left: 10px; font-size: 9pt; width: 50px;">{{ critical_percent }}%</div>
+        </div>
+        
+        <div class="bar-row">
+            <div class="bar-label">Atenção - 30 dias ({{ stats.warning_count }})</div>
+            <div class="bar-container">
+                <div class="bar-fill" style="width: {{ warning_percent }}%; background: linear-gradient(90deg, #ffc107 0%, #e0a800 100%);">
+                    {% if warning_percent > 10 %}
+                    {{ warning_percent }}%
+                    {% endif %}
+                </div>
+            </div>
+            <div style="margin-left: 10px; font-size: 9pt; width: 50px;">{{ warning_percent }}%</div>
+        </div>
+    </div>
+</div>
+
 <!-- Produtos Vencidos -->
 {% if expired %}
 <h3 class="text-danger">⚠ Produtos Vencidos</h3>
