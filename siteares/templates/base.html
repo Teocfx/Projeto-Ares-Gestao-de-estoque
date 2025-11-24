@@ -55,14 +55,40 @@
 <body class="tw:font-inter {% block body_class %}{% endblock %}">
     {% wagtailuserbar %}
 
-    {% include 'header.html' %}
+    {# =========================== #}
+    {# CABEÇALHO E MENU PRINCIPAL  #}
+    {# =========================== #}
+    {% block header %}
+        {% include 'components/header.html' %}
+    {% endblock %}
 
+    {# =========================== #}
+    {# CONTEÚDO PRINCIPAL          #}
+    {# =========================== #}
     <div id="site-conteudo-main">
-        {% include 'include/breadcrumb.html' %}
-        {% block content %}{% endblock %}
+        
+        {# Breadcrumbs (navegação hierárquica) #}
+        {% block breadcrumbs %}
+            {% include 'components/breadcrumbs.html' %}
+        {% endblock %}
+        
+        {# Título da Página (opcional - cada página decide se usa) #}
+        {% block page_header %}
+            {# Templates filhos podem sobrescrever para adicionar título customizado #}
+        {% endblock %}
+        
+        {# Conteúdo Principal da Página #}
+        {% block content %}
+            {# Conteúdo específico de cada página #}
+        {% endblock %}
     </div>
 
-    {% include 'footer.html' %}
+    {# =========================== #}
+    {# RODAPÉ                      #}
+    {# =========================== #}
+    {% block footer %}
+        {% include 'components/footer.html' %}
+    {% endblock %}
 
     {# Global javascript #}
     {% render_bundle 'main' 'js' %}
@@ -83,6 +109,7 @@
         </script>
     {% endif %}
 
+    {# VLibras - Acessibilidade #}
     <div vw class="enabled">
         <div vw-access-button class="active"></div>
         <div vw-plugin-wrapper>

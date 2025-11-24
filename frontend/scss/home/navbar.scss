@@ -276,10 +276,12 @@ a {
   @media (max-width: 992px) {
     background: variables.$color-primary !important;
     color: variables.$color-white !important;
-    padding: 12px 16px 12px 12px !important;
+    padding: 14px 16px !important;
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
+    border-radius: 4px;
+    
     &::after {
       display: inline-block !important;
       flex-shrink: 0;
@@ -337,15 +339,18 @@ a {
 .site-menu-navbar-nav {
   @media (max-width: 992px) {
     &.navbar-nav {
-      padding: 12px 16px !important;
+      padding: 16px !important;
+      
       .nav-link {
         &.dropdown-toggle {
           background: variables.$color-primary;
           color: variables.$color-white;
-          padding: 12px 16px 12px 12px !important;
+          padding: 14px 16px !important;
+          border-radius: 4px;
         }
-        margin-bottom: 2px !important;
+        margin-bottom: 8px !important;
       }
+      
       .nav-link.active,
       .nav-link.show {
         color: variables.$color-link-navbar !important;
@@ -512,24 +517,191 @@ a {
   @media (max-width: 992px) {
     .nav-link {
       padding: 12px 16px !important;
-    }
       font-size: 14px;
       letter-spacing: 0.5px;
     }
   }
 }
 
-// Perfil no mobile
+// Perfil no mobile - integrado ao menu
 .site-menu-nav-login {
   @media (max-width: 992px) {
-    padding: 12px 16px;
-    background-color: variables.$color-grey-100;
-    border-radius: 8px;
-    margin: 0 16px 12px 16px;
+    padding: 0 16px;
+    margin: 16px 0;
+    list-style: none;
     
-    .nav-link {
-      color: variables.$color-grey-900 !important;
+    // Container do dropdown
+    .dropdown {
+      width: 100%;
+    }
+    
+    // Estilo consistente com os links do menu
+    .dropdown-toggle {
+      color: variables.$color-white !important;
+      padding: 14px 16px;
+      border-radius: 4px;
+      background: variables.$color-primary;
+      transition: all 0.2s ease;
+      width: 100%;
+      
+      &:hover {
+        background: darken(variables.$color-primary, 5%);
+      }
+      
+      // Setinha do dropdown
+      &::after {
+        border-top-color: white !important;
+      }
+    }
+    
+    .header-user-icon-wrapper {
+      width: 32px;
+      height: 32px;
+      border: 2px solid white;
+      background-color: transparent;
+    }
+    
+    .header-user-icon {
+      fill: white;
+      width: 18px;
+      height: 18px;
+    }
+    
+    .header-user-text {
+      color: white !important;
       font-weight: 500;
+      font-size: 14px;
+    }
+    
+    // Dropdown menu no mobile
+    .dropdown-menu {
+      width: 100%;
+      margin-top: 8px;
+    }
+    
+    // Alinhar ícones e textos no dropdown - alinhamento perfeito
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 16px;
+      gap: 12px;
+      
+      i {
+        width: 18px;
+        min-width: 18px;
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+    
+    // Garantir que o form do logout também tenha alinhamento
+    form {
+      width: 100%;
+      margin: 0;
+      
+      button.dropdown-item {
+        width: 100%;
+        text-align: left;
+        border: none;
+        background: none;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        
+        i {
+          width: 18px;
+          min-width: 18px;
+          flex-shrink: 0;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+    }
+  }
+}
+
+// Ferramentas de acessibilidade - estilo consistente
+.site-menu-nav-tools {
+  @media (max-width: 992px) {
+    padding: 0 16px;
+    list-style: none;
+    margin-bottom: 8px;
+  }
+}
+
+.site-menu-nav-tools-divider {
+  @media (max-width: 992px) {
+    padding: 0 16px;
+    margin: 16px 0;
+    
+    hr {
+      margin: 0;
+      opacity: 0.3;
+    }
+  }
+}
+
+// Links de ferramentas
+.site-menu-tool-link {
+  @media (max-width: 992px) {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    color: variables.$color-primary;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 500;
+    
+    &:hover {
+      background-color: variables.$color-grey-100;
+      color: darken(variables.$color-primary, 10%);
+    }
+    
+    i {
+      font-size: 16px;
+    }
+  }
+}
+
+// Botões de fonte - diretamente lado a lado
+.site-menu-tool-fonts-buttons {
+  @media (max-width: 992px) {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    padding: 0 16px;
+    width: 100%;
+  }
+}
+
+.site-menu-tool-font-btn {
+  @media (max-width: 992px) {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 8px;
+    background-color: variables.$color-white;
+    color: variables.$color-primary;
+    border: 2px solid variables.$color-primary;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    
+    &:hover {
+      background-color: variables.$color-primary;
+      color: variables.$color-white;
+      border-color: variables.$color-primary;
+      transform: translateY(-1px);
     }
   }
 }
@@ -543,9 +715,21 @@ a {
   padding: 0px 16px 20px 16px;
   
   .navbar-brand-mobile {
-    background-color: variables.$color-white;
+    // Remover background branco - logo precisa ser branca para contrastar com fundo vermelho
     padding: 4px 12px;
-    border-radius: 8px;
+    
+    // Filtro para deixar a logo SVG BRANCA no fundo vermelho do mobile
+    img {
+      filter: brightness(0) invert(1);
+    }
+  }
+}
+
+// Ajustes de contraste no mobile (apenas na área do toggle)
+@media (max-width: 991.98px) {
+  .site-menu-navbar-toggler-brand {
+    // Apenas a área do hambúrguer e logo tem fundo vermelho
+    // O perfil fica dentro do menu collapse então segue o estilo normal
   }
 }
 

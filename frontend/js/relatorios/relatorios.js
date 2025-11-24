@@ -4,16 +4,6 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    const reportCards = document.querySelectorAll('.report-card');
-    
-    // Adicionar efeitos visuais nos cards
-    reportCards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.borderColor = 'var(--primary-color)';
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            this.style.borderColor = '';
-        });
-    });
+    // Cards de relatório já possuem efeitos visuais definidos via CSS
+    // Remover manipulação inline de estilos para melhor separação de responsabilidades
 });

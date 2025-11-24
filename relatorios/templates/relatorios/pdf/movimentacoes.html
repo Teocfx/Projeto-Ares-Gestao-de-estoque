@@ -1,0 +1,101 @@
+{% extends "relatorios/pdf/base.html" %}
+
+{% block content %}
+<!-- Estatísticas -->
+<div class="stats-box no-break">
+    <h3>Resumo das Movimentações</h3>
+    <table style="width: 100%; margin-bottom: 0;">
+        <tbody>
+        <tr>
+            <td style="border: none;"><strong>Total de Movimentações:</strong> {{ stats.total_movements }}</td>
+            <td style="border: none;"><strong>Período:</strong> {{ current_filters.date_from }} a {{ current_filters.date_to }}</td>
+        </tr>
+        <tr>
+            <td style="border: none;"><strong>Entradas:</strong> <span class="text-success">{{ stats.entradas }}</span></td>
+            <td style="border: none;"><strong>Saídas:</strong> <span class="text-danger">{{ stats.saidas }}</span></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Gráfico de Tipos de Movimentação -->
+<div class="chart-container no-break">
+    <div class="chart-title">📊 Distribuição por Tipo de Movimentação</div>
+    <div class="bar-chart">
+        {% widthratio stats.entradas stats.total_movements 100 as entrada_percent %}
+        {% widthratio stats.saidas stats.total_movements 100 as saida_percent %}
+        {% widthratio stats.ajustes stats.total_movements 100 as ajuste_percent %}
+        
+        <div class="bar-row">
+            <div class="bar-label">Entradas ({{ stats.entradas }})</div>
+            <div class="bar-container">
+                <div class="bar-fill" style="width: {{ entrada_percent }}%; background: linear-gradient(90deg, #28a745 0%, #218838 100%);">
+                    {% if entrada_percent > 10 %}
+                    {{ entrada_percent }}%
+                    {% endif %}
+                </div>
+            </div>
+            <div style="margin-left: 10px; font-size: 9pt; width: 50px;">{{ entrada_percent }}%</div>
+        </div>
+        
+        <div class="bar-row">
+            <div class="bar-label">Saídas ({{ stats.saidas }})</div>
+            <div class="bar-container">
+                <div class="bar-fill" style="width: {{ saida_percent }}%; background: linear-gradient(90deg, #dc3545 0%, #bd2130 100%);">
+                    {% if saida_percent > 10 %}
+                    {{ saida_percent }}%
+                    {% endif %}
+                </div>
+            </div>
+            <div style="margin-left: 10px; font-size: 9pt; width: 50px;">{{ saida_percent }}%</div>
+        </div>
+        
+        <div class="bar-row">
+            <div class="bar-label">Ajustes ({{ stats.ajustes }})</div>
+            <div class="bar-container">
+                <div class="bar-fill" style="width: {{ ajuste_percent }}%; background: linear-gradient(90deg, #ffc107 0%, #e0a800 100%);">
+                    {% if ajuste_percent > 10 %}
+                    {{ ajuste_percent }}%
+                    {% endif %}
+                </div>
+            </div>
+            <div style="margin-left: 10px; font-size: 9pt; width: 50px;">{{ ajuste_percent }}%</div>
+        </div>
+    </div>
+</div>
+
+<!-- Listagem de Movimentações -->
+<h3>Movimentações Registradas</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Data</th>
+            <th>Tipo</th>
+            <th>Produto</th>
+            <th style="text-align: center;">Quantidade</th>
+            <th>Documento</th>
+            <th>Usuário</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for mov in movements %}
+        <tr>
+            <td>{{ mov.created_at|date:"d/m/Y H:i" }}</td>
+            <td>
+                {% if mov.type == "ENTRADA" %}
+                    <span class="text-success">⬆ ENTRADA</span>
+                {% elif mov.type == "SAIDA" %}
+                    <span class="text-danger">⬇ SAÍDA</span>
+                {% else %}
+                    <span class="text-warning">⚙ AJUSTE</span>
+                {% endif %}
+            </td>
+            <td><strong>{{ mov.product.name }}</strong></td>
+            <td style="text-align: center;">{{ mov.quantity }} {{ mov.product.unit.name }}</td>
+            <td>{{ mov.document|default:"-" }}</td>
+            <td>{{ mov.user.get_full_name|default:mov.user.username }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

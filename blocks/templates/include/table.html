@@ -1,0 +1,156 @@
+{% load static %}
+{% load block_tags %}
+
+{% comment %}
+Componente: Tabela Padronizada
+Uso: {% include 'include/table.html' with headers=headers rows=rows %}
+
+Parâmetros:
+- headers (obrigatório): Lista de dicionários com as colunas
+  Formato: [{'label': 'Nome', 'field': 'name', 'sortable': True}, ...]
+- rows (obrigatório): Lista de objetos/dicionários com os dados
+- show_actions (opcional): Booleano para mostrar coluna de ações. Padrão: False
+- table_id (opcional): ID único da tabela. Padrão: 'data-table'
+- striped (opcional): Booleano para linhas zebradas. Padrão: True
+- hover (opcional): Booleano para hover nas linhas. Padrão: True
+- responsive (opcional): Booleano para tabela responsiva. Padrão: True
+- empty_message (opcional): Mensagem quando não há dados. Padrão: "Nenhum registro encontrado"
+
+Exemplo de uso:
+{% with headers=list %}
+    {'label': 'Código', 'field': 'sku', 'sortable': True},
+    {'label': 'Nome', 'field': 'name', 'sortable': True},
+    {'label': 'Estoque', 'field': 'current_stock', 'sortable': True},
+{% endwith %}
+
+{% include 'include/table.html' with headers=headers rows=products show_actions=True %}
+{% endcomment %}
+
+{% with table_id=table_id|default:"data-table" striped=striped|default:True hover=hover|default:True responsive=responsive|default:True empty_message=empty_message|default:"Nenhum registro encontrado" %}
+
+<div class="table-wrapper">
+    {% if responsive %}
+    <div class="table-responsive">
+    {% endif %}
+    
+        <table class="table {% if striped %}table-striped{% endif %} {% if hover %}table-hover{% endif %} mb-0" id="{{ table_id }}">
+            <thead class="table-light">
+                <tr>
+                    {% for header in headers %}
+                    <th scope="col" {% if header.sortable %}class="sortable" data-field="{{ header.field }}"{% endif %}>
+                        {{ header.label }}
+                        {% if header.sortable %}
+                        <i class="bi bi-chevron-expand ms-1 sort-icon"></i>
+                        {% endif %}
+                    </th>
+                    {% endfor %}
+                    
+                    {% if show_actions %}
+                    <th scope="col" class="text-center" style="width: 150px;">Ações</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% if rows %}
+                    {% for row in rows %}
+                    <tr>
+                        {% for header in headers %}
+                        <td>
+                            {% if header.field == 'status' %}
+                                {# Renderiza badges para status #}
+                                {% with value=row|get_item:header.field %}
+                                    {% if value == 'CRITICO' or value == 'critical' %}
+                                        <span class="badge bg-danger">{{ value }}</span>
+                                    {% elif value == 'BAIXO' or value == 'low' %}
+                                        <span class="badge bg-warning">{{ value }}</span>
+                                    {% elif value == 'OK' or value == 'normal' %}
+                                        <span class="badge bg-success">{{ value }}</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ value }}</span>
+                                    {% endif %}
+                                {% endwith %}
+                            {% else %}
+                                {# Renderiza valor normal #}
+                                {{ row|get_item:header.field|default:"-" }}
+                            {% endif %}
+                        </td>
+                        {% endfor %}
+                        
+                        {% if show_actions %}
+                        <td class="text-center">
+                            <div class="btn-group btn-group-sm" role="group">
+                                {% block table_actions %}
+                                {# Templates filhos podem sobrescrever para ações customizadas #}
+                                <a href="#" class="btn btn-outline-info" title="Visualizar">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="#" class="btn btn-outline-warning" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="#" class="btn btn-outline-danger" title="Excluir">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                                {% endblock %}
+                            </div>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="{% if show_actions %}{{ headers|length|add:1 }}{% else %}{{ headers|length }}{% endif %}" class="text-center text-muted py-4">
+                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                            {{ empty_message }}
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    
+    {% if responsive %}
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .sortable {
+        cursor: pointer;
+        user-select: none;
+    }
+    
+    .sortable:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+    
+    .sort-icon {
+        font-size: 0.75rem;
+        opacity: 0.5;
+        transition: opacity 0.2s;
+    }
+    
+    .sortable:hover .sort-icon {
+        opacity: 1;
+    }
+    
+    .table-wrapper {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Adicionar funcionalidade de ordenação
+    const sortableHeaders = document.querySelectorAll('#{{ table_id }} .sortable');
+    
+    sortableHeaders.forEach(header => {
+        header.addEventListener('click', function() {
+            const field = this.dataset.field;
+            // Implementar lógica de ordenação aqui
+            console.log('Ordenar por:', field);
+        });
+    });
+});
+</script>
+{% endwith %}

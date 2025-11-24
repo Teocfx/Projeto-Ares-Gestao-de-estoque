@@ -51,7 +51,7 @@ def wagtail_logout_with_sso(request):
     # Redireciona para a página de login
     return redirect('/admin/login/')
 
-def intranet_logout(request):
+def user_logout(request):
     """View de logout customizada que aceita GET."""
     user = request.user
     

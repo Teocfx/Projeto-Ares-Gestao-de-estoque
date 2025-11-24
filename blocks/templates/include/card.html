@@ -1,0 +1,96 @@
+{% load static %}
+
+{% comment %}
+Componente: Card/Box Reutilizável
+Uso: {% include 'include/card.html' with titulo="Meu Card" conteudo="Texto do card" %}
+
+Parâmetros:
+- titulo (opcional): Título do card (aparece no header)
+- conteudo (opcional): Conteúdo HTML do card (aparece no body)
+- footer_text (opcional): Texto do rodapé
+- variant (opcional): Variante de cor (primary, success, warning, danger, info). Padrão: default
+- icon (opcional): Ícone Bootstrap Icons no título
+- show_header (opcional): Booleano para mostrar header. Padrão: True se titulo existe
+- show_footer (opcional): Booleano para mostrar footer. Padrão: True se footer_text existe
+- clickable (opcional): Booleano para tornar o card clicável (adiciona hover)
+- href (opcional): URL para onde o card deve levar ao clicar (requer clickable=True)
+
+Exemplos:
+1. Card Simples:
+   {% include 'include/card.html' with titulo="Estatísticas" conteudo="<p>Total: 150 produtos</p>" %}
+
+2. Card com Variante:
+   {% include 'include/card.html' with titulo="Alerta" conteudo="<p>Estoque baixo!</p>" variant="warning" icon="exclamation-triangle" %}
+
+3. Card Clicável:
+   {% include 'include/card.html' with titulo="Ver Relatório" conteudo="<p>Clique para abrir</p>" clickable=True href="/relatorios/estoque/" %}
+
+4. Card Completo:
+   {% include 'include/card.html' with titulo="Produtos" icon="box" conteudo="<p>150 itens cadastrados</p>" footer_text="Atualizado há 5 minutos" variant="primary" %}
+{% endcomment %}
+
+<div class="card-component border-0 shadow-sm h-100 {% if variant %}card-variant-{{ variant }}{% endif %} {% if clickable %}card-clickable{% endif %}"
+     {% if clickable and href %}onclick="window.location.href='{{ href }}'"{% endif %}>
+    
+    {% if show_header|default:titulo %}
+    <div class="card-header bg-transparent border-bottom">
+        <h6 class="card-title mb-0 d-flex align-items-center">
+            {% if icon %}
+            <i class="bi bi-{{ icon }} me-2"></i>
+            {% endif %}
+            {{ titulo }}
+        </h6>
+    </div>
+    {% endif %}
+    
+    <div class="card-body">
+        {% if conteudo %}
+            {{ conteudo|safe }}
+        {% else %}
+            {% block card_content %}
+            {# Templates filhos podem sobrescrever para conteúdo customizado #}
+            {% endblock %}
+        {% endif %}
+    </div>
+    
+    {% if show_footer|default:footer_text %}
+    <div class="card-footer bg-transparent border-top text-muted small">
+        {{ footer_text|safe }}
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .card-component {
+        transition: all 0.3s ease;
+    }
+    
+    .card-clickable {
+        cursor: pointer;
+    }
+    
+    .card-clickable:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important;
+    }
+    
+    .card-variant-primary {
+        border-left: 4px solid var(--bs-primary);
+    }
+    
+    .card-variant-success {
+        border-left: 4px solid var(--bs-success);
+    }
+    
+    .card-variant-warning {
+        border-left: 4px solid var(--bs-warning);
+    }
+    
+    .card-variant-danger {
+        border-left: 4px solid var(--bs-danger);
+    }
+    
+    .card-variant-info {
+        border-left: 4px solid var(--bs-info);
+    }
+</style>

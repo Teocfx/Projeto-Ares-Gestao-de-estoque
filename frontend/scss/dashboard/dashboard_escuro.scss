@@ -10,6 +10,9 @@
     }
     
     .dashboard-page {
+        // Força texto branco puro em TODOS os elementos
+        color: variables.$color-white !important;
+        
         // Navbar preta com borda branca
         .navbar {
             background: variables.$dark-surface !important;
@@ -52,22 +55,27 @@
             .card-header {
                 border-bottom-color: variables.$dark-border;
                 
-                h6, .card-title {
-                    color: variables.$dark-text-primary;
+                h6, .card-title, h5 {
+                    color: variables.$color-white !important;
                 }
             }
             
             .card-body {
-                color: variables.$dark-text-primary;
+                color: variables.$color-white !important;
+                
+                // TODOS os elementos de texto em branco
+                h1, h2, h3, h4, h5, h6, p, span, div, strong, b {
+                    color: variables.$color-white !important;
+                }
                 
                 // Títulos e labels
                 .text-xs, .text-uppercase, small {
-                    color: variables.$dark-text-secondary;
+                    color: variables.$color-white !important;
                 }
                 
                 // Números grandes
-                .h5, .h4, .display-4, .font-weight-bold {
-                    color: variables.$dark-text-primary !important;
+                .h5, .h4, .h3, .h2, .h1, .display-4, .display-6, .font-weight-bold, .fw-bold {
+                    color: variables.$color-white !important;
                 }
                 
                 // Cores de status
@@ -88,7 +96,8 @@
                 }
                 
                 .text-muted, .text-gray-800 {
-                    color: variables.$dark-text-secondary !important;
+                    color: variables.$color-white !important;
+                    opacity: 0.85;
                 }
             }
         }
@@ -102,19 +111,31 @@
         }
         
         .table {
-            color: variables.$dark-text-primary;
+            color: variables.$color-white !important;
             
             thead {
                 background-color: variables.$dark-surface-alt;
+                
+                th {
+                    color: variables.$color-grey-900 !important;
+                }
             }
             
-            tbody tr:hover {
-                background-color: variables.$dark-surface-alt;
+            tbody {
+                tr {
+                    &:hover {
+                        background-color: variables.$dark-surface-alt;
+                    }
+                    
+                    td {
+                        color: variables.$color-white !important;
+                        border-bottom-color: variables.$dark-border !important;
+                    }
+                }
             }
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, variables.$theme-primary-darkmode 0%, variables.$theme-primary-darkmode-hover 100%);
             box-shadow: 0 2px 8px variables.$color-primary-20;
             
             &:hover {
@@ -130,7 +151,7 @@
             
             &:hover {
                 background-color: variables.$dark-surface;
-                color: variables.$dark-text-primary;
+                color: variables.$color-white !important;
                 border-color: variables.$color-white;
             }
         }
@@ -154,7 +175,7 @@
             
             &:hover {
                 background-color: variables.$theme-primary-darkmode;
-                color: variables.$color-white;
+                color: variables.$color-white !important;
             }
         }
         
@@ -174,7 +195,54 @@
             
             &:hover {
                 background-color: #EF5350;
-                color: variables.$color-white;
+                color: variables.$color-white !important;
+            }
+        }
+        
+        .btn-outline-secondary {
+            color: variables.$color-white !important;
+            border-color: variables.$dark-border;
+            
+            &:hover {
+                background-color: variables.$dark-surface-alt;
+                color: variables.$color-white !important;
+                border-color: variables.$dark-border;
+            }
+        }
+        
+        // List group items (produtos baixo/vencendo)
+        .list-group-item {
+            background-color: variables.$dark-surface !important;
+            border-color: variables.$dark-border !important;
+            color: variables.$color-white !important;
+            
+            h6, .fw-medium, strong {
+                color: variables.$color-white !important;
+            }
+            
+            small, .text-muted {
+                color: variables.$color-white !important;
+                opacity: 0.85;
+            }
+            
+            &:hover {
+                background-color: variables.$dark-surface-alt !important;
+            }
+        }
+        
+        // Cards de relatórios personalizados
+        .report-preset-card {
+            background-color: variables.$dark-surface !important;
+            
+            .card-body {
+                h6, .card-title, .fw-bold {
+                    color: variables.$color-white !important;
+                }
+                
+                p, .card-text, small {
+                    color: variables.$color-white !important;
+                    opacity: 0.85;
+                }
             }
         }
     }

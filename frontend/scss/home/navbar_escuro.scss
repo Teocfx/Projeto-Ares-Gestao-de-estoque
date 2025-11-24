@@ -5,7 +5,8 @@
     background-color: variables.$color-black;
     border: 1px solid variables.$color-white;
     @media (max-width: 992px) {
-      background-color: variables.$color-white;
+      background-color: variables.$color-grey-900;
+      border: 1px solid variables.$color-grey-700;
     }
   }
 
@@ -75,12 +76,79 @@
     }
   }
   
-  // Logo mobile no modo escuro - manter fundo claro para contraste
+  // Logo mobile no modo escuro - logo branca para contrastar com fundo escuro
   .site-menu-navbar-toggler-brand {
     .navbar-brand-mobile {
-      background-color: variables.$color-white;
       padding: 4px 12px;
-      border-radius: 8px;
+      
+      // Manter logo SVG branca no modo escuro também
+      img {
+        filter: brightness(0) invert(1);
+      }
+    }
+  }
+  
+  // Perfil mobile no modo escuro
+  .site-menu-nav-login {
+    @media (max-width: 992px) {
+      .dropdown-toggle {
+        background-color: variables.$color-grey-800;
+        border: 1px solid variables.$color-white;
+        
+        &:hover {
+          background-color: variables.$color-grey-700;
+        }
+      }
+      
+      // Melhorar contraste do dropdown menu no modo escuro
+      .dropdown-menu {
+        background-color: variables.$color-grey-200;
+        border: 1px solid variables.$color-grey-700;
+      }
+      
+      .dropdown-item {
+        color: variables.$color-white;
+        
+        &:hover {
+          background-color: variables.$color-grey-700;
+          color: variables.$color-white;
+        }
+      }
+    }
+  }
+
+  
+  // Ferramentas no modo escuro - usar branco ao invés de azul
+  .site-menu-tool-link {
+    @media (max-width: 992px) {
+      color: variables.$color-white;
+      
+      &:hover {
+        background-color: variables.$color-grey-800;
+        color: variables.$color-white;
+      }
+    }
+  }
+  
+  .site-menu-tool-font-btn {
+    @media (max-width: 992px) {
+      background-color: transparent;
+      color: variables.$color-white;
+      border-color: variables.$color-white;
+      
+      &:hover {
+        background-color: variables.$color-white;
+        color: variables.$color-black;
+        border-color: variables.$color-white;
+      }
+    }
+  }
+  
+  .site-menu-nav-tools-divider {
+    @media (max-width: 992px) {
+      hr {
+        border-color: variables.$color-grey-700;
+      }
     }
   }
   
@@ -108,16 +176,7 @@
     }
   }
   
-  // Perfil no mobile (modo escuro)
-  .site-menu-nav-login {
-    @media (max-width: 992px) {
-      background-color: variables.$color-grey-900;
-      
-      .nav-link {
-        color: variables.$color-white !important;
-      }
-    }
-  }
+
 
   .site-menu-dropdown-item {
     --bs-nav-link-hover-color: #{variables.$color-link-navbar-hover};

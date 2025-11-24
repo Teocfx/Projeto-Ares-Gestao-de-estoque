@@ -1,15 +1,30 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import Http404, FileResponse
 from django.views import View
+from django.views.generic import TemplateView
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 from django.utils.decorators import method_decorator
+from django.contrib.auth.mixins import LoginRequiredMixin
 from wagtail.documents.models import Document
 import mimetypes
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+class TesteComponentesView(LoginRequiredMixin, TemplateView):
+    """
+    View de teste para validação dos componentes reutilizáveis.
+    Apenas para desenvolvimento - deve ser removida em produção.
+    """
+    template_name = 'teste_componentes.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['show_breadcrumbs'] = False  # Desabilita breadcrumbs nesta página
+        return context
 
 
 @method_decorator(csrf_exempt, name='dispatch')

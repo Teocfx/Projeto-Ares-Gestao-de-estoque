@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load block_tags %}
 
 {% block title %}Dashboard - Sistema de Gestão de Estoque ARES{% endblock %}
 
@@ -61,7 +62,7 @@
                         </div>
                     </div>
                     <div class="mt-2">
-                        <a href="{% url 'produtos:list' %}" class="btn btn-sm btn-outline-primary">
+                        <a href="{% url 'produtos:list' %}" class="btn btn-sm btn-primary">
                             <i class="bi bi-arrow-right me-1"></i>Ver Produtos
                         </a>
                     </div>
@@ -112,7 +113,7 @@
                         </div>
                     </div>
                     <div class="mt-2">
-                        <a href="{% url 'produtos:list' %}?stock_status=BAIXO" class="btn btn-sm btn-outline-warning">
+                        <a href="{% url 'produtos:list' %}?stock_status=BAIXO" class="btn btn-sm btn-warning">
                             <i class="bi bi-arrow-right me-1"></i>Verificar
                         </a>
                     </div>
@@ -140,7 +141,7 @@
                         </div>
                     </div>
                     <div class="mt-2">
-                        <a href="{% url 'produtos:list' %}?stock_status=CRITICO" class="btn btn-sm btn-outline-danger">
+                        <a href="{% url 'produtos:list' %}?stock_status=CRITICO" class="btn btn-sm btn-danger">
                             <i class="bi bi-arrow-right me-1"></i>Ver Críticos
                         </a>
                     </div>
@@ -151,30 +152,353 @@
 
 <div class="row g-4 mt-4">
     
-    <!-- Gráfico de Movimentações -->
-    <div class="col-lg-8">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-transparent border-bottom-0 d-flex align-items-center justify-content-between">
-                <h6 class="card-title mb-0 fw-bold">Movimentações dos Últimos 7 Dias</h6>
-                <div class="dropdown">
-                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-three-dots"></i>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">7 dias</a></li>
-                        <li><a class="dropdown-item" href="#">30 dias</a></li>
-                        <li><a class="dropdown-item" href="#">90 dias</a></li>
-                    </ul>
+    <!-- Gráfico de Movimentações (Full Width) -->
+    <div class="col-12">
+        <div class="card border-0 shadow-sm" style="position: relative; z-index: 10;">
+            <div class="card-header bg-transparent border-bottom-0">
+                <div class="row align-items-center g-3">
+                    <div class="col-md-auto">
+                        <h6 class="card-title mb-0 fw-bold" id="chart-title">Movimentações - Últimos 7 Dias</h6>
+                    </div>
+                    <div class="col-md">
+                        <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
+                            <!-- Dropdown Períodos -->
+                            <div class="dropdown" style="z-index: 1050;">
+                                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="morePeriods" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-calendar3 me-1"></i>
+                                    <span id="selected-period-text">Últimos 7 Dias</span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="morePeriods" style="max-height: 400px; overflow-y: auto; z-index: 1060;">
+                                    <!-- Por Dias -->
+                                    <li><h6 class="dropdown-header fw-bold text-primary">Por Dias</h6></li>
+                                    <li><a class="dropdown-item chart-filter active" href="#" data-period="7d">
+                                        <i class="bi bi-calendar-day me-2"></i>Últimos 7 Dias
+                                    </a></li>
+                                    <li><a class="dropdown-item chart-filter" href="#" data-period="1m">
+                                        <i class="bi bi-calendar-week me-2"></i>Últimos 30 Dias
+                                    </a></li>
+                                    
+                                    <li><hr class="dropdown-divider"></li>
+                                    
+                                    <!-- Por Meses -->
+                                    <li><h6 class="dropdown-header fw-bold text-success">Por Meses</h6></li>
+                                    <li><a class="dropdown-item chart-filter" href="#" data-period="este_mes">
+                                        <i class="bi bi-calendar-check me-2"></i>Este Mês
+                                    </a></li>
+                                    <li><a class="dropdown-item chart-filter" href="#" data-period="mes_passado">
+                                        <i class="bi bi-calendar-minus me-2"></i>Mês Passado
+                                    </a></li>
+                                    <li><a class="dropdown-item chart-filter" href="#" data-period="ultimos_2meses">
+                                        <i class="bi bi-calendar2 me-2"></i>Últimos 2 Meses
+                                    </a></li>
+                                    <li><a class="dropdown-item chart-filter" href="#" data-period="3m">
+                                        <i class="bi bi-calendar2-range me-2"></i>Últimos 3 Meses
+                                    </a></li>
+                                    <li><a class="dropdown-item chart-filter" href="#" data-period="6m">
+                                        <i class="bi bi-calendar3 me-2"></i>Últimos 6 Meses
+                                    </a></li>
+                                    
+                                    <li><hr class="dropdown-divider"></li>
+                                    
+                                    <!-- Por Anos -->
+                                    <li><h6 class="dropdown-header fw-bold text-warning">Por Anos</h6></li>
+                                    <li><a class="dropdown-item chart-filter" href="#" data-period="este_ano">
+                                        <i class="bi bi-calendar-event me-2"></i>Este Ano
+                                    </a></li>
+                                    <li><a class="dropdown-item chart-filter" href="#" data-period="ano_passado">
+                                        <i class="bi bi-calendar-x me-2"></i>Ano Passado
+                                    </a></li>
+                                    <li><a class="dropdown-item chart-filter" href="#" data-period="1y">
+                                        <i class="bi bi-calendar4-range me-2"></i>Último Ano (365d)
+                                    </a></li>
+                                    <li><a class="dropdown-item chart-filter" href="#" data-period="ultimos_2anos">
+                                        <i class="bi bi-calendar-range me-2"></i>Últimos 2 Anos
+                                    </a></li>
+                                    <li><a class="dropdown-item chart-filter" href="#" data-period="ultimos_5anos">
+                                        <i class="bi bi-calendar4-week me-2"></i>Últimos 5 Anos
+                                    </a></li>
+                                    
+                                    <li><hr class="dropdown-divider"></li>
+                                    
+                                    <!-- Trimestres -->
+                                    <li><h6 class="dropdown-header fw-bold text-danger">Trimestres</h6></li>
+                                    <li><a class="dropdown-item chart-filter" href="#" data-period="q1">
+                                        <i class="bi bi-1-circle me-2"></i>1º Trimestre (Jan-Mar)
+                                    </a></li>
+                                    <li><a class="dropdown-item chart-filter" href="#" data-period="q2">
+                                        <i class="bi bi-2-circle me-2"></i>2º Trimestre (Abr-Jun)
+                                    </a></li>
+                                    <li><a class="dropdown-item chart-filter" href="#" data-period="q3">
+                                        <i class="bi bi-3-circle me-2"></i>3º Trimestre (Jul-Set)
+                                    </a></li>
+                                    <li><a class="dropdown-item chart-filter" href="#" data-period="q4">
+                                        <i class="bi bi-4-circle me-2"></i>4º Trimestre (Out-Dez)
+                                    </a></li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Botão Filtros Avançados -->
+                            <button class="btn btn-sm btn-outline-secondary position-relative" type="button" data-bs-toggle="collapse" data-bs-target="#advancedFilters" aria-expanded="false" aria-controls="advancedFilters" id="toggle-filters-btn">
+                                <i class="bi bi-funnel me-1"></i>Filtros Avançados
+                                <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle d-none" id="active-filters-badge">0</span>
+                            </button>
+                            
+                            <!-- Período Personalizado (inline) -->
+                            <div class="d-flex gap-2 align-items-center">
+                                <input type="date" id="custom-start-date" class="form-control form-control-sm" style="width: 130px;" placeholder="Data Início" title="Data de início">
+                                <span class="text-muted small">até</span>
+                                <input type="date" id="custom-end-date" class="form-control form-control-sm" style="width: 130px;" placeholder="Data Fim" title="Data de fim">
+                                <button id="apply-custom-period" class="btn btn-primary btn-sm" title="Aplicar período">
+                                    <i class="bi bi-check2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Painel de Filtros Avançados (Collapse) -->
+                <div class="collapse mt-3" id="advancedFilters">
+                    <div class="card card-body bg-light">
+                        <div class="row g-3">
+                            <!-- Busca Global -->
+                            <div class="col-md-12">
+                                <label for="filter-search" class="form-label fw-medium">
+                                    <i class="bi bi-search me-1"></i>Busca Rápida
+                                </label>
+                                <input type="text" class="form-control" id="filter-search" placeholder="Buscar por produto, código, documento, observações...">
+                                <small class="form-text text-muted">Digite qualquer termo para buscar nas movimentações</small>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <label class="form-label fw-medium">
+                                    <i class="bi bi-arrow-left-right me-1"></i>Tipos de Movimentação
+                                </label>
+                                <div class="dropdown w-100 mb-2">
+                                    <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start" type="button" id="dropdownMovementType" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-plus-circle me-1"></i>Adicionar tipo
+                                    </button>
+                                    <ul class="dropdown-menu w-100" aria-labelledby="dropdownMovementType">
+                                        <li><a class="dropdown-item" href="#" data-type="ENTRADA" data-label="Entrada">
+                                            <i class="bi bi-arrow-down-circle text-success me-2"></i>Entrada
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="#" data-type="SAIDA" data-label="Saída">
+                                            <i class="bi bi-arrow-up-circle text-danger me-2"></i>Saída
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="#" data-type="AJUSTE" data-label="Ajuste">
+                                            <i class="bi bi-arrow-repeat text-warning me-2"></i>Ajuste
+                                        </a></li>
+                                    </ul>
+                                </div>
+                                <div id="selected-types-container" class="d-flex flex-wrap gap-2">
+                                    <!-- Tags selecionadas serão adicionadas aqui -->
+                                    <span class="badge bg-success-subtle text-success border border-success dashboard-filter-tag" data-type="ENTRADA">
+                                        <i class="bi bi-arrow-down-circle me-1"></i>Entrada
+                                        <button type="button" class="btn-close btn-close-sm ms-2" aria-label="Remover" onclick="removeMovementTypeTag('ENTRADA')"></button>
+                                    </span>
+                                    <span class="badge bg-danger-subtle text-danger border border-danger dashboard-filter-tag" data-type="SAIDA">
+                                        <i class="bi bi-arrow-up-circle me-1"></i>Saída
+                                        <button type="button" class="btn-close btn-close-sm ms-2" aria-label="Remover" onclick="removeMovementTypeTag('SAIDA')"></button>
+                                    </span>
+                                    <span class="badge bg-warning-subtle text-warning border border-warning dashboard-filter-tag" data-type="AJUSTE">
+                                        <i class="bi bi-arrow-repeat me-1"></i>Ajuste
+                                        <button type="button" class="btn-close btn-close-sm ms-2" aria-label="Remover" onclick="removeMovementTypeTag('AJUSTE')"></button>
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <label for="filter-product" class="form-label fw-medium">
+                                    <i class="bi bi-box me-1"></i>Produto
+                                </label>
+                                <select class="form-select" id="filter-product">
+                                    <option value="">Todos os produtos</option>
+                                    {% if system_info.products_available %}
+                                        {% comment %}TODO: Popular dinamicamente via AJAX{% endcomment %}
+                                    {% endif %}
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <label class="form-label fw-medium">
+                                    <i class="bi bi-tag me-1"></i>Categorias
+                                </label>
+                                <div class="dropdown w-100 mb-2">
+                                    <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start" type="button" id="dropdownCategory" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-plus-circle me-1"></i>Adicionar categoria
+                                    </button>
+                                    <ul class="dropdown-menu w-100" aria-labelledby="dropdownCategory" id="category-dropdown-menu">
+                                        <li><a class="dropdown-item text-muted" href="#"><i class="bi bi-hourglass-split me-2"></i>Carregando...</a></li>
+                                    </ul>
+                                </div>
+                                <div id="selected-categories-container" class="d-flex flex-wrap gap-2">
+                                    <!-- Tags de categorias selecionadas serão adicionadas aqui -->
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <label for="filter-user" class="form-label fw-medium">
+                                    <i class="bi bi-person me-1"></i>Usuário
+                                </label>
+                                <select class="form-select" id="filter-user">
+                                    <option value="">Todos os usuários</option>
+                                    {% comment %}TODO: Popular dinamicamente via AJAX{% endcomment %}
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <label for="filter-min-quantity" class="form-label fw-medium">
+                                    <i class="bi bi-dash-circle me-1"></i>Quantidade Mínima
+                                </label>
+                                <input type="number" class="form-control" id="filter-min-quantity" placeholder="Ex: 10" step="0.01" min="0">
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <label for="filter-max-quantity" class="form-label fw-medium">
+                                    <i class="bi bi-plus-circle me-1"></i>Quantidade Máxima
+                                </label>
+                                <input type="number" class="form-control" id="filter-max-quantity" placeholder="Ex: 1000" step="0.01" min="0">
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <label for="filter-sort" class="form-label fw-medium">
+                                    <i class="bi bi-sort-down me-1"></i>Ordenar Por
+                                </label>
+                                <select class="form-select" id="filter-sort">
+                                    <option value="date">Data</option>
+                                    <option value="quantity">Quantidade</option>
+                                    <option value="type">Tipo</option>
+                                    <option value="product">Produto</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <label class="form-label fw-medium">
+                                    <i class="bi bi-arrow-down-up me-1"></i>Ordem
+                                </label>
+                                <div class="btn-group w-100" role="group">
+                                    <input type="radio" class="btn-check" name="filter-order" id="filter-order-desc" value="desc" checked>
+                                    <label class="btn btn-outline-secondary" for="filter-order-desc">
+                                        <i class="bi bi-sort-down"></i> Desc
+                                    </label>
+                                    <input type="radio" class="btn-check" name="filter-order" id="filter-order-asc" value="asc">
+                                    <label class="btn btn-outline-secondary" for="filter-order-asc">
+                                        <i class="bi bi-sort-up"></i> Asc
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Botões de Ação -->
+                            <div class="col-12">
+                                <hr>
+                                <div class="d-flex gap-2 justify-content-end">
+                                    <button type="button" class="btn btn-outline-danger" id="clear-filters">
+                                        <i class="bi bi-x-circle me-1"></i>Limpar Filtros
+                                    </button>
+                                    <button type="button" class="btn btn-primary" id="apply-filters">
+                                        <i class="bi bi-check2-circle me-1"></i>Aplicar Filtros
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="card-body">
-                <canvas id="movimentacoesChart" width="400" height="200"></canvas>
+            <div class="card-body position-relative">
+                <!-- Loading Spinner -->
+                <div id="chart-loading" class="d-none position-absolute top-50 start-50 translate-middle" style="z-index: 100;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                    <p class="text-muted mt-2 small">Carregando dados...</p>
+                </div>
+                <canvas id="movimentacoesChart" style="max-height: 400px;"></canvas>
             </div>
         </div>
     </div>
+
+    <!-- Relatórios Personalizados -->
+    <div class="col-12 mt-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-bottom d-flex align-items-center justify-content-between">
+                <h5 class="mb-0">
+                    <i class="bi bi-file-earmark-text me-2 text-primary"></i>Relatórios Personalizados
+                </h5>
+                <button class="btn btn-sm btn-outline-primary" id="btn-add-custom-report">
+                    <i class="bi bi-plus-circle me-1"></i>Adicionar Novo
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="row g-3" id="reports-presets-container">
+                    <!-- Preset: Relatório de Estoque -->
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100 border border-primary report-preset-card" data-preset="estoque">
+                            <div class="card-body text-center">
+                                <i class="bi bi-box-seam display-4 text-primary mb-3"></i>
+                                <h6 class="card-title fw-bold">Relatório de Estoque</h6>
+                                <p class="card-text small text-muted">Estoque atual de todos os produtos</p>
+                                <button class="btn btn-sm btn-primary w-100" onclick="generateReport('estoque', event)">
+                                    <i class="bi bi-file-earmark-pdf me-1"></i>Gerar PDF
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preset: Relatório de Movimentações -->
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100 border border-success report-preset-card" data-preset="movimentacoes">
+                            <div class="card-body text-center">
+                                <i class="bi bi-arrow-left-right display-4 text-success mb-3"></i>
+                                <h6 class="card-title fw-bold">Relatório de Movimentações</h6>
+                                <p class="card-text small text-muted">Histórico de entradas e saídas</p>
+                                <button class="btn btn-sm btn-success w-100" onclick="generateReport('movimentacoes', event)">
+                                    <i class="bi bi-file-earmark-pdf me-1"></i>Gerar PDF
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preset: Relatório de Vencimentos -->
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100 border border-warning report-preset-card" data-preset="vencimentos">
+                            <div class="card-body text-center">
+                                <i class="bi bi-calendar-x display-4 text-warning mb-3"></i>
+                                <h6 class="card-title fw-bold">Relatório de Vencimentos</h6>
+                                <p class="card-text small text-muted">Produtos próximos ao vencimento</p>
+                                <button class="btn btn-sm btn-warning w-100" onclick="generateReport('vencimentos', event)">
+                                    <i class="bi bi-file-earmark-pdf me-1"></i>Gerar PDF
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preset: Relatório Financeiro -->
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100 border border-info report-preset-card" data-preset="financeiro">
+                            <div class="card-body text-center">
+                                <i class="bi bi-currency-dollar display-4 text-info mb-3"></i>
+                                <h6 class="card-title fw-bold">Relatório Financeiro</h6>
+                                <p class="card-text small text-muted">Valor total do estoque por categoria</p>
+                                <button class="btn btn-sm btn-info w-100" onclick="generateReport('financeiro', event)">
+                                    <i class="bi bi-file-earmark-pdf me-1"></i>Gerar PDF
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Relatórios Customizados (carregados do localStorage) -->
+                <div class="row g-3 mt-2" id="custom-reports-container">
+                    <!-- Relatórios personalizados do usuário serão adicionados aqui -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mt-4">
     
     <!-- Produtos com Estoque Baixo -->
-    <div class="col-lg-4">
+    <div class="col-lg-6">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-header bg-transparent border-bottom-0 d-flex align-items-center justify-content-between">
                 <h6 class="card-title mb-0 fw-bold">Estoque Baixo</h6>
@@ -205,6 +529,45 @@
                     <div class="text-center py-4">
                         <i class="bi bi-check-circle text-success fs-1 mb-3"></i>
                         <p class="text-muted mb-0">Todos os produtos estão com estoque adequado!</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Produtos Próximos ao Vencimento -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-transparent border-bottom-0 d-flex align-items-center justify-content-between">
+                <h6 class="card-title mb-0 fw-bold">Produtos Vencendo</h6>
+                <a href="{% url 'relatorios:vencimentos' %}" class="btn btn-outline-danger btn-sm">
+                    Ver Todos
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for produto in expiring_products %}
+                    <div class="list-group-item border-0 px-3 py-3">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="bg-danger bg-opacity-10 rounded-2 p-2">
+                                    <i class="bi bi-calendar-x text-danger"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1 fw-medium">{{ produto.name }}</h6>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-danger">{{ produto.expiry_date|date:"d/m/Y" }}</span>
+                                    <small class="text-muted">{{ produto.current_stock }} {{ produto.unit.name }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-check-circle text-success fs-1 mb-3"></i>
+                        <p class="text-muted mb-0">Nenhum produto próximo ao vencimento!</p>
                     </div>
                     {% endfor %}
                 </div>
@@ -292,4 +655,1296 @@
 {% block extra_js %}
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// =====================================
+// VARIÁVEIS GLOBAIS DO DASHBOARD
+// =====================================
+let selectedMovementTypes = ['ENTRADA', 'SAIDA', 'AJUSTE']; // Todos selecionados por padrão
+let selectedCategories = []; // Todas categorias por padrão
+
+// Funções para remover tags do dashboard
+window.removeMovementTypeTag = function(type) {
+    selectedMovementTypes = selectedMovementTypes.filter(t => t !== type);
+    const tag = document.querySelector(`#selected-types-container .dashboard-filter-tag[data-type="${type}"]`);
+    if (tag) tag.remove();
+    updateActiveFiltersBadge();
+    saveFiltersToCache();
+};
+
+window.removeCategoryTag = function(categoryId) {
+    selectedCategories = selectedCategories.filter(c => c.id !== categoryId);
+    const tag = document.querySelector(`#selected-categories-container .dashboard-filter-tag[data-category-id="${categoryId}"]`);
+    if (tag) tag.remove();
+    updateActiveFiltersBadge();
+    saveFiltersToCache();
+};
+
+// =====================================
+// VARIÁVEIS GLOBAIS DO MODAL DE RELATÓRIO
+// =====================================
+let reportSelectedCategories = [];
+let reportSelectedTypes = [];
+
+// Funções para remover tags do modal
+window.removeReportCategoryTag = function(categoryId) {
+    reportSelectedCategories = reportSelectedCategories.filter(c => c.id !== categoryId);
+    const tag = document.querySelector(`#report-selected-categories-container .dashboard-filter-tag[data-category-id="${categoryId}"]`);
+    if (tag) tag.remove();
+};
+
+window.removeReportTypeTag = function(type) {
+    reportSelectedTypes = reportSelectedTypes.filter(t => t !== type);
+    const tag = document.querySelector(`#report-selected-types-container .dashboard-filter-tag[data-type="${type}"]`);
+    if (tag) tag.remove();
+};
+
+// Popular dropdown de categorias do modal
+function populateReportCategoryDropdown(categories) {
+    const menu = document.getElementById('report-category-dropdown-menu');
+    if (!menu) return;
+    
+    menu.innerHTML = '';
+    
+    if (categories.length === 0) {
+        menu.innerHTML = '<li><a class="dropdown-item text-muted" href="#"><i class="bi bi-info-circle me-2"></i>Nenhuma categoria disponível</a></li>';
+        return;
+    }
+    
+    categories.forEach(cat => {
+        const item = document.createElement('li');
+        item.innerHTML = `
+            <a class="dropdown-item" href="#" data-category-id="${cat.id}" data-category-name="${cat.label}">
+                <i class="bi bi-tag me-2 text-primary"></i>${cat.label}
+            </a>
+        `;
+        
+        item.querySelector('a').addEventListener('click', function(e) {
+            e.preventDefault();
+            const catId = this.dataset.categoryId;
+            const catName = this.dataset.categoryName;
+            
+            if (reportSelectedCategories.some(c => c.id === catId)) {
+                alert('Esta categoria já está selecionada!');
+                return;
+            }
+            
+            reportSelectedCategories.push({ id: catId, name: catName });
+            
+            const container = document.getElementById('report-selected-categories-container');
+            const tag = document.createElement('span');
+            tag.className = 'badge bg-primary-subtle text-primary border border-primary dashboard-filter-tag';
+            tag.dataset.categoryId = catId;
+            tag.innerHTML = `
+                <i class="bi bi-tag me-1"></i>${catName}
+                <button type="button" class="btn-close btn-close-sm ms-2" aria-label="Remover" onclick="removeReportCategoryTag('${catId}')"></button>
+            `;
+            container.appendChild(tag);
+        });
+        
+        menu.appendChild(item);
+    });
+}
+
+// Popular dropdown de categorias do dashboard
+function populateCategoryDropdown(categories) {
+    const menu = document.getElementById('category-dropdown-menu');
+    if (!menu) return;
+    
+    menu.innerHTML = '';
+    
+    if (categories.length === 0) {
+        menu.innerHTML = '<li><a class="dropdown-item text-muted" href="#"><i class="bi bi-info-circle me-2"></i>Nenhuma categoria disponível</a></li>';
+        return;
+    }
+    
+    categories.forEach(cat => {
+        const item = document.createElement('li');
+        item.innerHTML = `
+            <a class="dropdown-item" href="#" data-category-id="${cat.id}" data-category-name="${cat.label}">
+                <i class="bi bi-tag me-2 text-primary"></i>${cat.label}
+            </a>
+        `;
+        
+        item.querySelector('a').addEventListener('click', function(e) {
+            e.preventDefault();
+            const catId = this.dataset.categoryId;
+            const catName = this.dataset.categoryName;
+            
+            // Verificar se já está selecionado
+            if (selectedCategories.some(c => c.id === catId)) {
+                alert('Esta categoria já está selecionada!');
+                return;
+            }
+            
+            // Adicionar ao array
+            selectedCategories.push({ id: catId, name: catName });
+            
+            // Criar elemento visual
+            const container = document.getElementById('selected-categories-container');
+            const tag = document.createElement('span');
+            tag.className = 'badge bg-primary-subtle text-primary border border-primary dashboard-filter-tag';
+            tag.dataset.categoryId = catId;
+            tag.style.animation = 'fadeInScale 0.2s ease-out';
+            tag.innerHTML = `
+                <i class="bi bi-tag me-1"></i>${catName}
+                <button type="button" class="btn-close btn-close-sm ms-2" aria-label="Remover" onclick="removeCategoryTag('${catId}')"></button>
+            `;
+            container.appendChild(tag);
+            
+            updateActiveFiltersBadge();
+        });
+        
+        menu.appendChild(item);
+    });
+}
+
+// =====================================
+// FUNÇÕES AUXILIARES (precisam ser globais para serem acessadas no DOMContentLoaded)
+// =====================================
+function updateActiveFiltersBadge() {
+    const badge = document.getElementById('active-filters-badge');
+    if (!badge) return;
+    
+    let count = 0;
+    
+    // Contar filtros ativos
+    if (document.getElementById('filter-search')?.value) count++;
+    
+    // Usar selectedMovementTypes ao invés de select
+    if (selectedMovementTypes.length < 3) count++;
+    
+    if (document.getElementById('filter-product')?.value) count++;
+    if (selectedCategories.length > 0) count++;
+    if (document.getElementById('filter-user')?.value) count++;
+    if (document.getElementById('filter-min-quantity')?.value) count++;
+    if (document.getElementById('filter-max-quantity')?.value) count++;
+    
+    // Atualizar badge
+    if (count > 0) {
+        badge.textContent = count;
+        badge.classList.remove('d-none');
+    } else {
+        badge.classList.add('d-none');
+    }
+}
+
+function saveFiltersToCache() {
+    const filters = {
+        period: document.querySelector('.chart-filter.active')?.dataset.period || '7d',
+        search: document.getElementById('filter-search')?.value || '',
+        product: document.getElementById('filter-product')?.value || '',
+        categories: selectedCategories.map(c => ({ id: c.id, name: c.name })),
+        user: document.getElementById('filter-user')?.value || '',
+        minQuantity: document.getElementById('filter-min-quantity')?.value || '',
+        maxQuantity: document.getElementById('filter-max-quantity')?.value || '',
+        sortBy: document.getElementById('filter-sort')?.value || 'date',
+        sortOrder: document.querySelector('input[name="filter-order"]:checked')?.value || 'desc',
+        types: selectedMovementTypes
+    };
+    localStorage.setItem('dashboard_filters', JSON.stringify(filters));
+    console.log('Filtros salvos no cache:', filters);
+}
+
+function restoreFiltersFromCache() {
+    const cached = localStorage.getItem('dashboard_filters');
+    if (!cached) return false;
+    
+    try {
+        const filters = JSON.parse(cached);
+        console.log('Restaurando filtros do cache:', filters);
+        
+        // Restaurar valores básicos
+        if (filters.search) document.getElementById('filter-search').value = filters.search;
+        if (filters.product) document.getElementById('filter-product').value = filters.product;
+        if (filters.user) document.getElementById('filter-user').value = filters.user;
+        if (filters.minQuantity) document.getElementById('filter-min-quantity').value = filters.minQuantity;
+        if (filters.maxQuantity) document.getElementById('filter-max-quantity').value = filters.maxQuantity;
+        if (filters.sortBy) document.getElementById('filter-sort').value = filters.sortBy;
+        if (filters.sortOrder) {
+            const orderRadio = document.getElementById(`filter-order-${filters.sortOrder}`);
+            if (orderRadio) orderRadio.checked = true;
+        }
+        
+        // Restaurar tipos de movimentação (via tags)
+        if (filters.types && Array.isArray(filters.types)) {
+            selectedMovementTypes = filters.types;
+            
+            // Recriar tags visuais
+            const typesContainer = document.getElementById('selected-types-container');
+            if (typesContainer) {
+                typesContainer.innerHTML = '';
+                
+                filters.types.forEach(type => {
+                    let colorClass = 'bg-secondary-subtle text-secondary border-secondary';
+                    let icon = 'bi-arrow-repeat';
+                    let label = 'Ajuste';
+                    
+                    if (type === 'ENTRADA') {
+                        colorClass = 'bg-success-subtle text-success border-success';
+                        icon = 'bi-arrow-down-circle';
+                        label = 'Entrada';
+                    } else if (type === 'SAIDA') {
+                        colorClass = 'bg-danger-subtle text-danger border-danger';
+                        icon = 'bi-arrow-up-circle';
+                        label = 'Saída';
+                    }
+                    
+                    const tag = document.createElement('span');
+                    tag.className = `badge ${colorClass} border dashboard-filter-tag`;
+                    tag.dataset.type = type;
+                    tag.innerHTML = `
+                        <i class="bi ${icon} me-1"></i>${label}
+                        <button type="button" class="btn-close btn-close-sm ms-2" aria-label="Remover" onclick="removeMovementTypeTag('${type}')"></button>
+                    `;
+                    typesContainer.appendChild(tag);
+                });
+            }
+        }
+        
+        // Restaurar categorias será feito após carregar da API
+        if (filters.categories && Array.isArray(filters.categories)) {
+            selectedCategories = filters.categories;
+        }
+        
+        return filters.period || '7d';
+    } catch (error) {
+        console.error('Erro ao restaurar filtros:', error);
+        return false;
+    }
+}
+
+// Função para coletar filtros avançados
+function getAdvancedFilters() {
+    let filters = '';
+    
+    // Busca por texto
+    const search = document.getElementById('filter-search')?.value;
+    if (search) {
+        filters += `&search=${encodeURIComponent(search)}`;
+    }
+    
+    // Tipo de movimentação (múltiplos valores via tags)
+    if (selectedMovementTypes.length > 0 && selectedMovementTypes.length < 3) {
+        // Se não são todos selecionados
+        filters += `&movement_type=${selectedMovementTypes.join(',')}`;
+    }
+    
+    // Produto
+    const productId = document.getElementById('filter-product')?.value;
+    if (productId) {
+        filters += `&product_id=${productId}`;
+    }
+    
+    // Categoria (agora usa selectedCategories ao invés de select)
+    if (selectedCategories.length > 0) {
+        const categoryIds = selectedCategories.map(c => c.id).join(',');
+        filters += `&category_id=${categoryIds}`;
+    }
+    
+    // Usuário
+    const userId = document.getElementById('filter-user')?.value;
+    if (userId) {
+        filters += `&user_id=${userId}`;
+    }
+    
+    // Quantidade mínima
+    const minQuantity = document.getElementById('filter-min-quantity')?.value;
+    if (minQuantity) {
+        filters += `&min_quantity=${minQuantity}`;
+    }
+    
+    // Quantidade máxima
+    const maxQuantity = document.getElementById('filter-max-quantity')?.value;
+    if (maxQuantity) {
+        filters += `&max_quantity=${maxQuantity}`;
+    }
+    
+    // Ordenação
+    const sortBy = document.getElementById('filter-sort')?.value || 'date';
+    const sortOrder = document.querySelector('input[name="filter-order"]:checked')?.value || 'desc';
+    filters += `&sort_by=${sortBy}&sort_order=${sortOrder}`;
+    
+    return filters;
+}
+
+// Função para gerar relatório (preset ou customizado)
+window.generateReport = function(presetType, event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    console.log('Gerando relatório:', presetType);
+    
+    const messages = {
+        'estoque': 'Relatório de Estoque',
+        'movimentacoes': 'Relatório de Movimentações',
+        'vencimentos': 'Relatório de Vencimentos',
+        'financeiro': 'Relatório Financeiro'
+    };
+    
+    // Criar toast de loading
+    const toastId = 'toast-' + Date.now();
+    const toastHTML = `
+        <div id="${toastId}" class="toast align-items-center text-white bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="bi bi-hourglass-split me-2"></i>
+                    Gerando ${messages[presetType]}...
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Adicionar toast ao container
+    let toastContainer = document.querySelector('.toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+        document.body.appendChild(toastContainer);
+    }
+    toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+    
+    const toastElement = document.getElementById(toastId);
+    const toast = new bootstrap.Toast(toastElement, { autohide: false });
+    toast.show();
+    
+    // Pegar filtros avançados do modal
+    const filters = getAdvancedFilters();
+    
+    // Preparar URL com parâmetros
+    const urlMap = {
+        'estoque': '/relatorios/estoque/',
+        'movimentacoes': '/relatorios/movimentacoes/',
+        'vencimentos': '/relatorios/vencimentos/',
+        'financeiro': '/relatorios/index/' // Redirecionar para página de relatórios
+    };
+    
+    const baseUrl = urlMap[presetType];
+    if (!baseUrl) {
+        toast.hide();
+        toastElement.remove();
+        alert('Tipo de relatório inválido');
+        return;
+    }
+    
+    // Construir query string
+    const params = new URLSearchParams();
+    if (filters.dateFrom) params.append('date_from', filters.dateFrom);
+    if (filters.dateTo) params.append('date_to', filters.dateTo);
+    if (filters.categories.length > 0) params.append('categories', filters.categories.join(','));
+    if (filters.movementTypes.length > 0) params.append('types', filters.movementTypes.join(','));
+    params.append('format', 'pdf');
+    
+    const url = baseUrl + (params.toString() ? '?' + params.toString() : '');
+    
+    // Fazer requisição
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.blob();
+    })
+    .then(blob => {
+        // Criar link para download
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const filename = `relatorio_${presetType}_${new Date().toISOString().split('T')[0]}.pdf`;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        
+        // Atualizar toast para sucesso
+        toast.hide();
+        toastElement.remove();
+        
+        const successToast = `
+            <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="bi bi-check-circle me-2"></i>
+                        Relatório gerado com sucesso!
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        `;
+        toastContainer.insertAdjacentHTML('beforeend', successToast);
+        const successToastElement = toastContainer.lastElementChild;
+        new bootstrap.Toast(successToastElement).show();
+    })
+    .catch(error => {
+        console.error('Erro ao gerar relatório:', error);
+        
+        // Atualizar toast para erro
+        toast.hide();
+        toastElement.remove();
+        
+        const errorToast = `
+            <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="bi bi-exclamation-circle me-2"></i>
+                        Erro ao gerar relatório. Tente novamente.
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        `;
+        toastContainer.insertAdjacentHTML('beforeend', errorToast);
+        const errorToastElement = toastContainer.lastElementChild;
+        new bootstrap.Toast(errorToastElement).show();
+    });
+};
+
+// =====================================
+// INÍCIO DO DOMCONTENTLOADED PRINCIPAL
+// =====================================
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('movimentacoesChart');
+    if (!ctx) return;
+    
+    let movimentacoesChart = null;
+    
+    // Mapa de labels dos períodos
+    const periodLabels = {
+        '7d': 'Últimos 7 Dias',
+        '1m': 'Últimos 30 Dias',
+        '3m': 'Últimos 3 Meses',
+        '6m': 'Últimos 6 Meses',
+        '1y': 'Último Ano',
+        'custom': 'Período Personalizado'
+    };
+    
+    // Função para mostrar/ocultar loading
+    function toggleLoading(show) {
+        const loadingEl = document.getElementById('chart-loading');
+        const canvas = document.getElementById('movimentacoesChart');
+        if (loadingEl && canvas) {
+            if (show) {
+                loadingEl.classList.remove('d-none');
+                canvas.style.opacity = '0.3';
+            } else {
+                loadingEl.classList.add('d-none');
+                canvas.style.opacity = '1';
+            }
+        }
+    }
+    
+    // As funções updateActiveFiltersBadge, saveFiltersToCache e restoreFiltersFromCache
+    // estão declaradas no escopo global acima (antes do DOMContentLoaded)
+    
+    // Função para carregar dados do gráfico com filtros
+    function loadChartData(period = '7d', startDate = null, endDate = null) {
+        console.log('Carregando dados do gráfico para período:', period, 'Início:', startDate, 'Fim:', endDate);
+        
+        // Mostrar loading
+        toggleLoading(true);
+        
+        // Construir URL base
+        let url = `/api/chart-data/?period=${period}`;
+        
+        // Adicionar datas personalizadas
+        if (startDate && endDate) {
+            url += `&start_date=${startDate}&end_date=${endDate}`;
+        }
+        
+        // Adicionar filtros avançados
+        const filters = getAdvancedFilters();
+        if (filters) {
+            url += filters;
+        }
+        
+        console.log('URL:', url);
+        
+        fetch(url)
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Ocultar loading
+                toggleLoading(false);
+                
+                // Salvar filtros no cache
+                saveFiltersToCache();
+                console.log('Dados recebidos:', data);
+                
+                // Atualizar título do gráfico
+                const chartTitle = document.getElementById('chart-title');
+                if (chartTitle && data.title) {
+                    chartTitle.textContent = `Movimentações - ${data.title}`;
+                }
+                
+                // Atualizar botão ativo
+                document.querySelectorAll('.chart-filter').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                if (period !== 'custom') {
+                    const activeBtn = document.querySelector(`.chart-filter[data-period="${period}"]`);
+                    if (activeBtn) activeBtn.classList.add('active');
+                }
+                
+                console.log('Gráfico existe?', !!movimentacoesChart);
+                console.log('Novos dados - Labels:', data.labels.length, 'Entradas:', data.entradas.length, 'Saídas:', data.saidas.length);
+                
+                if (movimentacoesChart) {
+                    // Atualizar gráfico existente
+                    console.log('Atualizando gráfico existente...');
+                    movimentacoesChart.data.labels = data.labels;
+                    movimentacoesChart.data.datasets[0].data = data.entradas;
+                    movimentacoesChart.data.datasets[1].data = data.saidas;
+                    movimentacoesChart.update('none'); // Sem animação para melhor performance
+                    console.log('Gráfico atualizado!');
+                } else {
+                    // Destruir gráfico antigo se existir
+                    const existingChart = Chart.getChart(ctx);
+                    if (existingChart) {
+                        console.log('Destruindo gráfico antigo...');
+                        existingChart.destroy();
+                    }
+                    
+                    // Criar novo gráfico
+                    console.log('Criando novo gráfico...');
+                    movimentacoesChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: data.labels,
+                            datasets: [
+                                {
+                                    label: 'Entradas',
+                                    data: data.entradas,
+                                    borderColor: '#28a745',
+                                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                                    tension: 0.4,
+                                    fill: true,
+                                    borderWidth: 2,
+                                    pointRadius: 3,
+                                    pointHoverRadius: 5
+                                },
+                                {
+                                    label: 'Saídas',
+                                    data: data.saidas,
+                                    borderColor: '#dc3545',
+                                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                                    tension: 0.4,
+                                    fill: true,
+                                    borderWidth: 2,
+                                    pointRadius: 3,
+                                    pointHoverRadius: 5
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            interaction: {
+                                mode: 'index',
+                                intersect: false
+                            },
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'top',
+                                    labels: {
+                                        usePointStyle: true,
+                                        padding: 15
+                                    }
+                                },
+                                tooltip: {
+                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                    padding: 12,
+                                    titleColor: '#fff',
+                                    bodyColor: '#fff',
+                                    displayColors: true
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        stepSize: 1,
+                                        precision: 0
+                                    },
+                                    grid: {
+                                        drawBorder: false
+                                    }
+                                },
+                                x: {
+                                    grid: {
+                                        display: false
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao carregar dados do gráfico:', error);
+                toggleLoading(false);
+                // Mostrar mensagem de erro ao usuário
+                const chartTitle = document.getElementById('chart-title');
+                if (chartTitle) {
+                    const originalText = chartTitle.textContent;
+                    chartTitle.innerHTML = '<i class="bi bi-exclamation-triangle text-danger me-2"></i>Erro ao carregar dados';
+                    setTimeout(() => {
+                        chartTitle.textContent = originalText;
+                    }, 3000);
+                }
+            });
+    }
+    
+    // Mostrar loading inicial
+    toggleLoading(true);
+    
+    // Carregar opções dos filtros (produtos, categorias, usuários)
+    fetch('/api/filter-options/')
+        .then(response => response.json())
+        .then(data => {
+            // Popular dropdown de produtos
+            const productSelect = document.getElementById('filter-product');
+            if (productSelect && data.products) {
+                data.products.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product.id;
+                    option.textContent = product.label;
+                    productSelect.appendChild(option);
+                });
+            }
+            
+            // Popular dropdown de categorias com sistema de tags
+            if (data.categories) {
+                populateCategoryDropdown(data.categories);
+                populateReportCategoryDropdown(data.categories); // Popular também no modal
+            }
+            
+            // Popular dropdown de usuários
+            const userSelect = document.getElementById('filter-user');
+            if (userSelect && data.users) {
+                data.users.forEach(user => {
+                    const option = document.createElement('option');
+                    option.value = user.id;
+                    option.textContent = user.label;
+                    userSelect.appendChild(option);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao carregar opções de filtros:', error);
+            toggleLoading(false);
+        });
+    
+    // Restaurar filtros do cache ou carregar padrão
+    const cachedPeriod = restoreFiltersFromCache();
+    const initialPeriod = cachedPeriod || '7d';
+    
+    // Atualizar período ativo no dropdown
+    if (cachedPeriod) {
+        document.querySelectorAll('.chart-filter').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.period === cachedPeriod) {
+                btn.classList.add('active');
+                const periodText = btn.textContent.trim();
+                const selectedPeriodText = document.getElementById('selected-period-text');
+                if (selectedPeriodText) {
+                    selectedPeriodText.textContent = periodText;
+                }
+            }
+        });
+    }
+    
+    // Carregar gráfico inicial
+    loadChartData(initialPeriod);
+    
+    // A função getAdvancedFilters está declarada no escopo global acima
+    
+    // Função para limpar filtros
+    function clearFilters() {
+        document.getElementById('filter-search').value = '';
+        document.getElementById('filter-product').value = '';
+        document.getElementById('filter-category').value = '';
+        document.getElementById('filter-user').value = '';
+        document.getElementById('filter-min-quantity').value = '';
+        document.getElementById('filter-max-quantity').value = '';
+        document.getElementById('filter-sort').value = 'date';
+        document.getElementById('filter-order-desc').checked = true;
+        
+        // Resetar tipo de movimentação (restaurar todos via tags)
+        selectedMovementTypes = ['ENTRADA', 'SAIDA', 'AJUSTE'];
+        const typesContainer = document.getElementById('selected-types-container');
+        typesContainer.innerHTML = `
+            <span class="badge bg-success-subtle text-success border border-success dashboard-filter-tag" data-type="ENTRADA">
+                <i class="bi bi-arrow-down-circle me-1"></i>Entrada
+                <button type="button" class="btn-close btn-close-sm ms-2" aria-label="Remover" onclick="removeMovementTypeTag('ENTRADA')"></button>
+            </span>
+            <span class="badge bg-danger-subtle text-danger border border-danger dashboard-filter-tag" data-type="SAIDA">
+                <i class="bi bi-arrow-up-circle me-1"></i>Saída
+                <button type="button" class="btn-close btn-close-sm ms-2" aria-label="Remover" onclick="removeMovementTypeTag('SAIDA')"></button>
+            </span>
+            <span class="badge bg-warning-subtle text-warning border border-warning dashboard-filter-tag" data-type="AJUSTE">
+                <i class="bi bi-arrow-repeat me-1"></i>Ajuste
+                <button type="button" class="btn-close btn-close-sm ms-2" aria-label="Remover" onclick="removeMovementTypeTag('AJUSTE')"></button>
+            </span>
+        `;
+        
+        // Resetar categorias selecionadas
+        selectedCategories = [];
+        document.getElementById('selected-categories-container').innerHTML = '';
+        
+        // Limpar cache
+        localStorage.removeItem('dashboard_filters');
+        
+        // Atualizar badge
+        updateActiveFiltersBadge();
+        
+        // Recarregar com filtros limpos
+        const currentPeriod = document.querySelector('.chart-filter.active')?.dataset.period || '7d';
+        loadChartData(currentPeriod);
+    }
+    
+    // Event listeners para os botões de filtro
+    const filterButtons = document.querySelectorAll('.chart-filter');
+    console.log('Botões de filtro encontrados:', filterButtons.length);
+    
+    filterButtons.forEach((button, index) => {
+        console.log(`Botão ${index}:`, button.dataset.period);
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const period = this.dataset.period;
+            const periodText = this.textContent.trim();
+            console.log('🔵 Clicou no filtro:', period);
+            
+            // Remover classe active de todos os botões
+            document.querySelectorAll('.chart-filter').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Adicionar classe active no botão clicado
+            this.classList.add('active');
+            
+            // Atualizar texto do dropdown
+            const selectedPeriodText = document.getElementById('selected-period-text');
+            if (selectedPeriodText) {
+                selectedPeriodText.textContent = periodText;
+            }
+            
+            loadChartData(period);
+        });
+    });
+    
+    // Event listener para período personalizado
+    const applyCustomBtn = document.getElementById('apply-custom-period');
+    if (applyCustomBtn) {
+        applyCustomBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const startDate = document.getElementById('custom-start-date').value;
+            const endDate = document.getElementById('custom-end-date').value;
+            
+            if (!startDate || !endDate) {
+                alert('Por favor, selecione ambas as datas.');
+                return;
+            }
+            
+            if (startDate > endDate) {
+                alert('A data de início deve ser anterior à data de fim.');
+                return;
+            }
+            
+            console.log('Aplicando período personalizado:', startDate, 'até', endDate);
+            loadChartData('custom', startDate, endDate);
+        });
+    }
+    
+    // Event listener para botão "Aplicar Filtros"
+    const applyFiltersBtn = document.getElementById('apply-filters');
+    if (applyFiltersBtn) {
+        applyFiltersBtn.addEventListener('click', function() {
+            updateActiveFiltersBadge();
+            const currentPeriod = document.querySelector('.chart-filter.active')?.dataset.period || '7d';
+            loadChartData(currentPeriod);
+        });
+    }
+    
+    // Event listener para botão "Limpar Filtros"
+    const clearFiltersBtn = document.getElementById('clear-filters');
+    if (clearFiltersBtn) {
+        clearFiltersBtn.addEventListener('click', clearFilters);
+    }
+    
+    // Event listener para busca (Enter key)
+    const searchInput = document.getElementById('filter-search');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const currentPeriod = document.querySelector('.chart-filter.active')?.dataset.period || '7d';
+                loadChartData(currentPeriod);
+            }
+        });
+    }
+    
+    // Definir data máxima como hoje nos date pickers
+    const today = new Date().toISOString().split('T')[0];
+    const startDateInput = document.getElementById('custom-start-date');
+    const endDateInput = document.getElementById('custom-end-date');
+    if (startDateInput) {
+        startDateInput.max = today;
+        // Definir data início como 7 dias atrás por padrão
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        startDateInput.value = sevenDaysAgo.toISOString().split('T')[0];
+    }
+    if (endDateInput) {
+        endDateInput.max = today;
+        endDateInput.value = today; // Definir data fim como hoje por padrão
+    }
+    
+    // =====================================
+    // SISTEMA DE TAGS/CHIPS PARA SELEÇÃO MÚLTIPLA
+    // =====================================
+    
+    // Estado dos tipos de movimentação selecionados (iniciar com todos)
+    let selectedMovementTypes = ['ENTRADA', 'SAIDA', 'AJUSTE'];
+    
+    // Função para remover tag de tipo de movimentação
+    window.removeMovementTypeTag = function(type) {
+        // Remover do array
+        selectedMovementTypes = selectedMovementTypes.filter(t => t !== type);
+        
+        // Remover elemento visual
+        const tag = document.querySelector(`#selected-types-container .dashboard-filter-tag[data-type="${type}"]`);
+        if (tag) {
+            tag.style.animation = 'fadeOutScale 0.2s ease-out';
+            setTimeout(() => tag.remove(), 200);
+        }
+        
+        updateActiveFiltersBadge();
+    };
+    
+    // Adicionar event listeners ao dropdown de tipos
+    const movementTypeDropdown = document.querySelectorAll('#dropdownMovementType + .dropdown-menu .dropdown-item');
+    movementTypeDropdown.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            const type = this.dataset.type;
+            const label = this.dataset.label;
+            
+            // Verificar se já está selecionado
+            if (selectedMovementTypes.includes(type)) {
+                alert('Este tipo já está selecionado!');
+                return;
+            }
+            
+            // Adicionar ao array
+            selectedMovementTypes.push(type);
+            
+            // Criar elemento visual
+            const container = document.getElementById('selected-types-container');
+            const tag = document.createElement('span');
+            
+            // Definir cor baseado no tipo
+            let colorClass = 'bg-secondary-subtle text-secondary border-secondary';
+            let icon = 'bi-arrow-repeat';
+            if (type === 'ENTRADA') {
+                colorClass = 'bg-success-subtle text-success border-success';
+                icon = 'bi-arrow-down-circle';
+            } else if (type === 'SAIDA') {
+                colorClass = 'bg-danger-subtle text-danger border-danger';
+                icon = 'bi-arrow-up-circle';
+            } else if (type === 'AJUSTE') {
+                colorClass = 'bg-warning-subtle text-warning border-warning';
+            }
+            
+            tag.className = `badge ${colorClass} border dashboard-filter-tag`;
+            tag.dataset.type = type;
+            tag.style.animation = 'fadeInScale 0.2s ease-out';
+            tag.innerHTML = `
+                <i class="bi ${icon} me-1"></i>${label}
+                <button type="button" class="btn-close btn-close-sm ms-2" aria-label="Remover" onclick="removeMovementTypeTag('${type}')"></button>
+            `;
+            container.appendChild(tag);
+            
+            updateActiveFiltersBadge();
+        });
+    });
+    
+    // Estado das categorias selecionadas
+    let selectedCategories = [];
+    
+    // Função para remover tag de categoria
+    window.removeCategoryTag = function(categoryId) {
+        selectedCategories = selectedCategories.filter(c => c.id !== categoryId);
+        
+        const tag = document.querySelector(`#selected-categories-container .dashboard-filter-tag[data-category-id="${categoryId}"]`);
+        if (tag) {
+            tag.style.animation = 'fadeOutScale 0.2s ease-out';
+            setTimeout(() => tag.remove(), 200);
+        }
+        
+        updateActiveFiltersBadge();
+    };
+    
+    // A função populateCategoryDropdown está declarada no escopo global acima
+    
+    // =====================================
+    // SISTEMA DE RELATÓRIOS PERSONALIZADOS
+    // =====================================
+    
+    // A função generateReport está declarada no escopo global acima
+    
+    // Carregar relatórios customizados do localStorage
+    function loadCustomReports() {
+        const customReports = JSON.parse(localStorage.getItem('custom_reports') || '[]');
+        const container = document.getElementById('custom-reports-container');
+        
+        if (customReports.length === 0) {
+            container.innerHTML = '';
+            return;
+        }
+        
+        container.innerHTML = customReports.map((report, index) => `
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border border-secondary report-preset-card" data-custom-id="${index}">
+                    <div class="card-body text-center position-relative">
+                        <button class="btn btn-sm btn-link text-danger position-absolute top-0 end-0" onclick="deleteCustomReport(${index})" title="Excluir">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                        <i class="bi bi-file-earmark-text display-4 text-secondary mb-3"></i>
+                        <h6 class="card-title fw-bold">${report.name}</h6>
+                        <p class="card-text small text-muted">${report.description}</p>
+                        <button class="btn btn-sm btn-secondary w-100" onclick="generateCustomReport(${index})">
+                            <i class="bi bi-file-earmark-pdf me-1"></i>Gerar PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    // Deletar relatório customizado
+    window.deleteCustomReport = function(index) {
+        if (!confirm('Deseja realmente excluir este relatório personalizado?')) return;
+        
+        const customReports = JSON.parse(localStorage.getItem('custom_reports') || '[]');
+        customReports.splice(index, 1);
+        localStorage.setItem('custom_reports', JSON.stringify(customReports));
+        loadCustomReports();
+    };
+    
+    // Gerar relatório customizado
+    window.generateCustomReport = function(index) {
+        const customReports = JSON.parse(localStorage.getItem('custom_reports') || '[]');
+        const report = customReports[index];
+        
+        console.log('Gerando relatório customizado:', report);
+        alert(`Gerando relatório: ${report.name}\n\nConfiguração:\n${JSON.stringify(report.config, null, 2)}`);
+        
+        // TODO: Implementar geração via backend
+    };
+    
+    // Event listener para botão "Adicionar Novo" relatório
+    const btnAddCustomReport = document.getElementById('btn-add-custom-report');
+    if (btnAddCustomReport) {
+        btnAddCustomReport.addEventListener('click', function() {
+            // Abrir modal de configuração (será implementado a seguir)
+            alert('Modal de configuração de relatório será implementado!\n\nPermitirá configurar:\n- Nome\n- Descrição\n- Filtros\n- Campos a exibir\n- Ordenação');
+            
+            // TODO: Implementar modal Bootstrap
+            // const modal = new bootstrap.Modal(document.getElementById('customReportModal'));
+            // modal.show();
+        });
+    }
+    
+    // Carregar relatórios customizados ao inicializar
+    loadCustomReports();
+});
+</script>
+
+<!-- Modal de Configuração de Relatório Customizado -->
+<div class="modal fade" id="customReportModal" tabindex="-1" aria-labelledby="customReportModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customReportModalLabel">
+                    <i class="bi bi-file-earmark-plus me-2"></i>Criar Relatório Personalizado
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <form id="customReportForm">
+                    <div class="mb-3">
+                        <label for="report-name" class="form-label fw-medium">Nome do Relatório *</label>
+                        <input type="text" class="form-control" id="report-name" required placeholder="Ex: Relatório de Produtos em Falta">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="report-description" class="form-label fw-medium">Descrição</label>
+                        <textarea class="form-control" id="report-description" rows="2" placeholder="Descreva o objetivo deste relatório"></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">Tipo de Relatório Base *</label>
+                        <select class="form-select" id="report-base-type" required>
+                            <option value="">Selecione...</option>
+                            <option value="estoque">Estoque Atual</option>
+                            <option value="movimentacoes">Movimentações</option>
+                            <option value="vencimentos">Vencimentos</option>
+                            <option value="financeiro">Financeiro</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="report-filters" class="form-label fw-medium">Filtros</label>
+                        <div class="form-text mb-2">Configure os filtros que serão aplicados automaticamente</div>
+                        
+                        <div class="row g-3" id="report-filters">
+                            <div class="col-md-6">
+                                <label class="form-label small">Categorias</label>
+                                <div class="dropdown w-100 mb-2">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle w-100 text-start" type="button" id="dropdownReportCategory" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-plus-circle me-1"></i>Adicionar categoria
+                                    </button>
+                                    <ul class="dropdown-menu w-100" aria-labelledby="dropdownReportCategory" id="report-category-dropdown-menu">
+                                        <li><a class="dropdown-item text-muted" href="#"><i class="bi bi-hourglass-split me-2"></i>Carregando...</a></li>
+                                    </ul>
+                                </div>
+                                <div id="report-selected-categories-container" class="d-flex flex-wrap gap-2" style="min-height: 2.5rem; padding: 0.5rem; border: 1px dashed #ddd; border-radius: 0.375rem; background: #f8f9fa;">
+                                    <!-- Tags de categorias selecionadas -->
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small">Tipos de Movimentação</label>
+                                <div class="dropdown w-100 mb-2">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle w-100 text-start" type="button" id="dropdownReportType" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-plus-circle me-1"></i>Adicionar tipo
+                                    </button>
+                                    <ul class="dropdown-menu w-100" aria-labelledby="dropdownReportType">
+                                        <li><a class="dropdown-item" href="#" data-type="ENTRADA" data-label="Entrada">
+                                            <i class="bi bi-arrow-down-circle text-success me-2"></i>Entrada
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="#" data-type="SAIDA" data-label="Saída">
+                                            <i class="bi bi-arrow-up-circle text-danger me-2"></i>Saída
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="#" data-type="AJUSTE" data-label="Ajuste">
+                                            <i class="bi bi-arrow-repeat text-warning me-2"></i>Ajuste
+                                        </a></li>
+                                    </ul>
+                                </div>
+                                <div id="report-selected-types-container" class="d-flex flex-wrap gap-2" style="min-height: 2.5rem; padding: 0.5rem; border: 1px dashed #ddd; border-radius: 0.375rem; background: #f8f9fa;">
+                                    <!-- Tags de tipos selecionadas -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">Ordenação</label>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <select class="form-select form-select-sm" id="report-sort-by">
+                                    <option value="name">Nome</option>
+                                    <option value="quantity">Quantidade</option>
+                                    <option value="date">Data</option>
+                                    <option value="value">Valor</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <select class="form-select form-select-sm" id="report-sort-order">
+                                    <option value="asc">Crescente</option>
+                                    <option value="desc">Decrescente</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" id="btn-save-custom-report">
+                    <i class="bi bi-check2-circle me-1"></i>Salvar Relatório
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Event listeners para tipos do modal (já está dentro do DOMContentLoaded principal acima)
+document.addEventListener('DOMContentLoaded', function() {
+    const reportTypeItems = document.querySelectorAll('#dropdownReportType + .dropdown-menu .dropdown-item');
+    reportTypeItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            const type = this.dataset.type;
+            const label = this.dataset.label;
+            
+            if (reportSelectedTypes.includes(type)) {
+                alert('Este tipo já está selecionado!');
+                return;
+            }
+            
+            reportSelectedTypes.push(type);
+            
+            let colorClass = 'bg-secondary-subtle text-secondary border-secondary';
+            let icon = 'bi-arrow-repeat';
+            
+            if (type === 'ENTRADA') {
+                colorClass = 'bg-success-subtle text-success border-success';
+                icon = 'bi-arrow-down-circle';
+            } else if (type === 'SAIDA') {
+                colorClass = 'bg-danger-subtle text-danger border-danger';
+                icon = 'bi-arrow-up-circle';
+            } else if (type === 'AJUSTE') {
+                colorClass = 'bg-warning-subtle text-warning border-warning';
+            }
+            
+            const container = document.getElementById('report-selected-types-container');
+            const tag = document.createElement('span');
+            tag.className = `badge ${colorClass} border dashboard-filter-tag`;
+            tag.dataset.type = type;
+            tag.innerHTML = `
+                <i class="bi ${icon} me-1"></i>${label}
+                <button type="button" class="btn-close btn-close-sm ms-2" aria-label="Remover" onclick="removeReportTypeTag('${type}')"></button>
+            `;
+            container.appendChild(tag);
+        });
+    });
+});
+
+// Event listener para salvar relatório customizado
+document.getElementById('btn-save-custom-report')?.addEventListener('click', function() {
+    const form = document.getElementById('customReportForm');
+    
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    const customReport = {
+        name: document.getElementById('report-name').value,
+        description: document.getElementById('report-description').value,
+        config: {
+            baseType: document.getElementById('report-base-type').value,
+            filters: {
+                categories: reportSelectedCategories.map(c => c.id),
+                types: reportSelectedTypes
+            },
+            sorting: {
+                by: document.getElementById('report-sort-by').value,
+                order: document.getElementById('report-sort-order').value
+            }
+        }
+    };
+    
+    // Salvar no localStorage
+    const customReports = JSON.parse(localStorage.getItem('custom_reports') || '[]');
+    customReports.push(customReport);
+    localStorage.setItem('custom_reports', JSON.stringify(customReports));
+    
+    // Fechar modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('customReportModal'));
+    modal.hide();
+    
+    // Limpar form e tags
+    form.reset();
+    reportSelectedCategories = [];
+    reportSelectedTypes = [];
+    document.getElementById('report-selected-categories-container').innerHTML = '';
+    document.getElementById('report-selected-types-container').innerHTML = '';
+    
+    // Recarregar lista
+    loadCustomReports();
+    
+    // Feedback
+    alert('Relatório personalizado criado com sucesso!');
+});
+
+// Popular categorias do modal quando a API carregar
+// (será chamado após fetch de /api/filter-options/)
+
+// =====================================
+// FUNÇÃO PARA GERAR RELATÓRIO PDF
+// =====================================
+window.generateReport = function(reportType, event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    
+    // Mostrar loading no botão
+    const btn = event.target.closest('button');
+    const originalHTML = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Gerando...';
+    
+    // Construir URL com período atual do dashboard
+    const currentPeriod = document.getElementById('period-selector')?.value || '30d';
+    let params = new URLSearchParams();
+    
+    // Calcular datas baseado no período
+    const today = new Date();
+    let dateFrom = new Date();
+    
+    switch(currentPeriod) {
+        case '7d':
+            dateFrom.setDate(today.getDate() - 7);
+            break;
+        case '15d':
+            dateFrom.setDate(today.getDate() - 15);
+            break;
+        case '30d':
+            dateFrom.setDate(today.getDate() - 30);
+            break;
+        case '90d':
+            dateFrom.setDate(today.getDate() - 90);
+            break;
+        case 'mes':
+            dateFrom.setMonth(today.getMonth() - 1);
+            break;
+        case 'ano':
+            dateFrom.setFullYear(today.getFullYear() - 1);
+            break;
+    }
+    
+    // Formatar datas para YYYY-MM-DD
+    const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+    
+    if (reportType === 'movimentacoes') {
+        params.append('date_from', formatDate(dateFrom));
+        params.append('date_to', formatDate(today));
+    } else if (reportType === 'vencimentos') {
+        params.append('days', '30');
+        params.append('expired', 'true');
+    }
+    
+    // Redirecionar para download
+    const downloadUrl = `/relatorios/download/${reportType}/?${params.toString()}`;
+    window.open(downloadUrl, '_blank');
+    
+    // Restaurar botão após 2 segundos
+    setTimeout(() => {
+        btn.disabled = false;
+        btn.innerHTML = originalHTML;
+    }, 2000);
+};
+</script>
 {% endblock %}

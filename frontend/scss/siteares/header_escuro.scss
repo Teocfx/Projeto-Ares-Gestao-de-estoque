@@ -54,7 +54,7 @@
     }
   }
 
-  .header-acessibilidade--intranet {
+  .header-acessibilidade {
     color: variables.$color-white;
     &:hover {
       color: variables.$color-grey-200;
@@ -68,16 +68,16 @@
     }
   }
   
-  // Perfil/Intranet no modo escuro
-  .header-intranet-user-icon-wrapper {
+  // Perfil no modo escuro
+  .header-user-icon-wrapper {
     border-color: variables.$color-white;
   }
   
-  .header-intranet-user-icon {
+  .header-user-icon {
     fill: variables.$color-white;
   }
   
-  .header-intranet-user-text {
+  .header-user-text {
     color: variables.$color-white;
   }
   

@@ -1,0 +1,131 @@
+{% load static %}
+
+{% comment %}
+Componente: Paginação Padronizada
+Uso: {% include 'include/pagination.html' with page_obj=page_obj %}
+
+Parâmetros:
+- page_obj (obrigatório): Objeto de paginação do Django (Paginator)
+- size (opcional): Tamanho dos botões (sm, md, lg). Padrão: md
+- show_info (opcional): Booleano para mostrar info de registros. Padrão: True
+- max_pages (opcional): Número máximo de páginas visíveis. Padrão: 5
+
+Exemplo de uso na view:
+from django.core.paginator import Paginator
+
+def minha_view(request):
+    items = Product.objects.all()
+    paginator = Paginator(items, 25)  # 25 items por página
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, 'template.html', {'page_obj': page_obj})
+
+No template:
+{% include 'include/pagination.html' with page_obj=page_obj %}
+{% endcomment %}
+
+{% if page_obj.has_other_pages %}
+{% with size=size|default:"md" show_info=show_info|default:True max_pages=max_pages|default:5 %}
+
+<div class="pagination-wrapper d-flex justify-content-between align-items-center mt-4 flex-wrap">
+    {% if show_info %}
+    <div class="pagination-info text-muted mb-2 mb-md-0">
+        Mostrando 
+        <strong>{{ page_obj.start_index }}</strong> a 
+        <strong>{{ page_obj.end_index }}</strong> de 
+        <strong>{{ page_obj.paginator.count }}</strong> registros
+    </div>
+    {% endif %}
+    
+    <nav aria-label="Navegação de páginas">
+        <ul class="pagination pagination-{{ size }} mb-0">
+            {# Botão Primeira Página #}
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1" aria-label="Primeira página">
+                    <i class="bi bi-chevron-double-left"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-double-left"></i>
+                </span>
+            </li>
+            {% endif %}
+            
+            {# Botão Página Anterior #}
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Página anterior">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-left"></i>
+                </span>
+            </li>
+            {% endif %}
+            
+            {# Números das Páginas #}
+            {% with start_page=page_obj.number|add:"-2" end_page=page_obj.number|add:"2" %}
+                {% if start_page < 1 %}
+                    {% with start_page=1 %}{% endwith %}
+                {% endif %}
+                {% if end_page > page_obj.paginator.num_pages %}
+                    {% with end_page=page_obj.paginator.num_pages %}{% endwith %}
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                    {% if num >= start_page and num <= end_page %}
+                        {% if page_obj.number == num %}
+                        <li class="page-item active" aria-current="page">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            {% endwith %}
+            
+            {# Botão Próxima Página #}
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Próxima página">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-right"></i>
+                </span>
+            </li>
+            {% endif %}
+            
+            {# Botão Última Página #}
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Última página">
+                    <i class="bi bi-chevron-double-right"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-double-right"></i>
+                </span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+
+{% endwith %}
+{% endif %}

@@ -1,85 +1,148 @@
 {% extends "base.html" %}
 {% load static %}
+{% load block_tags %}
 
 {% block title %}Produtos - Sistema de Gestão de Estoque ARES{% endblock %}
 
 {% block body_class %}produtos-page{% endblock %}
 
-{% block content %}
-    <!-- Header com título e ações -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-0">
-                <i class="bi bi-box-seam me-2"></i>
-                Produtos
-            </h1>
-            <p class="text-muted mb-0">Gerencie o catálogo de produtos</p>
-        </div>
-        
-        <div class="btn-group">
-            <a href="{% url 'produtos:create' %}" class="btn btn-primary">
-                <i class="bi bi-plus-circle me-1"></i>
-                Novo Produto
-            </a>
-            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                <i class="bi bi-three-dots-vertical"></i>
-            </button>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="{% url 'produtos:category_list' %}">
-                    <i class="bi bi-tags me-2"></i>Categorias
-                </a></li>
-                <li><a class="dropdown-item" href="{% url 'produtos:unit_list' %}">
-                    <i class="bi bi-rulers me-2"></i>Unidades
-                </a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#" onclick="exportProducts()">
-                    <i class="bi bi-download me-2"></i>Exportar
-                </a></li>
-            </ul>
+{% block page_header %}
+    <div class="page-titulo titulo-container mb-4">
+        <div class="container-fluid">
+            <div class="row align-items-center py-3">
+                <!-- Título e descrição -->
+                <div class="col-lg-8">
+                    <div class="page-titulo__content">
+                        <h1 class="page-titulo__title titulo-1 h2 mb-2 d-flex align-items-center">
+                            <i class="bi bi-box-seam me-2"></i>
+                            Produtos
+                        </h1>
+                        <p class="page-titulo__subtitle text-muted mb-1">
+                            Gerencie o catálogo de produtos
+                        </p>
+                    </div>
+                </div>
+                <!-- Ações (botões) -->
+                <div class="col-lg-4">
+                    <div class="page-titulo__actions d-flex justify-content-lg-end gap-2">
+                        <a href="{% url 'produtos:create' %}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-1"></i>Novo Produto
+                        </a>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'produtos:category_list' %}">
+                                    <i class="bi bi-tags me-2"></i>Categorias
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'produtos:unit_list' %}">
+                                    <i class="bi bi-rulers me-2"></i>Unidades
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'produtos:export' %}?{{ request.GET.urlencode }}">
+                                    <i class="bi bi-download me-2"></i>Exportar CSV
+                                </a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+{% endblock %}
 
-    <!-- Estatísticas rápidas -->
-    {% if stats %}
+{% block content %}
+<div class="container-fluid">
+    <!-- Cards de Estatísticas -->
     <div class="row mb-4">
-        <div class="col-md-3">
+        <!-- Total de Produtos -->
+        <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-box display-6 text-primary mb-2"></i>
-                    <h5 class="card-title">{{ stats.total_products }}</h5>
-                    <p class="card-text text-muted">Total de Produtos</p>
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total de Produtos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ stats.total_products|default:"0" }}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-box-seam display-4 text-primary opacity-75"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+
+        <!-- Estoque Crítico -->
+        <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-exclamation-triangle display-6 text-danger mb-2"></i>
-                    <h5 class="card-title">{{ stats.critical_stock }}</h5>
-                    <p class="card-text text-muted">Estoque Crítico</p>
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Estoque Crítico
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ stats.critical_stock|default:"0" }}
+                            </div>
+                            <small class="text-muted">Sem estoque</small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-exclamation-triangle-fill display-4 text-danger opacity-75"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+
+        <!-- Estoque Baixo -->
+        <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-exclamation-circle display-6 text-warning mb-2"></i>
-                    <h5 class="card-title">{{ stats.low_stock }}</h5>
-                    <p class="card-text text-muted">Estoque Baixo</p>
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Estoque Baixo
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ stats.low_stock|default:"0" }}
+                            </div>
+                            <small class="text-muted">Abaixo do mínimo</small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-exclamation-circle-fill display-4 text-warning opacity-75"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+
+        <!-- Valor Total -->
+        <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-currency-dollar display-6 text-success mb-2"></i>
-                    <h5 class="card-title">R$ {{ stats.total_stock_value|floatformat:2 }}</h5>
-                    <p class="card-text text-muted">Valor Total</p>
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Valor Total
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                R$ {{ stats.total_stock_value|floatformat:2 }}
+                            </div>
+                            <small class="text-muted">Estoque atual</small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-currency-dollar display-4 text-success opacity-75"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    {% endif %}
 
     <!-- Formulário de busca e filtros -->
     <div class="card mb-4">
@@ -267,39 +330,7 @@
 
                 <!-- Paginação -->
                 {% if is_paginated %}
-                <nav aria-label="Paginação de produtos">
-                    <ul class="pagination justify-content-center mt-4">
-                        {% if page_obj.has_previous %}
-                            <li class="page-item">
-                                <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page=1">Primeira</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}">Anterior</a>
-                            </li>
-                        {% endif %}
-
-                        {% for num in page_obj.paginator.page_range %}
-                            {% if page_obj.number == num %}
-                                <li class="page-item active">
-                                    <span class="page-link">{{ num }}</span>
-                                </li>
-                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ num }}">{{ num }}</a>
-                                </li>
-                            {% endif %}
-                        {% endfor %}
-
-                        {% if page_obj.has_next %}
-                            <li class="page-item">
-                                <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.next_page_number }}">Próxima</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.paginator.num_pages }}">Última</a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </nav>
+                    {% include 'include/pagination.html' with page_obj=page_obj show_info=True %}
                 {% endif %}
 
             {% else %}

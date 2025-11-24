@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ report_title }}</title>
+    <style>
+        /* Estilos inline para PDF */
+        @page {
+            size: A4;
+            margin: 2cm 1.5cm;
+            @top-center {
+                content: "Sistema ARES";
+                font-size: 10pt;
+                color: #666;
+            }
+            @bottom-center {
+                content: "Página " counter(page) " de " counter(pages);
+                font-size: 9pt;
+                color: #666;
+            }
+        }
+        
+        body {
+            font-family: 'DejaVu Sans', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            font-size: 10pt;
+            color: #333;
+        }
+        
+        .report-header {
+            border-bottom: 3px solid #C8102E;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            page-break-after: avoid;
+        }
+        
+        .header-logo {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-svg {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo-svg svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .system-name {
+            font-size: 20pt;
+            font-weight: bold;
+            color: #C8102E;
+            margin: 0;
+        }
+        
+        .report-type {
+            font-size: 9pt;
+            color: #666;
+            margin: 0;
+        }
+        
+        .header-info {
+            text-align: right;
+            font-size: 8pt;
+            color: #666;
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 18pt;
+            margin: 10px 0;
+        }
+        
+        .text-muted {
+            color: #666;
+            font-size: 10pt;
+            margin: 5px 0 15px 0;
+        }
+        
+        /* Estilos para tabelas */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 9pt;
+        }
+        
+        table thead {
+            background: #f5f5f5;
+        }
+        
+        table th {
+            padding: 10px 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        table td {
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+        
+        table tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+        
+        /* Badges de status */
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 8pt;
+            font-weight: bold;
+        }
+        
+        .badge-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .badge-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .badge-info {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        /* Stats box */
+        .stats-box {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .stats-box h3 {
+            margin: 0 0 10px 0;
+            font-size: 12pt;
+            color: #C8102E;
+        }
+        
+        /* Rodapé */
+        .report-footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #dee2e6;
+            text-align: center;
+            font-size: 8pt;
+            color: #666;
+        }
+        
+        .report-footer p {
+            margin: 5px 0;
+        }
+        
+        /* Quebras de página */
+        .no-break {
+            page-break-inside: avoid;
+        }
+        
+        .page-break {
+            page-break-after: always;
+        }
+        
+        /* Gráficos */
+        .chart-container {
+            margin: 30px 0;
+            page-break-inside: avoid;
+        }
+        
+        .chart-title {
+            font-size: 12pt;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .bar-chart {
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        .bar-row {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+        }
+        
+        .bar-label {
+            width: 150px;
+            font-size: 9pt;
+            padding-right: 10px;
+        }
+        
+        .bar-container {
+            flex: 1;
+            height: 25px;
+            background: #e9ecef;
+            border-radius: 3px;
+            position: relative;
+        }
+        
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #C8102E 0%, #8B0000 100%);
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+            color: white;
+            font-size: 8pt;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Cabeçalho do Relatório -->
+    <div class="report-header">
+        <div class="header-logo">
+            <div class="logo-area">
+                <div class="logo-svg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 375 375" preserveAspectRatio="xMidYMid meet">
+                        <path fill="#5b0000" d="M 148.703125 123.988281 C 148.703125 123.988281 144.566406 143.667969 147.617188 160.957031 L 142.386719 188.050781 L 149.652344 183.546875 C 149.652344 183.546875 151.03125 159.144531 152.121094 156.890625 C 153.210938 154.636719 175.582031 150.789062 175.582031 150.789062 C 175.582031 150.789062 171.367188 161.609375 167.15625 163.933594 C 162.945312 166.1875 155.609375 167.929688 155.609375 167.929688 C 155.609375 167.929688 155.753906 197.5625 148.34375 208.53125 C 148.34375 208.53125 171.296875 201.410156 174.347656 198.578125 C 177.324219 195.816406 178.777344 177.296875 178.777344 177.296875 L 164.175781 183.472656 C 164.175781 183.472656 177.46875 171.921875 184.367188 171.921875 C 191.265625 171.921875 194.320312 189.28125 198.824219 189.863281 C 203.398438 190.371094 216.253906 180.128906 216.253906 180.128906 L 211.609375 169.089844 L 198.535156 173.085938 L 209.429688 166.183594 C 207.175781 129.214844 191.34375 104.882812 155.320312 123.765625 C 155.320312 123.765625 163.746094 138.074219 185.535156 149.550781 C 172.238281 145.050781 158.4375 134.007812 148.703125 123.988281 Z"/>
+                        <path fill="#bd1b1b" d="M 153.5 121.082031 L 128.804688 83.382812 C 153.863281 92.460938 185.894531 82.441406 205.285156 96.53125 C 232.523438 116.140625 212.332031 166.402344 246.179688 194.800781 C 246.179688 194.800781 227.003906 191.53125 217.703125 160.808594 C 213.347656 146.574219 211.167969 136.261719 208.117188 128.488281 C 200.203125 108.003906 173.765625 102.195312 154.953125 108.589844 L 160.324219 117.8125 C 158.074219 118.753906 155.894531 119.773438 153.789062 120.9375 Z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="system-name">Sistema ARES</p>
+                    <p class="report-type">Gestão de Estoque</p>
+                </div>
+            </div>
+            <div class="header-info">
+                <div>Gerado em: {{ generated_at|date:"d/m/Y H:i" }}</div>
+                <div>Por: {{ report_author }}</div>
+            </div>
+        </div>
+        <h1>{{ report_title }}</h1>
+        {% if report_subtitle %}
+        <p class="text-muted">{{ report_subtitle }}</p>
+        {% endif %}
+    </div>
+    
+    <!-- Conteúdo do Relatório -->
+    <div class="report-content">
+        {% block content %}
+        {% endblock %}
+    </div>
+    
+    <!-- Rodapé do Relatório -->
+    <div class="report-footer">
+        <p>Sistema ARES - Gestão de Estoque</p>
+        <p>Este relatório foi gerado automaticamente pelo sistema.</p>
+    </div>
+</body>
+</html>

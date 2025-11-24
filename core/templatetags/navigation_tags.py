@@ -71,7 +71,7 @@ def top_menu(context, parent, calling_page=None, max_levels=None):
         "menuitems": menuitems,
         # required by the pageurl tag that we want to use within this template
         "request": context["request"],
+        "user": context.get("user"),  # Passar o usuário para o template
         "max_levels": max_levels,
-        "HABILITAR_SITE_INTRANET": context.get("HABILITAR_SITE_INTRANET", False),
     }
 

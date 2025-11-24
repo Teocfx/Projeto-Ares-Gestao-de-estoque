@@ -1,0 +1,162 @@
+{% load static %}
+
+{% comment %}
+Componente: Layout de Formulário Padronizado
+Uso: {% include 'include/form_layout.html' with form=form titulo="Cadastrar Produto" %}
+
+Parâmetros:
+- form (obrigatório): Objeto form do Django
+- titulo (opcional): Título do formulário
+- subtitulo (opcional): Subtítulo/descrição
+- action (opcional): URL de submit. Padrão: "" (mesma página)
+- method (opcional): Método HTTP. Padrão: "post"
+- btn_submit_text (opcional): Texto do botão submit. Padrão: "Salvar"
+- btn_cancel_url (opcional): URL do botão cancelar
+- btn_cancel_text (opcional): Texto do botão cancelar. Padrão: "Cancelar"
+- show_required_note (opcional): Mostrar nota de campos obrigatórios. Padrão: True
+- enctype (opcional): Tipo de encoding (para upload). Padrão: None
+
+Exemplos:
+1. Formulário Simples:
+   {% include 'include/form_layout.html' with form=product_form titulo="Novo Produto" %}
+
+2. Formulário com Upload:
+   {% include 'include/form_layout.html' with form=image_form titulo="Adicionar Imagem" enctype="multipart/form-data" %}
+
+3. Formulário Completo:
+   {% include 'include/form_layout.html' with form=form titulo="Editar Produto" subtitulo="Preencha os dados abaixo" btn_submit_text="Atualizar" btn_cancel_url="/produtos/" %}
+
+Na view, use:
+if request.method == 'POST':
+    form = ProductForm(request.POST)
+    if form.is_valid():
+        form.save()
+        return redirect('produtos:list')
+else:
+    form = ProductForm()
+{% endcomment %}
+
+{% with action=action|default:"" method=method|default:"post" btn_submit_text=btn_submit_text|default:"Salvar" btn_cancel_text=btn_cancel_text|default:"Cancelar" show_required_note=show_required_note|default:True %}
+
+<div class="form-layout-wrapper">
+    <div class="card border-0 shadow-sm">
+        {% if titulo %}
+        <div class="card-header bg-white border-bottom">
+            <h5 class="card-title mb-0">{{ titulo }}</h5>
+            {% if subtitulo %}
+            <p class="text-muted small mb-0 mt-1">{{ subtitulo }}</p>
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        <div class="card-body">
+            {% if show_required_note %}
+            <p class="text-muted small mb-3">
+                <i class="bi bi-info-circle me-1"></i>
+                Campos marcados com <span class="text-danger">*</span> são obrigatórios
+            </p>
+            {% endif %}
+            
+            {# Erros não específicos de campo #}
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                {{ form.non_field_errors }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endif %}
+            
+            <form method="{{ method }}" action="{{ action }}" {% if enctype %}enctype="{{ enctype }}"{% endif %} novalidate>
+                {% csrf_token %}
+                
+                {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label">
+                        {{ field.label }}
+                        {% if field.field.required %}
+                        <span class="text-danger">*</span>
+                        {% endif %}
+                    </label>
+                    
+                    {# Renderiza o campo com classes Bootstrap #}
+                    {% if field.field.widget.input_type == 'checkbox' %}
+                        <div class="form-check">
+                            {{ field }}
+                            <label class="form-check-label" for="{{ field.id_for_label }}">
+                                {{ field.label }}
+                            </label>
+                        </div>
+                    {% elif field.field.widget.input_type == 'select' %}
+                        {{ field }}
+                    {% elif field.field.widget.input_type == 'textarea' %}
+                        {{ field }}
+                    {% else %}
+                        {{ field }}
+                    {% endif %}
+                    
+                    {# Help text #}
+                    {% if field.help_text %}
+                    <div class="form-text">{{ field.help_text }}</div>
+                    {% endif %}
+                    
+                    {# Erros do campo #}
+                    {% if field.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ field.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                
+                {# Botões de ação #}
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    {% if btn_cancel_url %}
+                    <a href="{{ btn_cancel_url }}" class="btn btn-secondary">
+                        <i class="bi bi-x-circle me-1"></i>{{ btn_cancel_text }}
+                    </a>
+                    {% endif %}
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>{{ btn_submit_text }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Adicionar classes Bootstrap aos campos automaticamente
+    const form = document.querySelector('.form-layout-wrapper form');
+    if (form) {
+        // Inputs de texto
+        form.querySelectorAll('input[type="text"], input[type="email"], input[type="number"], input[type="password"], input[type="date"], input[type="time"], input[type="url"], textarea').forEach(input => {
+            input.classList.add('form-control');
+            if (input.parentElement.querySelector('.invalid-feedback')) {
+                input.classList.add('is-invalid');
+            }
+        });
+        
+        // Selects
+        form.querySelectorAll('select').forEach(select => {
+            select.classList.add('form-select');
+            if (select.parentElement.querySelector('.invalid-feedback')) {
+                select.classList.add('is-invalid');
+            }
+        });
+        
+        // Checkboxes
+        form.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.classList.add('form-check-input');
+        });
+        
+        // Radio buttons
+        form.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.classList.add('form-check-input');
+        });
+    }
+});
+</script>
+
+{% endwith %}

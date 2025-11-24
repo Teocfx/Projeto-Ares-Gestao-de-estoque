@@ -136,6 +136,8 @@ class MovementCreateView(LoginRequiredMixin, CreateView):
         context.update({
             'title': 'Nova Movimentação',
             'products': Product.objects.filter(is_active=True).order_by('name'),
+            'submit_button_text': 'Salvar Movimentação',
+            'cancel_url': reverse_lazy('movimentacoes:list'),
         })
         return context
 

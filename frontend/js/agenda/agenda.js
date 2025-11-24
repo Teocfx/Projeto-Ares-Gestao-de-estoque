@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", function() {
         try {
             datasAgenda = JSON.parse(calendarAgendas.getAttribute("data-datas-agenda").replace(/'/g, '"'));
         } catch (e) {
+            console.error('Failed to parse calendar data:', e);
             datasAgenda = [];
         }
     }

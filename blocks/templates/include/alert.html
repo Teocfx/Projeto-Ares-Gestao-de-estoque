@@ -1,0 +1,72 @@
+{% load static %}
+
+{% comment %}
+Componente: Alerta/Notificação
+Uso: {% include 'include/alert.html' with tipo="success" mensagem="Operação realizada com sucesso!" %}
+
+Parâmetros:
+- tipo (obrigatório): Tipo do alerta (success, info, warning, danger, primary, secondary)
+- mensagem (obrigatório): Texto da mensagem
+- titulo (opcional): Título do alerta
+- icon (opcional): Ícone Bootstrap Icons (sem o prefixo 'bi-')
+- dismissible (opcional): Booleano para permitir fechar. Padrão: True
+- show_icon (opcional): Booleano para mostrar ícone automático. Padrão: True
+
+Ícones automáticos por tipo:
+- success: check-circle
+- info: info-circle
+- warning: exclamation-triangle
+- danger: x-circle
+- primary: star
+- secondary: question-circle
+
+Exemplos:
+1. Alerta de Sucesso:
+   {% include 'include/alert.html' with tipo="success" mensagem="Produto cadastrado com sucesso!" %}
+
+2. Alerta com Título:
+   {% include 'include/alert.html' with tipo="warning" titulo="Atenção" mensagem="Estoque baixo detectado!" %}
+
+3. Alerta Não Dispensável:
+   {% include 'include/alert.html' with tipo="danger" mensagem="Erro crítico!" dismissible=False %}
+
+4. Alerta com Ícone Customizado:
+   {% include 'include/alert.html' with tipo="info" mensagem="Nova atualização disponível" icon="download" %}
+{% endcomment %}
+
+{% with dismissible=dismissible|default:True show_icon=show_icon|default:True %}
+{% if mensagem %}
+<div class="alert alert-{{ tipo }} {% if dismissible %}alert-dismissible fade show{% endif %} d-flex align-items-center" role="alert">
+    {% if show_icon %}
+    <i class="bi 
+        {% if icon %}
+            bi-{{ icon }}
+        {% elif tipo == 'success' %}
+            bi-check-circle-fill
+        {% elif tipo == 'info' %}
+            bi-info-circle-fill
+        {% elif tipo == 'warning' %}
+            bi-exclamation-triangle-fill
+        {% elif tipo == 'danger' %}
+            bi-x-circle-fill
+        {% elif tipo == 'primary' %}
+            bi-star-fill
+        {% else %}
+            bi-question-circle-fill
+        {% endif %}
+        me-3 fs-4" style="flex-shrink: 0;"></i>
+    {% endif %}
+    
+    <div class="flex-grow-1">
+        {% if titulo %}
+        <h6 class="alert-heading mb-1">{{ titulo }}</h6>
+        {% endif %}
+        <div class="mb-0">{{ mensagem|safe }}</div>
+    </div>
+    
+    {% if dismissible %}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+    {% endif %}
+</div>
+{% endif %}
+{% endwith %}

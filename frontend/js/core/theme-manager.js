@@ -221,7 +221,7 @@ class ThemeManager {
      * Verificar se é tema escuro
      */
     isDarkTheme() {
-        return this.currentTheme === 'dark';
+        return this.currentTheme.includes('dark');
     }
 }
 

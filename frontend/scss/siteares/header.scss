@@ -116,7 +116,7 @@
   }
 }
 
-.header-acessibilidade--intranet {
+.header-acessibilidade{
   color: variables.$color-primary;
   font-weight: 700;
   text-decoration: none;
@@ -136,21 +136,21 @@
   }
 }
 
-.header-intranet-user-icon-wrapper {
+.header-user-icon-wrapper {
   width: 38px;
   height: 38px;
   border: 2px solid variables.$color-primary;
 }
 
-.header-intranet-user-icon {
+.header-user-icon {
   fill: variables.$color-primary;
 }
 
-.header-intranet-user-text {
+.header-user-text {
   color: variables.$color-primary;
 }
 
-.header-intranet-user-text--bold {
+.header-user-text--bold {
   font-weight: 600;
 }
 
@@ -162,7 +162,7 @@
 }
 
 // Dropdown menu - modo claro (precisa sobrescrever Bootstrap)
-.header-intranet-user-icon-wrapper ~ .dropdown-menu,
+.header-user-icon-wrapper ~ .dropdown-menu,
 .dropdown {
   .dropdown-menu {
     .dropdown-item {

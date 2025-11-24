@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+{% load static %}
+{% load block_tags %}
+
+{% block title %}Teste de Componentes - Gestão de Estoque{% endblock %}
+
+{% block page_header %}
+{% include 'include/titulo.html' with titulo="Teste de Componentes" subtitulo="Validação dos componentes reutilizáveis" icon="puzzle" show_actions=True %}
+    {% block titulo_actions %}
+        <button class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i>
+            Ação de Teste
+        </button>
+    {% endblock %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid my-4">
+    
+    <!-- Seção: Alertas -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="mb-3">1. Alertas</h3>
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            {% include 'include/alert.html' with tipo="success" mensagem="Operação realizada com sucesso!" titulo="Sucesso" dismissible=True %}
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            {% include 'include/alert.html' with tipo="warning" mensagem="Atenção: Estoque baixo detectado!" dismissible=True %}
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            {% include 'include/alert.html' with tipo="danger" mensagem="Erro ao processar requisição." titulo="Erro" %}
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            {% include 'include/alert.html' with tipo="info" mensagem="Novidade: Nova funcionalidade disponível!" icon="lightbulb" %}
+        </div>
+    </div>
+    
+    <!-- Seção: Cards -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="mb-3">2. Cards</h3>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            {% include 'include/card.html' with titulo="Total de Produtos" conteudo="<h2>150</h2>" variant="primary" icon="box" %}
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            {% include 'include/card.html' with titulo="Estoque Crítico" conteudo="<h2 class='text-danger'>12</h2>" variant="danger" icon="exclamation-triangle" %}
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            {% include 'include/card.html' with titulo="Valor Total" conteudo="<h2>R$ 45.320,00</h2>" variant="success" icon="currency-dollar" footer_text="Atualizado agora" %}
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            {% include 'include/card.html' with titulo="Movimentações Hoje" conteudo="<h2>23</h2>" variant="info" icon="arrow-left-right" clickable=True href="#" %}
+        </div>
+    </div>
+    
+    <!-- Seção: Tabela -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="mb-3">3. Tabela (Simulada)</h3>
+            
+            {% comment %}
+            Em uma view real, você passaria:
+            headers = [
+                {'label': 'Código', 'field': 'sku', 'sortable': True},
+                {'label': 'Nome', 'field': 'name', 'sortable': True},
+                {'label': 'Estoque', 'field': 'stock', 'sortable': True},
+                {'label': 'Status', 'field': 'status'},
+            ]
+            rows = Product.objects.values('id', 'sku', 'name', 'stock', 'status')
+            {% endcomment %}
+            
+            <div class="card">
+                <div class="card-body">
+                    <p class="text-muted">
+                        <i class="bi bi-info-circle me-1"></i>
+                        A tabela requer dados da view. Exemplo de uso:
+                    </p>
+                    <pre class="bg-light p-3 rounded"><code>{% templatetag openvariable %} include 'include/table.html' with headers=headers rows=products show_actions=True {% templatetag closevariable %}</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Seção: Modal -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="mb-3">4. Modal</h3>
+            
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exemploModal">
+                <i class="bi bi-window me-1"></i>
+                Abrir Modal de Exemplo
+            </button>
+            
+            {% include 'include/modal.html' with modal_id="exemploModal" titulo="Exemplo de Modal" size="lg" %}
+                {% block modal_content %}
+                    <p>Este é um exemplo de modal reutilizável!</p>
+                    <p>Você pode personalizar o conteúdo usando o bloco <code>modal_content</code>.</p>
+                    
+                    <div class="alert alert-info">
+                        <i class="bi bi-lightbulb me-1"></i>
+                        Suporte para tamanhos: sm, md, lg, xl, fullscreen
+                    </div>
+                {% endblock %}
+                
+                {% block modal_footer %}
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Fechar
+                    </button>
+                    <button type="button" class="btn btn-primary">
+                        Salvar
+                    </button>
+                {% endblock %}
+        </div>
+    </div>
+    
+    <!-- Seção: Paginação -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="mb-3">5. Paginação</h3>
+            
+            <div class="card">
+                <div class="card-body">
+                    <p class="text-muted">
+                        <i class="bi bi-info-circle me-1"></i>
+                        A paginação requer um objeto Django Paginator da view. Exemplo de uso:
+                    </p>
+                    <pre class="bg-light p-3 rounded"><code># View:
+from django.core.paginator import Paginator
+
+items = Product.objects.all()
+paginator = Paginator(items, 25)
+page_obj = paginator.get_page(request.GET.get('page'))
+
+# Template:
+{% templatetag openvariable %} include 'include/pagination.html' with page_obj=page_obj {% templatetag closevariable %}</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Seção: Formulário -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="mb-3">6. Layout de Formulário</h3>
+            
+            <div class="card">
+                <div class="card-body">
+                    <p class="text-muted">
+                        <i class="bi bi-info-circle me-1"></i>
+                        O layout de formulário funciona com Django Forms. Exemplo de uso:
+                    </p>
+                    <pre class="bg-light p-3 rounded"><code># View:
+form = ProductForm(instance=product)
+
+# Template:
+{% templatetag openvariable %} include 'include/form_layout.html' with 
+    form=form 
+    titulo="Novo Produto" 
+    subtitulo="Preencha os dados abaixo"
+    btn_cancel_url="/produtos/" 
+{% templatetag closevariable %}</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Resumo -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-success">
+                <div class="card-body">
+                    <h4 class="card-title text-success">
+                        <i class="bi bi-check-circle me-2"></i>
+                        Componentes Criados com Sucesso!
+                    </h4>
+                    <p class="card-text">7 componentes reutilizáveis estão prontos para uso:</p>
+                    <ol class="mb-0">
+                        <li><strong>titulo.html</strong> - Títulos de página versáteis</li>
+                        <li><strong>card.html</strong> - Cartões com 5 variantes de cor</li>
+                        <li><strong>table.html</strong> - Tabelas padronizadas com sorting</li>
+                        <li><strong>modal.html</strong> - Modais Bootstrap 5</li>
+                        <li><strong>alert.html</strong> - Alertas e notificações</li>
+                        <li><strong>pagination.html</strong> - Paginação Django</li>
+                        <li><strong>form_layout.html</strong> - Layouts de formulário</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    console.log('✅ Página de teste de componentes carregada');
+    console.log('📦 7 componentes reutilizáveis disponíveis');
+</script>
+{% endblock %}

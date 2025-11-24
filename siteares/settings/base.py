@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     
     # Apps ARES
     "core",
+    "blocks",  # Template tags e componentes reutilizáveis
     'dashboard',
     'autenticacao',
     'produtos',
@@ -349,7 +350,6 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 HABILITAR_SSO_LOGIN = get_bool("HABILITAR_SSO_LOGIN", False)
-HABILITAR_SITE_INTRANET = get_bool("HABILITAR_SITE_INTRANET", False)
 PORTAL_PROVEDOR_CONTEUDO = get_bool("PORTAL_PROVEDOR_CONTEUDO", False)
 API_CONTEUDO_AGRUPADO = get_bool("API_CONTEUDO_AGRUPADO", False)
 
