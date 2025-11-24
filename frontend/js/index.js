@@ -37,6 +37,3 @@ window.Odometer = Odometer;
 window.VanillaCalendarPro = require('vanilla-calendar-pro');
 
 UIkit.use(Icons);
-
-//Deve ser importado depois de inicializar o VanillaCalendarPro na window.
-import './agenda/agenda.js';
