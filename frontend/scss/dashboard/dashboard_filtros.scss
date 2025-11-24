@@ -303,7 +303,7 @@ canvas {
         }
         
         .card-text {
-            font-size: 0.813rem;
+            font-size: variables.$font-size-small;
             min-height: 2.5rem;
             margin-bottom: 1rem;
         }

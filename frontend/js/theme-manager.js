@@ -372,6 +372,3 @@ if (document.readyState === 'loading') {
 
 // Exporta para uso global
 window.ThemeManager = ThemeManager;
-
-console.log('🎨 ARES Theme Manager carregado');
-console.log('💡 Atalho: Alt + T para alternar tema');
