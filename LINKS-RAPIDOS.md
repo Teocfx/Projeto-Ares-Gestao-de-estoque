@@ -79,6 +79,8 @@ Perfil: Operador
 - **Acesso Teste:** [ACESSO-TESTE.md](ACESSO-TESTE.md)
 - **Componentes HTML:** [docs/COMPONENTES-GUIA.md](docs/COMPONENTES-GUIA.md)
 - **HomePage Wagtail:** [docs/HOMEPAGE-WAGTAIL.md](docs/HOMEPAGE-WAGTAIL.md)
+- **Sistema de Upload:** [docs/UPLOAD-SISTEMA.md](docs/UPLOAD-SISTEMA.md)
+- **Theme Switcher:** [docs/THEME-SWITCHER.md](docs/THEME-SWITCHER.md)
 - **Status Projeto:** [STATUS-PROJETO.md](STATUS-PROJETO.md)
 - **Implementações 25/11:** [IMPLEMENTACOES-25-11-2025.md](IMPLEMENTACOES-25-11-2025.md)
 
@@ -125,6 +127,11 @@ python scripts/populate_complete.py
 ```powershell
 python manage.py test
 ```
+
+### Alternar Tema (Claro/Escuro)
+- **Via Botão:** Clicar no ícone sol/lua no menu superior
+- **Via Teclado:** `Ctrl + Shift + T`
+- **Via JavaScript:** `window.ThemeSwitcher.toggleTheme()`
 
 ---
 

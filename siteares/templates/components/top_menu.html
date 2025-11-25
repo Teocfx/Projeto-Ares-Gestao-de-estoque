@@ -63,6 +63,14 @@ Uso: {% include 'components/top_menu.html' %}
             
             {# Menu do usuário #}
             <ul class="navbar-nav ms-auto">
+                {# Theme Switcher #}
+                <li class="nav-item">
+                    <button class="btn btn-link nav-link" data-theme-toggle aria-label="Alternar tema" title="Alternar tema">
+                        <i class="bi bi-sun-fill theme-icon theme-icon-light"></i>
+                        <i class="bi bi-moon-stars-fill theme-icon theme-icon-dark d-none"></i>
+                    </button>
+                </li>
+                
                 {% if user.is_authenticated %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" 
