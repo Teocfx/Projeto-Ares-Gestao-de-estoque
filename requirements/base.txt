@@ -18,14 +18,21 @@ django-webpack-loader==3.1.1
 # Authentication
 django-allauth==65.10.0
 jwt==1.4.0
+django-otp>=1.5.0,<2.0  # 2FA support
+qrcode>=7.4.2,<8.0  # QR codes for 2FA
 
 # Utilities
 python-decouple==3.8
 python-magic==0.4.27
 python-dateutil==2.9.0
+Pillow>=10.4.0,<11.0  # Updated from 10.1.0
 
 # PDF Generation (opcional no Windows)
 weasyprint>=62.0,<63.0
 
 # Excel Export
 openpyxl>=3.1.0,<4.0
+
+# Security
+django-ratelimit>=4.1.0,<5.0  # Granular rate limiting
+django-csp>=3.8,<4.0  # Content Security Policy
