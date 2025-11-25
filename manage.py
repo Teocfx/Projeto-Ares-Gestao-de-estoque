@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 try:
     import dotenv
-    dotenv.load_dotenv()
+    dotenv.read_dotenv()
 except ImportError:
     # Se dotenv não estiver disponível, tenta carregar .env manualmente
     from pathlib import Path

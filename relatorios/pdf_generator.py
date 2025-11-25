@@ -5,8 +5,16 @@ Suporta templates customizáveis e diferentes tipos de relatórios.
 
 from django.template.loader import render_to_string
 from django.conf import settings
-from weasyprint import HTML, CSS
-from weasyprint.text.fonts import FontConfiguration
+try:
+    from weasyprint import HTML, CSS
+    from weasyprint.text.fonts import FontConfiguration
+    WEASYPRINT_AVAILABLE = True
+except (ImportError, OSError):
+    # WeasyPrint não disponível no Windows ou bibliotecas faltando
+    WEASYPRINT_AVAILABLE = False
+    HTML = None
+    CSS = None
+    FontConfiguration = None
 import os
 from datetime import datetime
 
@@ -18,7 +26,7 @@ class PDFGenerator:
         self.title = title
         self.subtitle = subtitle
         self.author = author
-        self.font_config = FontConfiguration()
+        self.font_config = FontConfiguration() if WEASYPRINT_AVAILABLE else None
         
     def generate_pdf(self, template_name, context, output_path=None):
         """
@@ -41,6 +49,9 @@ class PDFGenerator:
             'STATIC_URL': settings.STATIC_URL,
             'MEDIA_URL': settings.MEDIA_URL,
         })
+        
+        if not WEASYPRINT_AVAILABLE:
+            raise RuntimeError("WeasyPrint não está disponível. A geração de PDF não é suportada neste ambiente.")
         
         # Renderizar HTML
         html_string = render_to_string(template_name, context)
