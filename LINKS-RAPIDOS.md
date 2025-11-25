@@ -18,6 +18,14 @@
 
 ### Upload de Arquivos
 - **Exemplo de Upload:** http://127.0.0.1:8000/core/upload-exemplo/
+
+### API REST v1
+- **Swagger UI:** http://127.0.0.1:8000/api/v1/docs/
+- **ReDoc:** http://127.0.0.1:8000/api/v1/redoc/
+- **Obter Token JWT:** POST http://127.0.0.1:8000/api/v1/auth/token/
+- **Produtos API:** http://127.0.0.1:8000/api/v1/products/
+- **Movimentações API:** http://127.0.0.1:8000/api/v1/movements/
+- **Documentação:** [API-REST.md](docs/API-REST.md)
 - **Upload de Imagens:** POST /core/upload/image/
 - **Upload de Documentos:** POST /core/upload/document/
 - **Upload de Avatar:** POST /core/upload/avatar/
