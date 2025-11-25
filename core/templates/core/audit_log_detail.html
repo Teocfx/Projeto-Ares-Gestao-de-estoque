@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+{% load perfil_tags %}
+
+{% block title %}Detalhes do Log #{{ log.pk }} | {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    {% include 'components/titulo.html' with 
+        title='Detalhes do Log de Auditoria'
+        subtitle='Log #'|add:log.pk|stringformat:"s"
+        icon='bi-file-text'
+        show_back=True
+        back_url='/core/logs/'
+    %}
+    
+    <div class="row">
+        <div class="col-lg-8">
+            {# Informações Principais #}
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>Informações do Log
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-2">Data e Hora</h6>
+                            <p class="mb-0">
+                                <i class="bi bi-calendar me-2"></i>
+                                <strong>{{ log.timestamp|date:"d/m/Y H:i:s" }}</strong>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-2">Usuário</h6>
+                            <p class="mb-0">
+                                <i class="bi bi-person me-2"></i>
+                                {% if log.user %}
+                                <strong>{{ log.user.get_full_name|default:log.user.username }}</strong>
+                                <small class="text-muted">(@{{ log.user.username }})</small>
+                                {% else %}
+                                <span class="text-muted">Sistema</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-2">Ação</h6>
+                            <p class="mb-0">
+                                {% if log.action == 'CREATE' %}
+                                <span class="badge bg-success fs-6">{{ log.get_action_display }}</span>
+                                {% elif log.action == 'UPDATE' %}
+                                <span class="badge bg-info fs-6">{{ log.get_action_display }}</span>
+                                {% elif log.action == 'DELETE' %}
+                                <span class="badge bg-danger fs-6">{{ log.get_action_display }}</span>
+                                {% elif log.action == 'LOGIN' %}
+                                <span class="badge bg-primary fs-6">{{ log.get_action_display }}</span>
+                                {% elif log.action == 'PERM_CHANGE' %}
+                                <span class="badge bg-warning fs-6">{{ log.get_action_display }}</span>
+                                {% else %}
+                                <span class="badge bg-secondary fs-6">{{ log.get_action_display }}</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-2">Severidade</h6>
+                            <p class="mb-0">
+                                <span class="badge {{ log.get_severity_badge_class }} fs-6">
+                                    {{ log.get_severity_display }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-2">Descrição</h6>
+                        <div class="alert alert-light">
+                            {{ log.description }}
+                        </div>
+                    </div>
+                    
+                    {% if log.object_repr %}
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-2">Objeto Afetado</h6>
+                        <p class="mb-0">
+                            {% if log.content_type %}
+                            <span class="badge bg-light text-dark">{{ log.content_type }}</span>
+                            {% endif %}
+                            <strong>{{ log.object_repr }}</strong>
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {# Mudanças (se existirem) #}
+            {% if log.changes %}
+            <div class="card mb-4">
+                <div class="card-header bg-warning">
+                    <h5 class="mb-0">
+                        <i class="bi bi-arrow-left-right me-2"></i>Mudanças Realizadas
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 30%;">Campo</th>
+                                    <th style="width: 35%;">Valor Anterior</th>
+                                    <th style="width: 35%;">Valor Novo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for field, change in log.changes.items %}
+                                <tr>
+                                    <td><strong>{{ field }}</strong></td>
+                                    <td class="text-danger">
+                                        {% if change.old %}
+                                            {{ change.old }}
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-success">
+                                        {% if change.new %}
+                                            {{ change.new }}
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            {# Metadados (se existirem) #}
+            {% if log.metadata %}
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-braces me-2"></i>Metadados Adicionais
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <pre class="bg-light p-3 rounded"><code>{{ log.metadata|pprint }}</code></pre>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="col-lg-4">
+            {# Informações Técnicas #}
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-gear me-2"></i>Informações Técnicas
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-2">
+                            <i class="bi bi-laptop me-2"></i>Endereço IP
+                        </h6>
+                        <p class="mb-0 font-monospace">
+                            {{ log.ip_address|default:'-' }}
+                        </p>
+                    </div>
+                    
+                    {% if log.user_agent %}
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-2">
+                            <i class="bi bi-browser-chrome me-2"></i>User Agent
+                        </h6>
+                        <p class="mb-0 small text-break">
+                            {{ log.user_agent }}
+                        </p>
+                    </div>
+                    {% endif %}
+                    
+                    <hr>
+                    
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-2">
+                            <i class="bi bi-key me-2"></i>ID do Log
+                        </h6>
+                        <p class="mb-0 font-monospace">
+                            #{{ log.pk }}
+                        </p>
+                    </div>
+                    
+                    {% if log.content_type and log.object_id %}
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-2">
+                            <i class="bi bi-box me-2"></i>Referência do Objeto
+                        </h6>
+                        <p class="mb-0 font-monospace">
+                            {{ log.content_type }} #{{ log.object_id }}
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {# Ações #}
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="bi bi-list-check me-2"></i>Ações
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'core:audit_log_list' %}" class="btn btn-outline-primary">
+                            <i class="bi bi-arrow-left me-2"></i>Voltar para Lista
+                        </a>
+                        
+                        {% if request.user|is_representante_legal %}
+                        <a href="/admin/core/auditlog/{{ log.pk }}/change/" class="btn btn-outline-secondary" target="_blank">
+                            <i class="bi bi-gear me-2"></i>Ver no Admin
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
