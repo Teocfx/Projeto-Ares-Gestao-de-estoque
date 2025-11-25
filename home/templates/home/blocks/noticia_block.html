@@ -1,0 +1,29 @@
+{% load wagtailimages_tags %}
+
+<div class="noticia-card">
+    <div class="card h-100 shadow-sm">
+        {% if value.image %}
+        {% image value.image fill-400x250 as not_img %}
+        <img src="{{ not_img.url }}" class="card-img-top" alt="{{ value.title }}">
+        {% endif %}
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <small class="text-muted">
+                    <i class="bi bi-calendar me-1"></i>{{ value.date|date:"d/m/Y" }}
+                </small>
+                {% if value.author %}
+                <small class="text-muted">
+                    <i class="bi bi-person me-1"></i>{{ value.author }}
+                </small>
+                {% endif %}
+            </div>
+            <h5 class="card-title">{{ value.title }}</h5>
+            <p class="card-text">{{ value.summary }}</p>
+            {% if value.link %}
+            <a href="{{ value.link }}" class="btn btn-link p-0">
+                Ler mais <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>

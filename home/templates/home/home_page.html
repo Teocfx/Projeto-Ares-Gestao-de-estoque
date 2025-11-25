@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags static %}
+
+{% block title %}{{ page.title }} | {{ block.super }}{% endblock %}
+
+{% block content %}
+
+{# Hero Section #}
+{% if page.hero_title %}
+<section class="hero-section" {% if page.hero_image %}style="background-image: url('{% image page.hero_image fill-1920x800 as hero_bg %}{{ hero_bg.url }}');"{% endif %}>
+    <div class="hero-overlay">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center text-white">
+                    <h1 class="display-3 fw-bold mb-3">{{ page.hero_title }}</h1>
+                    {% if page.hero_subtitle %}
+                    <p class="lead mb-4">{{ page.hero_subtitle }}</p>
+                    {% endif %}
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard:index' %}" class="btn btn-primary btn-lg me-2">
+                        <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                    </a>
+                    {% else %}
+                    <a href="{% url 'autenticacao:login' %}" class="btn btn-primary btn-lg me-2">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Entrar
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{# Carrossel de Banners #}
+{% if page.banners %}
+<section class="banners-section">
+    <div id="bannersCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            {% for banner in page.banners %}
+            <button type="button" data-bs-target="#bannersCarousel" data-bs-slide-to="{{ forloop.counter0 }}" 
+                    {% if forloop.first %}class="active" aria-current="true"{% endif %} 
+                    aria-label="Slide {{ forloop.counter }}"></button>
+            {% endfor %}
+        </div>
+        <div class="carousel-inner">
+            {% for banner in page.banners %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                {% include_block banner %}
+            </div>
+            {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#bannersCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Anterior</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#bannersCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Próximo</span>
+        </button>
+    </div>
+</section>
+{% endif %}
+
+{# Seção de Destaques #}
+{% if page.destaques %}
+<section class="destaques-section py-5 bg-light">
+    <div class="container">
+        {% if page.destaques_title %}
+        <h2 class="text-center mb-5">{{ page.destaques_title }}</h2>
+        {% endif %}
+        <div class="row g-4">
+            {% for destaque in page.destaques %}
+            <div class="col-md-4">
+                {% include_block destaque %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{# Conteúdo Flexível #}
+{% if page.body %}
+<section class="body-section">
+    {% for block in page.body %}
+        {% include_block block %}
+    {% endfor %}
+</section>
+{% endif %}
+
+{# Seção de Notícias #}
+{% if page.noticias %}
+<section class="noticias-section py-5">
+    <div class="container">
+        {% if page.noticias_title %}
+        <h2 class="text-center mb-5">{{ page.noticias_title }}</h2>
+        {% endif %}
+        <div class="row g-4">
+            {% for noticia in page.noticias %}
+            <div class="col-md-4">
+                {% include_block noticia %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{# Rodapé Customizado #}
+{% if page.footer_text %}
+<section class="custom-footer py-4 bg-dark text-white">
+    <div class="container text-center">
+        {{ page.footer_text|richtext }}
+    </div>
+</section>
+{% endif %}
+
+<style>
+.hero-section {
+    min-height: 600px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+    display: flex;
+    align-items: center;
+}
+
+.hero-section .container {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-section h1 {
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+</style>
+
+{% endblock %}

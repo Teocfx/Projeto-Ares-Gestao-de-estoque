@@ -1,0 +1,55 @@
+{% load wagtailimages_tags %}
+
+<div class="destaque-card h-100">
+    <div class="card shadow-sm h-100">
+        {% if value.image %}
+        <div class="card-img-wrapper">
+            {% image value.image fill-400x300 as dest_img %}
+            <img src="{{ dest_img.url }}" class="card-img-top" alt="{{ value.title }}">
+            {% if value.icon %}
+            <div class="card-icon">
+                <i class="bi {{ value.icon }} fs-1"></i>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+        <div class="card-body">
+            <h5 class="card-title">{{ value.title }}</h5>
+            <p class="card-text">{{ value.description }}</p>
+            {% if value.link %}
+            <a href="{{ value.link }}" class="btn btn-outline-primary btn-sm">
+                Saiba mais <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.destaque-card .card-img-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+.destaque-card .card-img-top {
+    transition: transform 0.3s ease;
+}
+
+.destaque-card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.destaque-card .card-icon {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255,255,255,0.9);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--bs-primary);
+}
+</style>

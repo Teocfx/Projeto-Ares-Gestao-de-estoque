@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     # Apps ARES
     "core",
     "blocks",  # Template tags e componentes reutilizáveis
+    "home",  # HomePage pública com Wagtail
     'dashboard',
     'autenticacao',
     'produtos',
