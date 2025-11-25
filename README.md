@@ -174,6 +174,25 @@ coverage report
 coverage html
 ```
 
+## 🤖 Testes Automatizados
+- Ferramentas utilizadas
+- Como rodar os testes
+
+## 📊 Métricas e Estimativas
+- Métricas aplicadas (ex: cobertura, defeitos, complexidade)
+- Estimativas de esforço
+  
+## 🔍 Revisão Técnica
+- Técnicas usadas (pareamento, SonarQube, Lint)
+- Resultados encontrados
+  
+## 🔧 Versionamento
+Adotamos práticas modernas de desenvolvimento com foco em qualidade, escalabilidade e colaboração. Utilizamos o GitHub como plataforma principal, seguindo uma estratégia baseada em branches e pull requests para garantir controle de versão, revisão de código e integração contínua.
+
+Link para PRs e commits
+## 🚀 Execução
+Passo a passo para rodar o sistema localmente e os testes.
+
 ## 🐳 Docker
 
 ### Desenvolvimento
@@ -236,16 +255,9 @@ docker run -p 8000:8080 gestao-estoque
 4. Push para a branch (`git push origin feature/AmazingFeature`)
 5. Abra um Pull Request
 
+## 🌐 GitHub Pages
+[Link para a landing page do projeto](https://seuusuario.github.io/repositorio)
+
 ## 📝 Licença
 
 Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
-
----
-
-**🔥 Próximas Implementações:**
-- [ ] Templates HTML responsivos
-- [ ] Forms para CRUD completo
-- [ ] Dashboard com gráficos
-- [ ] Relatórios avançados
-- [ ] API REST
-- [ ] App mobile
