@@ -1,0 +1,116 @@
+{% comment %}
+Componente: Alert/Mensagem Reutilizável
+Uso: {% include 'components/alert.html' with type='success' message='Operação realizada!' %}
+Tipos: success, danger, warning, info, primary, secondary
+{% endcomment %}
+
+<div class="alert alert-{{ type|default:'info' }} {% if dismissible %}alert-dismissible fade show{% endif %} {% if custom_class %}{{ custom_class }}{% endif %}" 
+     role="alert" {% if alert_id %}id="{{ alert_id }}"{% endif %}>
+    <div class="d-flex align-items-start">
+        {% if icon %}
+        <div class="alert-icon me-3">
+            <i class="bi {{ icon }} fs-4"></i>
+        </div>
+        {% else %}
+        <div class="alert-icon me-3">
+            {% if type == 'success' %}
+                <i class="bi bi-check-circle-fill fs-4"></i>
+            {% elif type == 'danger' or type == 'error' %}
+                <i class="bi bi-x-circle-fill fs-4"></i>
+            {% elif type == 'warning' %}
+                <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+            {% elif type == 'info' %}
+                <i class="bi bi-info-circle-fill fs-4"></i>
+            {% else %}
+                <i class="bi bi-bell-fill fs-4"></i>
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        <div class="flex-grow-1">
+            {% if title %}
+            <h5 class="alert-heading mb-2">{{ title }}</h5>
+            {% endif %}
+            
+            <div class="alert-message">
+                {% if message %}
+                    {{ message|safe }}
+                {% else %}
+                    Mensagem do alert.
+                {% endif %}
+            </div>
+            
+            {% if details %}
+            <hr class="my-2">
+            <div class="alert-details small">
+                {{ details|safe }}
+            </div>
+            {% endif %}
+            
+            {% if action_url and action_text %}
+            <hr class="my-2">
+            <a href="{{ action_url }}" class="alert-link">{{ action_text }}</a>
+            {% endif %}
+        </div>
+        
+        {% if dismissible %}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.alert {
+    border-left: 4px solid currentColor;
+}
+
+.alert-icon {
+    line-height: 1;
+}
+
+.alert-heading {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.alert-message {
+    margin-bottom: 0;
+}
+
+.alert-details {
+    opacity: 0.85;
+}
+</style>
+
+{% comment %}
+Exemplos de uso:
+
+1. Alert simples:
+{% include 'components/alert.html' with type='success' message='Produto salvo com sucesso!' dismissible=True %}
+
+2. Alert com título:
+{% include 'components/alert.html' with 
+    type='warning' 
+    title='Atenção!' 
+    message='Estoque baixo para alguns produtos.'
+    dismissible=True 
+%}
+
+3. Alert com detalhes e ação:
+{% include 'components/alert.html' with 
+    type='danger' 
+    title='Erro na operação' 
+    message='Não foi possível salvar o registro.'
+    details='Verifique os campos obrigatórios e tente novamente.'
+    action_url='/help/'
+    action_text='Precisa de ajuda?'
+    dismissible=True 
+%}
+
+4. Alert com ícone customizado:
+{% include 'components/alert.html' with 
+    type='info' 
+    icon='bi-lightbulb'
+    message='Dica: Você pode usar atalhos de teclado!'
+%}
+{% endcomment %}

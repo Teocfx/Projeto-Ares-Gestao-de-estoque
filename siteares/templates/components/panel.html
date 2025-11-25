@@ -1,0 +1,152 @@
+{% comment %}
+Componente: Painel Colapsável (Accordion/Collapse)
+Uso: {% include 'components/panel.html' with title='Título' content='Conteúdo' %}
+{% endcomment %}
+
+<div class="panel-wrapper mb-3 {% if custom_class %}{{ custom_class }}{% endif %}">
+    {% if collapsible %}
+    <div class="card">
+        <div class="card-header {% if header_class %}{{ header_class }}{% else %}bg-light{% endif %}" 
+             id="heading{{ panel_id|default:'panel' }}">
+            <h5 class="mb-0">
+                <button class="btn btn-link w-100 text-start d-flex align-items-center justify-content-between text-decoration-none collapsed" 
+                        type="button" 
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#collapse{{ panel_id|default:'panel' }}" 
+                        aria-expanded="{% if expanded %}true{% else %}false{% endif %}" 
+                        aria-controls="collapse{{ panel_id|default:'panel' }}">
+                    <span>
+                        {% if icon %}<i class="bi {{ icon }} me-2"></i>{% endif %}
+                        {{ title|default:'Panel Title' }}
+                    </span>
+                    <i class="bi bi-chevron-down"></i>
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapse{{ panel_id|default:'panel' }}" 
+             class="collapse {% if expanded %}show{% endif %}" 
+             aria-labelledby="heading{{ panel_id|default:'panel' }}"
+             {% if parent_id %}data-bs-parent="#{{ parent_id }}"{% endif %}>
+            <div class="card-body {% if body_class %}{{ body_class }}{% endif %}">
+                {% if content %}
+                    {{ content|safe }}
+                {% else %}
+                    Panel content goes here.
+                {% endif %}
+            </div>
+            
+            {% if footer %}
+            <div class="card-footer {% if footer_class %}{{ footer_class }}{% endif %}">
+                {{ footer|safe }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    {# Panel não colapsável #}
+    <div class="card">
+        {% if title %}
+        <div class="card-header {% if header_class %}{{ header_class }}{% else %}bg-light{% endif %}">
+            <h5 class="mb-0">
+                {% if icon %}<i class="bi {{ icon }} me-2"></i>{% endif %}
+                {{ title }}
+            </h5>
+        </div>
+        {% endif %}
+        
+        <div class="card-body {% if body_class %}{{ body_class }}{% endif %}">
+            {% if content %}
+                {{ content|safe }}
+            {% else %}
+                Panel content goes here.
+            {% endif %}
+        </div>
+        
+        {% if footer %}
+        <div class="card-footer {% if footer_class %}{{ footer_class }}{% endif %}">
+            {{ footer|safe }}
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.panel-wrapper .btn-link {
+    color: #212529;
+    font-weight: 500;
+}
+
+.panel-wrapper .btn-link:hover {
+    color: #0d6efd;
+}
+
+.panel-wrapper .btn-link i.bi-chevron-down {
+    transition: transform 0.3s ease;
+}
+
+.panel-wrapper .btn-link:not(.collapsed) i.bi-chevron-down {
+    transform: rotate(180deg);
+}
+
+.panel-wrapper .card {
+    border: 1px solid #dee2e6;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+</style>
+
+{% comment %}
+Exemplos de uso:
+
+1. Panel simples (não colapsável):
+{% include 'components/panel.html' with 
+    title='Informações' 
+    content='<p>Conteúdo do painel</p>'
+%}
+
+2. Panel colapsável:
+{% include 'components/panel.html' with 
+    panel_id='panel1'
+    title='Clique para expandir' 
+    content='<p>Conteúdo colapsável</p>'
+    collapsible=True
+%}
+
+3. Panel colapsável expandido por padrão:
+{% include 'components/panel.html' with 
+    panel_id='panel2'
+    title='Já expandido' 
+    content='<p>Conteúdo visível</p>'
+    collapsible=True
+    expanded=True
+%}
+
+4. Panel com ícone e footer:
+{% include 'components/panel.html' with 
+    title='Detalhes do Produto' 
+    icon='bi-box'
+    content='<p>Informações detalhadas</p>'
+    footer='<small class="text-muted">Atualizado em: 25/11/2025</small>'
+%}
+
+5. Accordion (múltiplos panels agrupados):
+<div id="accordionExample">
+    {% include 'components/panel.html' with 
+        panel_id='panel1'
+        parent_id='accordionExample'
+        title='Item 1' 
+        content='Conteúdo 1'
+        collapsible=True
+        expanded=True
+    %}
+    
+    {% include 'components/panel.html' with 
+        panel_id='panel2'
+        parent_id='accordionExample'
+        title='Item 2' 
+        content='Conteúdo 2'
+        collapsible=True
+    %}
+</div>
+{% endcomment %}

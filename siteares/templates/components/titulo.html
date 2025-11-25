@@ -1,0 +1,89 @@
+{% comment %}
+Componente: Título de Página Padronizado
+Uso: {% include 'components/titulo.html' with title='Meu Título' subtitle='Subtítulo opcional' icon='bi-box' %}
+{% endcomment %}
+
+<div class="page-title-wrapper mb-4">
+    <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center">
+            {% if icon %}
+            <div class="title-icon me-3">
+                <i class="bi {{ icon }} fs-1 text-primary"></i>
+            </div>
+            {% endif %}
+            
+            <div>
+                <h1 class="page-title mb-0">
+                    {{ title|default:"Título da Página" }}
+                </h1>
+                {% if subtitle %}
+                <p class="text-muted mb-0 mt-1">{{ subtitle }}</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if show_back %}
+        <div>
+            <a href="{% if back_url %}{{ back_url }}{% else %}javascript:history.back(){% endif %}" 
+               class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Voltar
+            </a>
+        </div>
+        {% endif %}
+        
+        {% if actions %}
+        <div class="page-title-actions">
+            {{ actions }}
+        </div>
+        {% endif %}
+    </div>
+    
+    <hr class="mt-3 mb-0">
+</div>
+
+<style>
+.page-title-wrapper {
+    position: relative;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #212529;
+}
+
+.title-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    color: white !important;
+}
+
+.title-icon i {
+    color: white !important;
+}
+
+.page-title-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 1.25rem;
+    }
+    
+    .title-icon {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .title-icon i {
+        font-size: 1.5rem !important;
+    }
+}
+</style>
