@@ -193,3 +193,18 @@ def perfil_badge(user):
             'badge_class': 'bg-secondary',
             'has_perfil': False
         }
+
+
+@register.filter
+def pprint(value):
+    """
+    Formata JSON de forma legível (pretty print).
+    
+    Usage:
+        {{ my_dict|pprint }}
+    """
+    import json
+    try:
+        return json.dumps(value, indent=2, ensure_ascii=False)
+    except:
+        return str(value)
