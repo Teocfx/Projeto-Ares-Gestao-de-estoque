@@ -3,12 +3,12 @@
 **Ares** é um sistema de gestão de estoque desenvolvido para facilitar o controle de entradas, saídas e inventários. Com uma interface intuitiva, o Ares oferece agilidade, organização e eficiência para empresas que buscam otimizar seus processos logísticos.
 
 ## 👥 Equipe
-Teófilo da costa Fernandes- RA 1362321634
-Miqueias Oliveira Ferreira – RA 1362219767
-Nicollye Crisitna Coutinho Gomes – RA 1362318966
-Lucas Adryell Ramalho –RA 1362219767
-Isaac Bezerra de Menezes- RA 1362318834
-Felipe Maciel- RA 1362419474
+- Teófilo da costa Fernandes- RA 1362321634
+- Miqueias Oliveira Ferreira – RA 1362219767
+- Nicollye Crisitna Coutinho Gomes – RA 1362318966
+- Lucas Adryell Ramalho –RA 1362219767
+- Isaac Bezerra de Menezes- RA 1362318834
+- Felipe Maciel- RA 1362419474
 
 ## 📋 Sobre o Projeto
 
@@ -187,9 +187,19 @@ coverage html
 - Resultados encontrados
   
 ## 🔧 Versionamento
-Adotamos práticas modernas de desenvolvimento com foco em qualidade, escalabilidade e colaboração. Utilizamos o GitHub como plataforma principal, seguindo uma estratégia baseada em branches e pull requests para garantir controle de versão, revisão de código e integração contínua.
+Para organizar e registrar o desenvolvimento do sistema, o desenvolvimento foi realizado em branches separadas, o que ajudou a isolar funcionalidades, reduzir conflitos e garantir o bom funcionamento do sistema durante o controle de versão.
 
-Link para PRs e commits
+As principais branches utilizadas no projeto foram:
+
+- **main**: Branch estável, utilizada para concentrar a versão pronta para entrega do sistema.
+- **development**: Branch de integração, onde as alterações em desenvolvimento eram reunidas e validadas antes de seguirem para a versão estável.
+- **feat/001/desenvolvimento-principal**: Branch destinada ao desenvolvimento inicial das principais funcionalidades do sistema.
+- **feat/102-customizacao**: Branch focada em ajustes e customizações adicionais, mantendo essas mudanças isoladas até que estivessem prontas para serem integradas.
+
+Link para PRs e commits:
+ - https://github.com/Teocfx/Projeto-Ares-Gestao-de-estoque/pulls?q=is%3Apr+is%3Aclosed
+ - https://github.com/Teocfx/Projeto-Ares-Gestao-de-estoque/commits/main/
+
 ## 🚀 Execução
 Passo a passo para rodar o sistema localmente e os testes.
 
@@ -256,7 +266,7 @@ docker run -p 8000:8080 gestao-estoque
 5. Abra um Pull Request
 
 ## 🌐 GitHub Pages
-[Link para a landing page do projeto](https://seuusuario.github.io/repositorio)
+https://teocfx.github.io/landing-page-backup/
 
 ## 📝 Licença
 
