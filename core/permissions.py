@@ -245,3 +245,132 @@ def user_is_representante(user):
         return (perfil.is_representante_legal() or perfil.is_representante_delegado())
     except (AttributeError, PerfilUsuario.DoesNotExist):
         return False
+
+
+# ============================================================================
+# REST FRAMEWORK PERMISSIONS
+# ============================================================================
+
+from rest_framework import permissions
+
+
+class IsAdminOrReadOnly(permissions.BasePermission):
+    """
+    Permissão que permite leitura para todos autenticados,
+    mas apenas admin pode criar/editar/deletar.
+    """
+    
+    def has_permission(self, request, view):
+        # Leitura permitida para autenticados
+        if request.method in permissions.SAFE_METHODS:
+            return request.user and request.user.is_authenticated
+        
+        # Escrita apenas para admin/staff
+        return request.user and request.user.is_staff
+
+
+class IsStaffUser(permissions.BasePermission):
+    """
+    Permissão que exige usuário staff (admin).
+    """
+    
+    def has_permission(self, request, view):
+        return request.user and request.user.is_authenticated and request.user.is_staff
+
+
+class IsAdminUser(permissions.BasePermission):
+    """
+    Permissão que exige usuário admin (is_staff).
+    Alias para IsStaffUser para consistência de nomenclatura.
+    """
+    
+    def has_permission(self, request, view):
+        return request.user and request.user.is_authenticated and request.user.is_staff
+
+
+class IsAdminOrOwner(permissions.BasePermission):
+    """
+    Permissão que permite acesso total para admin,
+    ou apenas para o próprio usuário (owner).
+    """
+    
+    def has_permission(self, request, view):
+        return request.user and request.user.is_authenticated
+    
+    def has_object_permission(self, request, view, obj):
+        # Admin tem acesso total
+        if request.user.is_staff:
+            return True
+        
+        # Usuário pode acessar apenas seus próprios dados
+        if hasattr(obj, 'user'):
+            return obj.user == request.user
+        
+        return obj == request.user
+
+
+class IsRepresentanteLegal(permissions.BasePermission):
+    """
+    Permissão que exige perfil de Representante Legal.
+    """
+    
+    def has_permission(self, request, view):
+        if not request.user or not request.user.is_authenticated:
+            return False
+        
+        if not hasattr(request.user, 'perfil'):
+            return False
+        
+        return request.user.perfil.is_representante_legal()
+
+
+class IsRepresentanteOrDelegado(permissions.BasePermission):
+    """
+    Permissão que exige perfil de Representante Legal ou Delegado.
+    """
+    
+    def has_permission(self, request, view):
+        if not request.user or not request.user.is_authenticated:
+            return False
+        
+        if not hasattr(request.user, 'perfil'):
+            return False
+        
+        perfil = request.user.perfil
+        return perfil.is_representante_legal() or perfil.is_representante_delegado()
+
+
+class CanManageProducts(permissions.BasePermission):
+    """
+    Permissão para gerenciar produtos.
+    """
+    
+    def has_permission(self, request, view):
+        if not request.user or not request.user.is_authenticated:
+            return False
+        
+        # Leitura permitida para todos
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        
+        # Escrita apenas para quem pode editar produtos
+        if hasattr(request.user, 'perfil'):
+            return request.user.perfil.pode_editar_produtos()
+        
+        # Fallback para staff
+        return request.user.is_staff
+
+
+class CanApproveMovements(permissions.BasePermission):
+    """
+    Permissão para aprovar movimentações.
+    """
+    
+    def has_permission(self, request, view):
+        if not request.user or not request.user.is_authenticated:
+            return False
+        
+        if hasattr(request.user, 'perfil'):
+            return request.user.perfil.pode_aprovar_movimentacoes()
+        
+        return request.user.is_staff

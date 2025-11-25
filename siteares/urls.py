@@ -39,6 +39,9 @@ urlpatterns = [
     # Core URLs
     path("core/", include("core.urls")),
     
+    # API REST v1
+    path("api/v1/", include("siteares.api_urls", namespace="api-v1")),
+    
     # Utilidades
     path("__reload__/", include("django_browser_reload.urls")),
     path("favicon.ico", RedirectView.as_view(url=settings.STATIC_URL + "img/favicon.ico")),
