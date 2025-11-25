@@ -484,6 +484,102 @@ Você pode também sobrescrever estilos criando CSS específico no seu template 
 
 ---
 
+### 10. upload_modal.html - Modal de Upload com Validação
+
+Modal completo de upload com drag & drop, validação, otimização de imagens e preview.
+
+**Uso Básico:**
+```django
+{% include 'components/upload_modal.html' with 
+    id='myUploadModal'
+    title='Upload de Arquivos'
+    upload_url='/core/upload/file/'
+%}
+
+<button data-bs-toggle="modal" data-bs-target="#myUploadModal">
+    Enviar Arquivos
+</button>
+```
+
+**Parâmetros:**
+- `id` - ID único do modal (padrão: 'uploadModal')
+- `title` - Título do modal
+- `size` - Tamanho: 'modal-lg', 'modal-xl', 'modal-fullscreen'
+- `accept` - Tipos aceitos: 'image/*', '.pdf,.docx'
+- `accept_label` - Label dos tipos
+- `multiple` - Permitir múltiplos (true/false)
+- `max_size` - Tamanho máximo em bytes
+- `max_size_label` - Label do tamanho
+- `optimize_images` - Otimizar imagens (true/false)
+- `max_width` - Largura máxima para otimização
+- `max_height` - Altura máxima para otimização
+- `quality` - Qualidade JPEG (0.0 a 1.0)
+- `upload_url` - URL para POST (opcional para processamento manual)
+
+**Exemplo: Upload de Imagens:**
+```django
+{% include 'components/upload_modal.html' with 
+    id='imageUpload'
+    title='Enviar Imagens'
+    accept='image/*'
+    accept_label='JPG, PNG, GIF'
+    max_size='5242880'
+    max_size_label='5 MB'
+    upload_url='/core/upload/image/'
+    optimize_images='true'
+    max_width='1920'
+    max_height='1080'
+    quality='0.85'
+    multiple='true'
+%}
+```
+
+**Exemplo: Upload de Documentos:**
+```django
+{% include 'components/upload_modal.html' with 
+    id='docUpload'
+    title='Enviar Documentos'
+    accept='.pdf,.doc,.docx'
+    accept_label='PDF, Word'
+    max_size='20971520'
+    max_size_label='20 MB'
+    upload_url='/core/upload/document/'
+    multiple='true'
+%}
+```
+
+**Eventos JavaScript:**
+
+```javascript
+// Arquivos selecionados (processamento manual)
+document.addEventListener('filesSelected', (e) => {
+    console.log('Modal:', e.detail.modalId);
+    console.log('Arquivos:', e.detail.files);
+    // Processar manualmente
+});
+
+// Upload concluído
+document.addEventListener('uploadSuccess', (e) => {
+    console.log('Resposta:', e.detail.response);
+    // Atualizar UI
+});
+```
+
+**Funcionalidades:**
+- ✅ Drag & Drop
+- ✅ Validação de tipo e tamanho
+- ✅ Preview de arquivos (imagens + ícones)
+- ✅ Otimização automática de imagens
+- ✅ Progress bar em tempo real
+- ✅ Upload múltiplo
+- ✅ Remoção de arquivos antes do envio
+- ✅ Tratamento de erros
+- ✅ CSRF protection
+
+**Documentação completa:** [docs/UPLOAD-SISTEMA.md](UPLOAD-SISTEMA.md)
+
+---
+
 ## 🎨 Ícones Bootstrap Icons
 
 Todos os componentes suportam ícones do Bootstrap Icons. Alguns ícones úteis:
@@ -500,6 +596,13 @@ Todos os componentes suportam ícones do Bootstrap Icons. Alguns ícones úteis:
 - `bi-eye` - Visualizar
 - `bi-save` - Salvar
 - `bi-x` - Cancelar
+- `bi-cloud-upload` - Upload
+- `bi-cloud-arrow-up` - Enviar
+- `bi-file-earmark` - Arquivo genérico
+- `bi-file-pdf` - PDF
+- `bi-file-word` - Word
+- `bi-file-excel` - Excel
+- `bi-image` - Imagem
 
 Veja todos em: https://icons.getbootstrap.com/
 
