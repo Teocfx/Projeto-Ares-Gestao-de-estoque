@@ -7,6 +7,7 @@ from django.core.validators import MinValueValidator
 from django.urls import reverse
 from django.db import transaction
 from decimal import Decimal
+from typing import Any
 
 from core.models import TimeStampedModel
 
@@ -86,30 +87,34 @@ class InventoryMovement(TimeStampedModel):
         verbose_name_plural = "Movimentações de Estoque"
         ordering = ['-created_at']
         indexes = [
-            models.Index(fields=['product', '-created_at']),
-            models.Index(fields=['type', '-created_at']),
-            models.Index(fields=['user', '-created_at']),
+            models.Index(fields=['product', '-created_at'], name='inv_mov_prod_date_idx'),
+            models.Index(fields=['type', '-created_at'], name='inv_mov_type_date_idx'),
+            models.Index(fields=['user', '-created_at'], name='inv_mov_user_date_idx'),
+            # Índices compostos otimizados
+            models.Index(fields=['product', 'type', '-created_at'], name='inv_mov_prod_type_date_idx'),
+            models.Index(fields=['document'], name='inv_mov_document_idx'),
+            models.Index(fields=['created_at'], name='inv_mov_created_idx'),
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.get_type_display()} - {self.product.name} ({self.quantity} {self.product.unit})"
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         """Retorna a URL de detalhes da movimentação."""
         return reverse('movimentacoes:detail', kwargs={'pk': self.pk})
 
     @property
-    def url(self):
+    def url(self) -> str:
         """Alias para get_absolute_url (compatibilidade com Wagtail)."""
         return self.get_absolute_url()
 
     @property
-    def title(self):
+    def title(self) -> str:
         """Retorna título formatado para busca."""
         return f"{self.get_type_display()}: {self.product.name} ({self.quantity} {self.product.unit})"
 
     @property
-    def search_description(self):
+    def search_description(self) -> str:
         """Retorna descrição formatada para resultados de busca."""
         desc_parts = []
         desc_parts.append(f"Produto: {self.product.sku} - {self.product.name}")

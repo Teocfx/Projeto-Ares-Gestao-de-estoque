@@ -6,6 +6,7 @@ from django.core.validators import MinValueValidator
 from django.utils import timezone
 from django.urls import reverse
 from decimal import Decimal
+from typing import Optional
 
 from core.models import TimeStampedModel, SoftDeleteModel
 
@@ -45,7 +46,7 @@ class Category(TimeStampedModel, SoftDeleteModel):
         return self.name
 
     @property
-    def search_description(self):
+    def search_description(self) -> str:
         """Retorna a descrição para resultados de busca."""
         return self.description or f"Categoria de produtos: {self.name}"
 
@@ -177,7 +178,7 @@ class Product(TimeStampedModel, SoftDeleteModel):
         return f"{self.sku} - {self.name}"
 
     @property
-    def search_description(self):
+    def search_description(self) -> str:
         """Retorna descrição formatada para resultados de busca."""
         desc_parts = []
         if self.description:
@@ -188,7 +189,7 @@ class Product(TimeStampedModel, SoftDeleteModel):
         return " | ".join(desc_parts)
 
     @property
-    def stock_status(self):
+    def stock_status(self) -> str:
         """
         Retorna o status do estoque.
         Retorna: 'CRITICO', 'BAIXO', 'OK'
@@ -200,7 +201,7 @@ class Product(TimeStampedModel, SoftDeleteModel):
         return "OK"
 
     @property
-    def stock_status_display(self):
+    def stock_status_display(self) -> str:
         """Retorna o status formatado para exibição."""
         status_map = {
             'CRITICO': '🔴 Crítico',
@@ -210,7 +211,7 @@ class Product(TimeStampedModel, SoftDeleteModel):
         return status_map.get(self.stock_status, 'OK')
 
     @property
-    def expiry_status(self):
+    def expiry_status(self) -> Optional[str]:
         """
         Verifica o status de validade do produto.
         Retorna: 'VENCIDO', 'PROXIMO', 'OK', None (sem validade)
@@ -228,20 +229,20 @@ class Product(TimeStampedModel, SoftDeleteModel):
         return "OK"
 
     @property
-    def total_value(self):
+    def total_value(self) -> Decimal:
         """Valor total do estoque (estoque atual * preço unitário)."""
         if self.unit_price:
             return self.current_stock * self.unit_price
         return Decimal('0.00')
 
-    def has_low_stock(self):
+    def has_low_stock(self) -> bool:
         """Verifica se o estoque está baixo ou crítico."""
         return self.stock_status in ['BAIXO', 'CRITICO']
 
-    def is_expired(self):
+    def is_expired(self) -> bool:
         """Verifica se o produto está vencido."""
         return self.expiry_status == 'VENCIDO'
 
-    def is_near_expiry(self):
+    def is_near_expiry(self) -> bool:
         """Verifica se o produto está próximo do vencimento."""
         return self.expiry_status == 'PROXIMO'

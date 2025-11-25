@@ -502,9 +502,14 @@ class AuditLog(models.Model):
         verbose_name_plural = "Logs de Auditoria"
         ordering = ['-timestamp']
         indexes = [
-            models.Index(fields=['-timestamp', 'user']),
-            models.Index(fields=['action', 'severity']),
-            models.Index(fields=['content_type', 'object_id']),
+            models.Index(fields=['-timestamp', 'user'], name='audit_log_time_user_idx'),
+            models.Index(fields=['action', 'severity'], name='audit_log_action_sev_idx'),
+            models.Index(fields=['content_type', 'object_id'], name='audit_log_ct_obj_idx'),
+            # Índices adicionais otimizados
+            models.Index(fields=['content_type', 'object_id', '-timestamp'], name='audit_log_ct_obj_time_idx'),
+            models.Index(fields=['user', 'action', '-timestamp'], name='audit_log_user_act_time_idx'),
+            models.Index(fields=['-timestamp'], name='audit_log_time_idx'),
+            models.Index(fields=['ip_address', '-timestamp'], name='audit_log_ip_time_idx'),
         ]
 
     def __str__(self):
