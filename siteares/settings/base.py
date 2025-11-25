@@ -13,7 +13,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
-import dj_database_url
+try:
+    import dj_database_url
+    HAS_DJ_DATABASE_URL = True
+except ImportError:
+    HAS_DJ_DATABASE_URL = False
 
 from decouple import config
 
@@ -159,7 +163,7 @@ if "DATABASE_HOST" in os.environ and "DATABASE_PORT" in os.environ and "DATABASE
             "PASSWORD": config("DATABASE_PASSWORD"),
         },
     }
-elif "DATABASE_URL" in os.environ:
+elif "DATABASE_URL" in os.environ and HAS_DJ_DATABASE_URL:
     DATABASES = {"default": dj_database_url.config(conn_max_age=500)}
 else:
     DATABASES = {

@@ -72,6 +72,9 @@ Este sistema foi desenvolvido para facilitar a gestão de estoques em empresas d
 
 ### 📖 Guias de Setup
 
+**🚀 TESTE RÁPIDO (SQLite - sem PostgreSQL):**
+- **[QUICKSTART-TEST.md](QUICKSTART-TEST.md)** - Instalação mínima para testes (5 minutos)
+
 **Para Windows:**
 - **[SETUP-WINDOWS.md](SETUP-WINDOWS.md)** - Guia completo passo a passo para Windows
 
@@ -91,7 +94,12 @@ source .venv/bin/activate  # Linux/Mac
 
 3. **Instale as dependências:**
 ```bash
-pip install -r requirements/base.txt
+# Para testes rápidos (SQLite):
+pip install -r requirements/local.txt
+
+# Ou desenvolvimento completo:
+pip install -r requirements/development.txt
+
 npm install
 ```
 
@@ -267,9 +275,15 @@ docker run -p 8000:8080 gestao-estoque
 
 ## 🔗 Links Úteis
 
+- **[QUICKSTART-TEST.md](QUICKSTART-TEST.md)** - 🚀 Instalação rápida para testes (5 minutos)
+- **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** - 🛠️ Solução de problemas comuns
 - **[SETUP-WINDOWS.md](SETUP-WINDOWS.md)** - Guia completo de instalação no Windows
 - **[ACESSO-TESTE.md](ACESSO-TESTE.md)** - Informações de acesso ao sistema
 - **[docs/](docs/)** - Documentação adicional do projeto
+
+### 📜 Scripts de Instalação Automática
+- **Linux/Mac**: `bash install-quickstart.sh`
+- **Windows**: `.\install-quickstart.ps1`
 
 ## 🤝 Contribuindo
 
