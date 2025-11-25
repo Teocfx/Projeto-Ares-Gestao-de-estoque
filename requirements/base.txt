@@ -13,10 +13,13 @@ django-extensions==3.2.3
 dj-database-url==2.1.0
 django-browser-reload==1.17.0
 django-webpack-loader==3.1.1
+django-cors-headers>=4.3.0,<5.0
+drf-yasg>=1.21.0,<2.0  # API documentation
 
 # Authentication
 django-allauth==65.10.0
 jwt==1.4.0
+djangorestframework-simplejwt>=5.5.0,<6.0  # JWT for DRF
 django-otp>=1.5.0,<2.0  # 2FA support
 qrcode>=7.4.2,<8.0  # QR codes for 2FA
 
