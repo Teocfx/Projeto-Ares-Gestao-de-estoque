@@ -1,13 +1,12 @@
 """
 ViewSets para API REST de produtos.
 """
-from rest_framework import viewsets, filters, status
+from rest_framework import viewsets, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet, CharFilter, NumberFilter, BooleanFilter
-from django.db.models import Q, Sum, Count, F
-from decimal import Decimal
+from django.db.models import Count, F
 
 from .models import Category, Unit, Product
 from .serializers import (

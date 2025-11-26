@@ -8,7 +8,6 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from django.contrib import messages
-from django.utils.decorators import method_decorator
 from django.views.generic.base import View
 
 from .models import PerfilAcesso, PerfilUsuario

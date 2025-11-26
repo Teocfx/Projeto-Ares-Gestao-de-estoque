@@ -7,7 +7,6 @@ pytest --cov=produtos produtos/tests_api.py
 import pytest
 from decimal import Decimal
 from django.contrib.auth import get_user_model
-from django.utils import timezone
 from rest_framework.test import APIClient
 from rest_framework import status
 

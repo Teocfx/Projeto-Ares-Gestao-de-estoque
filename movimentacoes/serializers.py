@@ -80,7 +80,7 @@ class InventoryMovementDetailSerializer(serializers.ModelSerializer):
         """Valida que o produto existe e está ativo."""
         from produtos.models import Product
         try:
-            product = Product.objects.get(id=value, is_active=True)
+            Product.objects.get(id=value, is_active=True)
             return value
         except Product.DoesNotExist:
             raise serializers.ValidationError("Produto não encontrado ou inativo.")

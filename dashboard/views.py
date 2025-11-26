@@ -7,7 +7,6 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, F, Count, Q
 from django.views.decorators.cache import cache_page
-from django.core.cache import cache
 from decimal import Decimal
 from datetime import datetime, timedelta
 

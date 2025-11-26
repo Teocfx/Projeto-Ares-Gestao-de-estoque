@@ -5,9 +5,8 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 from django.utils.html import format_html
-from django.urls import reverse
 from django.utils import timezone
-from .models import PerfilUsuario, PerfilAcesso, AuditLog, TipoAcaoAuditoria, NivelSeveridade
+from .models import PerfilUsuario, PerfilAcesso, AuditLog, TipoAcaoAuditoria
 
 
 @admin.register(PerfilUsuario)
