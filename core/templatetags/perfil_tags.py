@@ -206,5 +206,5 @@ def pprint(value):
     import json
     try:
         return json.dumps(value, indent=2, ensure_ascii=False)
-    except:
+    except (TypeError, ValueError):
         return str(value)

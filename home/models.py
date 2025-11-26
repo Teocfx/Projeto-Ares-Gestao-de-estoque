@@ -7,7 +7,6 @@ from wagtail.fields import RichTextField, StreamField
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail import blocks
-from wagtail.snippets.models import register_snippet
 
 
 # StreamField Blocks personalizados

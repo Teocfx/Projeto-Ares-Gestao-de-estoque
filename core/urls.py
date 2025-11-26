@@ -1,7 +1,6 @@
 from django.urls import path
 from .views import (
-    DocumentServeView, 
-    document_serve_inline, 
+    DocumentServeView,
     TesteComponentesView,
     AuditLogListView,
     AuditLogDetailView
