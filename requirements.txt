@@ -48,7 +48,7 @@ django-basic-auth-ip-whitelist>=0.6,<0.7
 # ============================================
 # BANCO DE DADOS
 # ============================================
-psycopg[binary]>=3.1,<=3.3  # PostgreSQL adapter
+psycopg[binary]>=3.1,<3.3  # PostgreSQL adapter
 django-redis==5.4.0  # Redis cache backend
 
 # ============================================
@@ -71,7 +71,7 @@ elasticsearch==5.5.3
 # ============================================
 python-magic==0.4.27
 python-dateutil==2.9.0
-Pillow>=10.4.0,<11.0
+Pillow>=11.0.0  # Python 3.14 compatível (versão mais recente com binários Windows)
 
 # ============================================
 # REPORTS E EXPORTS
@@ -87,7 +87,9 @@ sentry-sdk>=2.0.0,<3.0
 # ============================================
 # SERVIDOR DE APLICAÇÃO
 # ============================================
-uwsgi>=2.0.17,<2.1
+# uwsgi>=2.0.17,<2.1  # ⚠️ NÃO FUNCIONA NO WINDOWS
+waitress>=3.0.0,<4.0  # WSGI server para Windows/desenvolvimento
+# gunicorn>=21.0.0,<22.0  # Apenas Linux/Unix - não compatível Windows
 
 # ============================================
 # DESENVOLVIMENTO (opcional)

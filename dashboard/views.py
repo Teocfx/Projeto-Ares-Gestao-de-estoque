@@ -6,6 +6,8 @@ Dashboard principal com métricas e estatísticas do sistema.
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, F, Count, Q
+from django.views.decorators.cache import cache_page
+from django.core.cache import cache
 from decimal import Decimal
 from datetime import datetime, timedelta
 
@@ -24,8 +26,31 @@ except ImportError:
 
 
 @login_required
+@cache_page(60 * 2)  # Cache de 2 minutos (dashboard com dados relativamente estáticos)
 def index(request):
-    """Dashboard principal com estatísticas em tempo real."""
+    """
+    Dashboard principal com estatísticas em tempo real.
+    
+    Exibe métricas gerais do sistema incluindo:
+    - Total de produtos e categorias
+    - Status de estoque (crítico, baixo, OK)
+    - Valor total do estoque
+    - Produtos com estoque crítico ou baixo
+    - Produtos próximos ao vencimento
+    - Movimentações recentes
+    - Gráficos de movimentações diárias
+    
+    Args:
+        request: HttpRequest object
+    
+    Returns:
+        HttpResponse: Dashboard renderizado com todas as métricas
+    
+    Notes:
+        - Cache de 2 minutos para reduzir carga no banco
+        - Queries otimizadas com select_related
+        - Estatísticas calculadas dinamicamente
+    """
     
     # Inicializar contexto
     context = {

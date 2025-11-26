@@ -1,0 +1,19 @@
+# ============================================
+# REQUIREMENTS PARA LINUX/PRODUÇÃO
+# ============================================
+# Use este arquivo em ambientes Linux/Unix
+# Instale primeiro: sudo apt-get install python3-dev gcc
+# Depois: pip install -r requirements-linux.txt
+
+-r requirements.txt
+
+# ============================================
+# SERVIDOR DE APLICAÇÃO (LINUX ONLY)
+# ============================================
+# Descomente UMA das opções abaixo:
+
+# Opção 1: uWSGI (requer python3-dev instalado)
+# uwsgi>=2.0.17,<2.1
+
+# Opção 2: Gunicorn (recomendado - mais fácil)
+gunicorn>=21.0.0,<22.0

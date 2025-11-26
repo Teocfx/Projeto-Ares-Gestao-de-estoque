@@ -174,6 +174,53 @@ else:
     }
 
 
+# Cache Configuration
+# https://docs.djangoproject.com/en/5.1/topics/cache/
+
+# Use Redis cache if REDIS_URL is configured, otherwise use local memory cache
+if "REDIS_URL" in os.environ:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": os.environ.get("REDIS_URL", "redis://127.0.0.1:6379/1"),
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "SOCKET_CONNECT_TIMEOUT": 5,
+                "SOCKET_TIMEOUT": 5,
+                "CONNECTION_POOL_KWARGS": {
+                    "max_connections": 50,
+                    "retry_on_timeout": True,
+                },
+                "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",
+                "IGNORE_EXCEPTIONS": True,  # Não quebrar se Redis cair
+            },
+            "KEY_PREFIX": "ares",
+            "TIMEOUT": 300,  # 5 minutos padrão
+        }
+    }
+    
+    # Session backend usando Redis
+    SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+    SESSION_CACHE_ALIAS = "default"
+else:
+    # Fallback para cache em memória local (desenvolvimento)
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "unique-snowflake",
+            "TIMEOUT": 300,
+            "OPTIONS": {
+                "MAX_ENTRIES": 1000
+            }
+        }
+    }
+
+# Cache settings
+CACHE_MIDDLEWARE_ALIAS = "default"
+CACHE_MIDDLEWARE_SECONDS = 600  # 10 minutos para páginas
+CACHE_MIDDLEWARE_KEY_PREFIX = "ares"
+
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
