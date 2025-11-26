@@ -296,6 +296,9 @@ docker run -p 8000:8080 gestao-estoque
 ## 🌐 GitHub Pages
 [Link para a landing page do projeto](https://seuusuario.github.io/repositorio)
 
+## Protótipo 
+- https://www.figma.com/proto/hDB7t1WNUPW5UihTcgje1F/Controle-de-estoque-Prot%C3%B3tipo?node-id=21-1119&t=2bYeuVfUUv3zlXgk-1&starting-point-node-id=61%3A2
+
 ## 📝 Licença
 
 Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
