@@ -13,7 +13,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
-import dj_database_url
+try:
+    import dj_database_url
+    HAS_DJ_DATABASE_URL = True
+except ImportError:
+    HAS_DJ_DATABASE_URL = False
 
 from decouple import config
 
@@ -59,6 +63,7 @@ INSTALLED_APPS = [
     # Apps ARES
     "core",
     "blocks",  # Template tags e componentes reutilizáveis
+    "home",  # HomePage pública com Wagtail
     'dashboard',
     'autenticacao',
     'produtos',
@@ -67,6 +72,11 @@ INSTALLED_APPS = [
     'search',
 
     "auth_keycloak",
+    
+    # Autenticação de Dois Fatores (2FA)
+    'django_otp',
+    'django_otp.plugins.otp_totp',
+    'autenticacao_2fa',
 
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
@@ -99,14 +109,19 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.openid_connect",
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
+    'django_filters',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django_otp.middleware.OTPMiddleware",  # 2FA middleware
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
@@ -154,7 +169,7 @@ if "DATABASE_HOST" in os.environ and "DATABASE_PORT" in os.environ and "DATABASE
             "PASSWORD": config("DATABASE_PASSWORD"),
         },
     }
-elif "DATABASE_URL" in os.environ:
+elif "DATABASE_URL" in os.environ and HAS_DJ_DATABASE_URL:
     DATABASES = {"default": dj_database_url.config(conn_max_age=500)}
 else:
     DATABASES = {
@@ -163,6 +178,53 @@ else:
             "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
         }
     }
+
+
+# Cache Configuration
+# https://docs.djangoproject.com/en/5.1/topics/cache/
+
+# Use Redis cache if REDIS_URL is configured, otherwise use local memory cache
+if "REDIS_URL" in os.environ:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": os.environ.get("REDIS_URL", "redis://127.0.0.1:6379/1"),
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "SOCKET_CONNECT_TIMEOUT": 5,
+                "SOCKET_TIMEOUT": 5,
+                "CONNECTION_POOL_KWARGS": {
+                    "max_connections": 50,
+                    "retry_on_timeout": True,
+                },
+                "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",
+                "IGNORE_EXCEPTIONS": True,  # Não quebrar se Redis cair
+            },
+            "KEY_PREFIX": "ares",
+            "TIMEOUT": 300,  # 5 minutos padrão
+        }
+    }
+    
+    # Session backend usando Redis
+    SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+    SESSION_CACHE_ALIAS = "default"
+else:
+    # Fallback para cache em memória local (desenvolvimento)
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "unique-snowflake",
+            "TIMEOUT": 300,
+            "OPTIONS": {
+                "MAX_ENTRIES": 1000
+            }
+        }
+    }
+
+# Cache settings
+CACHE_MIDDLEWARE_ALIAS = "default"
+CACHE_MIDDLEWARE_SECONDS = 600  # 10 minutos para páginas
+CACHE_MIDDLEWARE_KEY_PREFIX = "ares"
 
 
 # Password validation
@@ -282,34 +344,83 @@ WAGTAILADMIN_BASE_URL = config('WAGTAILADMIN_BASE_URL', default="http://example.
 WAGTAILDOCS_EXTENSIONS = ['csv', 'docx', 'key',
                           'odt', 'pdf', 'pptx', 'rtf', 'txt', 'xlsx', 'zip']
 
-# Content Security policy settings
-# http://django-csp.readthedocs.io/en/latest/configuration.html
 
-# Only enable CSP when enabled through environment variables.
-if "CSP_DEFAULT_SRC" in os.environ:
-    MIDDLEWARE.append("csp.middleware.CSPMiddleware")
+# ============================================
+# Content Security Policy (CSP)
+# ============================================
+# Proteção contra XSS, clickjacking e code injection
+# Docs: https://django-csp.readthedocs.io/
 
-    # Only report violations, don't enforce policy
-    CSP_REPORT_ONLY = True
+# CSP habilitado por padrão (modo report-only em dev, enforcement em prod)
+CSP_ENABLED = get_bool("CSP_ENABLED", default=True)
 
-    # The “special” source values of 'self', 'unsafe-inline', 'unsafe-eval', and 'none' must be quoted!
-    # e.g.: CSP_DEFAULT_SRC = "'self'" Without quotes they will not work as intended.
-
-    CSP_DEFAULT_SRC = os.environ.get("CSP_DEFAULT_SRC").split(",")
+if CSP_ENABLED:
+    # Adiciona middleware CSP
+    if "csp.middleware.CSPMiddleware" not in MIDDLEWARE:
+        MIDDLEWARE.append("csp.middleware.CSPMiddleware")
+    
+    # Modo report-only (dev) ou enforcement (prod)
+    CSP_REPORT_ONLY = get_bool("CSP_REPORT_ONLY", default=True)
+    
+    # ============================================
+    # Configurações Padrão Seguras
+    # ============================================
+    # IMPORTANTE: Valores especiais devem ter aspas: 'self', 'unsafe-inline', 'none'
+    
+    # Permite customização via variáveis de ambiente ou usa defaults seguros
+    if "CSP_DEFAULT_SRC" in os.environ:
+        CSP_DEFAULT_SRC = os.environ.get("CSP_DEFAULT_SRC").split(",")
+    else:
+        CSP_DEFAULT_SRC = ["'self'"]
+    
     if "CSP_SCRIPT_SRC" in os.environ:
         CSP_SCRIPT_SRC = os.environ.get("CSP_SCRIPT_SRC").split(",")
+    else:
+        # ⚠️ 'unsafe-inline' e 'unsafe-eval' necessários para Django admin/Wagtail
+        CSP_SCRIPT_SRC = ["'self'", "'unsafe-inline'", "'unsafe-eval'"]
+    
     if "CSP_STYLE_SRC" in os.environ:
         CSP_STYLE_SRC = os.environ.get("CSP_STYLE_SRC").split(",")
+    else:
+        CSP_STYLE_SRC = ["'self'", "'unsafe-inline'"]
+    
     if "CSP_IMG_SRC" in os.environ:
         CSP_IMG_SRC = os.environ.get("CSP_IMG_SRC").split(",")
-    if "CSP_CONNECT_SRC" in os.environ:
-        CSP_CONNECT_SRC = os.environ.get("CSP_CONNECT_SRC").split(",")
+    else:
+        # Permite imagens do próprio site, data URIs e HTTPS externo
+        CSP_IMG_SRC = ["'self'", "data:", "https:"]
+    
     if "CSP_FONT_SRC" in os.environ:
         CSP_FONT_SRC = os.environ.get("CSP_FONT_SRC").split(",")
+    else:
+        CSP_FONT_SRC = ["'self'", "data:"]
+    
+    if "CSP_CONNECT_SRC" in os.environ:
+        CSP_CONNECT_SRC = os.environ.get("CSP_CONNECT_SRC").split(",")
+    else:
+        CSP_CONNECT_SRC = ["'self'"]
+    
     if "CSP_BASE_URI" in os.environ:
         CSP_BASE_URI = os.environ.get("CSP_BASE_URI").split(",")
+    else:
+        CSP_BASE_URI = ["'self'"]
+    
     if "CSP_OBJECT_SRC" in os.environ:
         CSP_OBJECT_SRC = os.environ.get("CSP_OBJECT_SRC").split(",")
+    else:
+        # Bloqueia plugins (Flash, Java, etc)
+        CSP_OBJECT_SRC = ["'none'"]
+    
+    # Configurações adicionais de segurança
+    CSP_FRAME_ANCESTORS = ["'none'"]  # Previne clickjacking
+    CSP_FORM_ACTION = ["'self'"]  # Formulários apenas para próprio site
+    
+    # Upgrade HTTP para HTTPS (apenas em produção com HTTPS)
+    CSP_UPGRADE_INSECURE_REQUESTS = get_bool("CSP_UPGRADE_INSECURE_REQUESTS", default=False)
+    
+    # Report URI (opcional - endpoint para receber violações CSP)
+    if "CSP_REPORT_URI" in os.environ:
+        CSP_REPORT_URI = os.environ.get("CSP_REPORT_URI")
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
@@ -373,3 +484,112 @@ ACCOUNT_USERNAME_MIN_LENGTH = 2
 ACCOUNT_MAX_EMAIL_ADDRESSES = 1
 
 SITE_ID = 1
+
+# ============================================================================
+# DJANGO REST FRAMEWORK CONFIGURATION
+# ============================================================================
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ],
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning',
+    'DEFAULT_VERSION': 'v1',
+    'ALLOWED_VERSIONS': ['v1'],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/hour',
+        'user': '1000/hour',
+    },
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+    'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
+    'DATE_FORMAT': '%Y-%m-%d',
+    'TIME_FORMAT': '%H:%M:%S',
+}
+
+# JWT Configuration
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=2),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'UPDATE_LAST_LOGIN': True,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+}
+
+# CORS Configuration
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+# Swagger/OpenAPI Configuration
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    },
+    'USE_SESSION_AUTH': True,
+    'JSON_EDITOR': True,
+    'SUPPORTED_SUBMIT_METHODS': ['get', 'post', 'put', 'delete', 'patch'],
+    'OPERATIONS_SORTER': 'alpha',
+    'TAGS_SORTER': 'alpha',
+    'DOC_EXPANSION': 'list',
+    'DEEP_LINKING': True,
+    'SHOW_EXTENSIONS': True,
+    'DEFAULT_MODEL_RENDERING': 'example',
+}

@@ -41,7 +41,33 @@ class ProductListView(LoginRequiredMixin, ListView):
     paginate_by = 20
     
     def get_queryset(self):
-        """Filtrar produtos baseado nos parâmetros de busca."""
+        """
+        Retorna queryset de produtos com filtros, busca e ordenação aplicados.
+        
+        Aplica os seguintes filtros baseados em parâmetros GET:
+        - search: Busca textual em SKU, nome e descrição
+        - category: Filtra por ID de categoria
+        - unit: Filtra por ID de unidade de medida
+        - stock_status: Filtra por status do estoque (CRITICO/BAIXO/OK)
+        - active: Filtra por status ativo/inativo (1/0)
+        - order_by: Campo para ordenação (sku, name, category__name, current_stock, created_at)
+        - direction: Direção da ordenação (asc/desc)
+        
+        Returns:
+            QuerySet: Produtos filtrados, otimizado com select_related
+        
+        Examples:
+            >>> # Buscar produtos com estoque crítico
+            >>> ?stock_status=CRITICO
+            
+            >>> # Buscar por nome ordenado por estoque
+            >>> ?search=Produto&order_by=current_stock&direction=desc
+        
+        Notes:
+            - Usa select_related para otimizar queries de categoria e unidade
+            - Busca textual é case-insensitive (icontains)
+            - Estoque CRITICO = 0, BAIXO = > 0 e <= min_stock, OK = > min_stock
+        """
         queryset = Product.objects.select_related('category', 'unit').all()
         
         # Busca por texto
@@ -93,7 +119,27 @@ class ProductListView(LoginRequiredMixin, ListView):
         return queryset
     
     def get_context_data(self, **kwargs):
-        """Adicionar formulário de busca e estatísticas ao contexto."""
+        """
+        Adiciona dados extras ao contexto do template.
+        
+        Inclui no contexto:
+        - search_form: Formulário de busca preenchido com filtros atuais
+        - stats: Estatísticas dos produtos filtrados (total, valor, alertas)
+        - current_order: Campo de ordenação atual
+        - current_direction: Direção da ordenação atual
+        
+        Args:
+            **kwargs: Argumentos do contexto base
+        
+        Returns:
+            dict: Contexto atualizado com formulário e estatísticas
+        
+        Notes:
+            - Estatísticas são calculadas sobre o queryset filtrado atual
+            - total_stock_value = soma de (current_stock * unit_price)
+            - critical_stock = produtos com estoque zerado
+            - low_stock = produtos com estoque > 0 mas <= min_stock
+        """
         context = super().get_context_data(**kwargs)
         
         # Formulário de busca com dados atuais

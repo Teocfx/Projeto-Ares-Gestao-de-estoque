@@ -1,0 +1,274 @@
+{% extends 'base.html' %}
+{% load perfil_tags %}
+
+{% block title %}Logs de Auditoria | {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    {% include 'components/titulo.html' with 
+        title='Logs de Auditoria'
+        subtitle='Visualizar histórico de ações do sistema'
+        icon='bi-shield-check'
+    %}
+    
+    {# Estatísticas Rápidas #}
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="card-subtitle mb-1 text-white-50">Total de Logs</h6>
+                            <h3 class="mb-0">{{ stats.total }}</h3>
+                        </div>
+                        <div class="ms-3">
+                            <i class="bi bi-database fs-1 opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="card-subtitle mb-1 text-white-50">Hoje</h6>
+                            <h3 class="mb-0">{{ stats.today }}</h3>
+                        </div>
+                        <div class="ms-3">
+                            <i class="bi bi-calendar-check fs-1 opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card bg-danger text-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="card-subtitle mb-1 text-white-50">Críticos</h6>
+                            <h3 class="mb-0">{{ stats.critical }}</h3>
+                        </div>
+                        <div class="ms-3">
+                            <i class="bi bi-exclamation-triangle fs-1 opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="card-subtitle mb-1 text-white-50">Seu Perfil</h6>
+                            <p class="mb-0 small">{% get_perfil_display request.user %}</p>
+                        </div>
+                        <div class="ms-3">
+                            <i class="bi bi-person-badge fs-1 opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {# Filtros #}
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">
+                <i class="bi bi-funnel me-2"></i>Filtros
+            </h5>
+        </div>
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label for="search" class="form-label">Buscar</label>
+                    <input type="text" class="form-control" id="search" name="search" 
+                           value="{{ filters.search }}" placeholder="Buscar em logs...">
+                </div>
+                
+                <div class="col-md-2">
+                    <label for="action" class="form-label">Ação</label>
+                    <select class="form-select" id="action" name="action">
+                        <option value="">Todas</option>
+                        {% for value, label in action_choices %}
+                        <option value="{{ value }}" {% if filters.action == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-2">
+                    <label for="severity" class="form-label">Severidade</label>
+                    <select class="form-select" id="severity" name="severity">
+                        <option value="">Todas</option>
+                        {% for value, label in severity_choices %}
+                        <option value="{{ value }}" {% if filters.severity == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-2">
+                    <label for="period" class="form-label">Período</label>
+                    <select class="form-select" id="period" name="period">
+                        <option value="">Todos</option>
+                        <option value="today" {% if filters.period == 'today' %}selected{% endif %}>Hoje</option>
+                        <option value="week" {% if filters.period == 'week' %}selected{% endif %}>Última Semana</option>
+                        <option value="month" {% if filters.period == 'month' %}selected{% endif %}>Último Mês</option>
+                        <option value="year" {% if filters.period == 'year' %}selected{% endif %}>Último Ano</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-3 d-flex align-items-end gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-search me-1"></i>Filtrar
+                    </button>
+                    <a href="{% url 'core:audit_log_list' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle me-1"></i>Limpar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    {# Lista de Logs #}
+    <div class="card">
+        <div class="card-header bg-white d-flex align-items-center justify-content-between">
+            <h5 class="mb-0">
+                <i class="bi bi-list-ul me-2"></i>Registros
+                {% if page_obj %}
+                <span class="badge bg-secondary">{{ page_obj.paginator.count }}</span>
+                {% endif %}
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            {% if logs %}
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 160px;">Data/Hora</th>
+                            <th style="width: 150px;">Usuário</th>
+                            <th style="width: 120px;">Ação</th>
+                            <th style="width: 100px;">Severidade</th>
+                            <th>Descrição</th>
+                            <th style="width: 120px;">IP</th>
+                            <th style="width: 80px;" class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in logs %}
+                        <tr>
+                            <td>
+                                <small class="text-muted">{{ log.timestamp|date:"d/m/Y H:i" }}</small>
+                            </td>
+                            <td>
+                                {% if log.user %}
+                                <strong>{{ log.user.get_full_name|default:log.user.username }}</strong>
+                                <br><small class="text-muted">@{{ log.user.username }}</small>
+                                {% else %}
+                                <span class="text-muted">Sistema</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if log.action == 'CREATE' %}
+                                <span class="badge bg-success">{{ log.get_action_display }}</span>
+                                {% elif log.action == 'UPDATE' %}
+                                <span class="badge bg-info">{{ log.get_action_display }}</span>
+                                {% elif log.action == 'DELETE' %}
+                                <span class="badge bg-danger">{{ log.get_action_display }}</span>
+                                {% elif log.action == 'LOGIN' %}
+                                <span class="badge bg-primary">{{ log.get_action_display }}</span>
+                                {% elif log.action == 'LOGOUT' %}
+                                <span class="badge bg-secondary">{{ log.get_action_display }}</span>
+                                {% elif log.action == 'PERM_CHANGE' %}
+                                <span class="badge bg-warning">{{ log.get_action_display }}</span>
+                                {% else %}
+                                <span class="badge bg-light text-dark">{{ log.get_action_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge {{ log.get_severity_badge_class }}">
+                                    {{ log.get_severity_display }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="text-truncate" style="max-width: 400px;" title="{{ log.description }}">
+                                    {{ log.description }}
+                                </div>
+                            </td>
+                            <td>
+                                <small class="text-muted">{{ log.ip_address|default:'-' }}</small>
+                            </td>
+                            <td class="text-center">
+                                <a href="{% url 'core:audit_log_detail' log.pk %}" 
+                                   class="btn btn-sm btn-outline-primary" 
+                                   title="Ver detalhes">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-inbox fs-1 text-muted"></i>
+                <p class="text-muted mt-3">Nenhum log encontrado com os filtros aplicados.</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        {# Paginação #}
+        {% if page_obj.has_other_pages %}
+        <div class="card-footer bg-white">
+            <nav aria-label="Navegação de logs">
+                <ul class="pagination justify-content-center mb-0">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% for key, value in filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="bi bi-chevron-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    <li class="page-item active">
+                        <span class="page-link">
+                            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                        </span>
+                    </li>
+                    
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for key, value in filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="bi bi-chevron-double-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

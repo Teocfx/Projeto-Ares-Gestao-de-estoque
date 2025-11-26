@@ -36,8 +36,14 @@ urlpatterns = [
     path('relatorios/', include('relatorios.urls')),
     path('search/', include('search.urls')),
     
+    # Autenticação de Dois Fatores (2FA)
+    path('2fa/', include('autenticacao_2fa.urls')),
+    
     # Core URLs
     path("core/", include("core.urls")),
+    
+    # API REST v1
+    path("api/v1/", include("siteares.api_urls", namespace="api-v1")),
     
     # Utilidades
     path("__reload__/", include("django_browser_reload.urls")),

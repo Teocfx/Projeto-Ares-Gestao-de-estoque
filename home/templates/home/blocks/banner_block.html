@@ -1,0 +1,45 @@
+{% load wagtailimages_tags %}
+
+<div class="banner-slide" style="background-image: url('{% if value.image %}{% image value.image fill-1920x600 as bg_img %}{{ bg_img.url }}{% endif %}');">
+    <div class="banner-overlay">
+        <div class="container">
+            <div class="banner-content text-white">
+                <h2 class="display-4 fw-bold mb-3">{{ value.title }}</h2>
+                {% if value.subtitle %}
+                <p class="lead mb-4">{{ value.subtitle }}</p>
+                {% endif %}
+                {% if value.button_text and value.button_link %}
+                <a href="{{ value.button_link }}" class="btn btn-primary btn-lg">
+                    {{ value.button_text }}
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.banner-slide {
+    min-height: 500px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.banner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6));
+    display: flex;
+    align-items: center;
+}
+
+.banner-content {
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+</style>

@@ -156,3 +156,123 @@ def document_serve_inline(request, document_id, document_filename):
     except Exception as e:
         raise Http404(f"Error serving document: {str(e)}")
 
+
+# Views de Auditoria
+
+from django.views.generic import ListView, DetailView
+from django.db.models import Q, Count
+from datetime import timedelta
+
+from core.models import AuditLog, TipoAcaoAuditoria, NivelSeveridade
+from core.permissions import PermissaoRequiredMixin
+
+
+class AuditLogListView(LoginRequiredMixin, PermissaoRequiredMixin, ListView):
+    """
+    Lista de logs de auditoria com filtros avançados.
+    Apenas usuários com permissão podem visualizar.
+    """
+    model = AuditLog
+    template_name = 'core/audit_log_list.html'
+    context_object_name = 'logs'
+    paginate_by = 50
+    permissao_requerida = 'visualizar_logs'
+    
+    def get_queryset(self):
+        """Aplica filtros da query string."""
+        qs = super().get_queryset().select_related('user', 'content_type')
+        
+        # Filtro por usuário
+        user_id = self.request.GET.get('user')
+        if user_id:
+            qs = qs.filter(user_id=user_id)
+        
+        # Filtro por ação
+        action = self.request.GET.get('action')
+        if action and action in dict(TipoAcaoAuditoria.choices):
+            qs = qs.filter(action=action)
+        
+        # Filtro por severidade
+        severity = self.request.GET.get('severity')
+        if severity and severity in dict(NivelSeveridade.choices):
+            qs = qs.filter(severity=severity)
+        
+        # Filtro por período
+        period = self.request.GET.get('period')
+        if period:
+            from django.utils import timezone
+            now = timezone.now()
+            if period == 'today':
+                qs = qs.filter(timestamp__date=now.date())
+            elif period == 'week':
+                qs = qs.filter(timestamp__gte=now - timedelta(days=7))
+            elif period == 'month':
+                qs = qs.filter(timestamp__gte=now - timedelta(days=30))
+            elif period == 'year':
+                qs = qs.filter(timestamp__gte=now - timedelta(days=365))
+        
+        # Filtro por busca textual
+        search = self.request.GET.get('search')
+        if search:
+            qs = qs.filter(
+                Q(description__icontains=search) |
+                Q(object_repr__icontains=search) |
+                Q(user__username__icontains=search) |
+                Q(user__first_name__icontains=search) |
+                Q(user__last_name__icontains=search)
+            )
+        
+        return qs
+    
+    def get_context_data(self, **kwargs):
+        """Adiciona dados extras ao contexto."""
+        context = super().get_context_data(**kwargs)
+        
+        # Filtros ativos
+        context['filters'] = {
+            'user': self.request.GET.get('user', ''),
+            'action': self.request.GET.get('action', ''),
+            'severity': self.request.GET.get('severity', ''),
+            'period': self.request.GET.get('period', ''),
+            'search': self.request.GET.get('search', ''),
+        }
+        
+        # Choices para os selects
+        context['action_choices'] = TipoAcaoAuditoria.choices
+        context['severity_choices'] = NivelSeveridade.choices
+        
+        # Estatísticas rápidas
+        context['stats'] = self.get_statistics()
+        
+        return context
+    
+    def get_statistics(self):
+        """Retorna estatísticas dos logs."""
+        from django.utils import timezone
+        queryset = self.get_queryset()
+        
+        return {
+            'total': queryset.count(),
+            'today': queryset.filter(timestamp__date=timezone.now().date()).count(),
+            'critical': queryset.filter(severity=NivelSeveridade.CRITICAL).count(),
+            'by_action': dict(
+                queryset.values('action')
+                .annotate(count=Count('id'))
+                .values_list('action', 'count')
+            ),
+        }
+
+
+class AuditLogDetailView(LoginRequiredMixin, PermissaoRequiredMixin, DetailView):
+    """
+    Detalhes de um log específico.
+    """
+    model = AuditLog
+    template_name = 'core/audit_log_detail.html'
+    context_object_name = 'log'
+    permissao_requerida = 'visualizar_logs'
+    
+    def get_queryset(self):
+        """Otimiza queries."""
+        return super().get_queryset().select_related('user', 'content_type')
+

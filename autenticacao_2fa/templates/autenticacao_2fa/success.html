@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}2FA Configurado - ARES{% endblock %}
+
+{% block extra_css %}
+<style>
+    .success-2fa-container {
+        max-width: 600px;
+        margin: 80px auto;
+        padding: 40px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    
+    .success-icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+        animation: scaleIn 0.5s ease-out;
+    }
+    
+    @keyframes scaleIn {
+        0% {
+            transform: scale(0);
+        }
+        50% {
+            transform: scale(1.1);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+    
+    .success-2fa-container h1 {
+        color: #198754;
+        margin-bottom: 15px;
+    }
+    
+    .success-2fa-container p {
+        color: #666;
+        font-size: 16px;
+        margin-bottom: 30px;
+    }
+    
+    .info-box {
+        background: #e7f3ff;
+        border: 2px solid #0d6efd;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 30px 0;
+        text-align: left;
+    }
+    
+    .info-box h3 {
+        color: #084298;
+        margin-top: 0;
+    }
+    
+    .info-box ul {
+        margin: 15px 0;
+        padding-left: 20px;
+    }
+    
+    .info-box li {
+        margin: 10px 0;
+        color: #333;
+    }
+    
+    .warning-box {
+        background: #fff3cd;
+        border: 2px solid #ffc107;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+        text-align: left;
+    }
+    
+    .warning-box h3 {
+        color: #856404;
+        margin-top: 0;
+    }
+    
+    .warning-box p {
+        color: #856404;
+        margin-bottom: 10px;
+    }
+    
+    .action-buttons {
+        margin-top: 30px;
+    }
+    
+    .btn-primary {
+        display: inline-block;
+        padding: 12px 30px;
+        margin: 5px;
+        background: #0d6efd;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: background 0.3s;
+    }
+    
+    .btn-primary:hover {
+        background: #0b5ed7;
+        color: #fff;
+    }
+    
+    .btn-danger {
+        display: inline-block;
+        padding: 12px 30px;
+        margin: 5px;
+        background: #dc3545;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    
+    .btn-danger:hover {
+        background: #bb2d3b;
+        color: #fff;
+    }
+    
+    .device-info {
+        background: #f8f9fa;
+        border-radius: 6px;
+        padding: 15px;
+        margin: 20px 0;
+        text-align: left;
+    }
+    
+    .device-info strong {
+        color: #333;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="success-2fa-container">
+    <div class="success-icon">✅</div>
+    
+    {% if has_2fa %}
+        <h1>Autenticação de Dois Fatores Ativa!</h1>
+        <p>Sua conta agora está protegida com verificação em duas etapas.</p>
+    {% else %}
+        <h1>Bem-vindo ao Sistema ARES</h1>
+        <p>Para maior segurança, recomendamos configurar a autenticação de dois fatores.</p>
+    {% endif %}
+    
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    {% if has_2fa %}
+        <div class="info-box">
+            <h3>📱 Como Funciona Agora</h3>
+            <ul>
+                <li><strong>Login:</strong> Além de usuário e senha, você precisará do código do app autenticador</li>
+                <li><strong>Código:</strong> Novo código a cada 30 segundos no seu celular</li>
+                <li><strong>Segurança:</strong> Mesmo que alguém descubra sua senha, não conseguirá acessar sem seu celular</li>
+                <li><strong>Backup:</strong> Guarde a chave secreta em local seguro caso precise reconfigurar</li>
+            </ul>
+        </div>
+        
+        {% if device %}
+        <div class="device-info">
+            <strong>Dispositivo Configurado:</strong> {{ device.name }}<br>
+            <strong>Usuário:</strong> {{ user.username }}<br>
+            <strong>Status:</strong> <span style="color: #198754;">✓ Ativo</span>
+        </div>
+        {% endif %}
+        
+        <div class="warning-box">
+            <h3>⚠️ Importante</h3>
+            <p>
+                <strong>Não perca o acesso ao seu app autenticador!</strong><br>
+                Se trocar de celular, transfira o código ou reconfigure a autenticação.
+            </p>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="{% url 'dashboard:index' %}" class="btn-primary">Ir para o Dashboard</a>
+            
+            <form method="post" action="{% url 'autenticacao_2fa:disable_2fa' %}" style="display: inline-block;" 
+                  onsubmit="return confirm('Tem certeza que deseja desabilitar a autenticação de dois fatores? Isso reduzirá a segurança da sua conta.');">
+                {% csrf_token %}
+                <button type="submit" class="btn-danger">Desabilitar 2FA</button>
+            </form>
+        </div>
+    {% else %}
+        <div class="info-box">
+            <h3>🔐 Por que Usar 2FA?</h3>
+            <ul>
+                <li><strong>Segurança Extra:</strong> Protege sua conta mesmo se a senha for comprometida</li>
+                <li><strong>Fácil de Usar:</strong> Código gerado automaticamente no seu celular</li>
+                <li><strong>Recomendação:</strong> Padrão de segurança para sistemas governamentais</li>
+            </ul>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="{% url 'autenticacao_2fa:setup_2fa' %}" class="btn-primary">Configurar 2FA Agora</a>
+            <a href="{% url 'dashboard:index' %}" class="btn-primary" style="background: #6c757d;">Pular por Agora</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

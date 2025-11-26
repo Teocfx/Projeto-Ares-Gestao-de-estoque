@@ -7,6 +7,7 @@ from django.core.validators import MinValueValidator
 from django.urls import reverse
 from django.db import transaction
 from decimal import Decimal
+from typing import Any
 
 from core.models import TimeStampedModel
 
@@ -86,30 +87,34 @@ class InventoryMovement(TimeStampedModel):
         verbose_name_plural = "Movimentações de Estoque"
         ordering = ['-created_at']
         indexes = [
-            models.Index(fields=['product', '-created_at']),
-            models.Index(fields=['type', '-created_at']),
-            models.Index(fields=['user', '-created_at']),
+            models.Index(fields=['product', '-created_at'], name='inv_mov_prod_date_idx'),
+            models.Index(fields=['type', '-created_at'], name='inv_mov_type_date_idx'),
+            models.Index(fields=['user', '-created_at'], name='inv_mov_user_date_idx'),
+            # Índices compostos otimizados
+            models.Index(fields=['product', 'type', '-created_at'], name='inv_mov_prod_type_date_idx'),
+            models.Index(fields=['document'], name='inv_mov_document_idx'),
+            models.Index(fields=['created_at'], name='inv_mov_created_idx'),
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.get_type_display()} - {self.product.name} ({self.quantity} {self.product.unit})"
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         """Retorna a URL de detalhes da movimentação."""
         return reverse('movimentacoes:detail', kwargs={'pk': self.pk})
 
     @property
-    def url(self):
+    def url(self) -> str:
         """Alias para get_absolute_url (compatibilidade com Wagtail)."""
         return self.get_absolute_url()
 
     @property
-    def title(self):
+    def title(self) -> str:
         """Retorna título formatado para busca."""
         return f"{self.get_type_display()}: {self.product.name} ({self.quantity} {self.product.unit})"
 
     @property
-    def search_description(self):
+    def search_description(self) -> str:
         """Retorna descrição formatada para resultados de busca."""
         desc_parts = []
         desc_parts.append(f"Produto: {self.product.sku} - {self.product.name}")
@@ -121,44 +126,103 @@ class InventoryMovement(TimeStampedModel):
             desc_parts.append(f"Obs: {self.notes[:100]}")
         return " | ".join(desc_parts)
 
-    def save(self, *args, **kwargs):
+    def save(self, *args: Any, **kwargs: Any) -> None:
         """
-        Sobrescreve o save para atualizar o estoque do produto automaticamente.
-        Usa transaction.atomic() para garantir consistência.
+        Salva a movimentação e atualiza o estoque do produto automaticamente.
+        
+        Este método sobrescreve o save padrão para:
+        1. Garantir atomicidade da operação (transação)
+        2. Evitar race conditions (lock do produto)
+        3. Registrar estoque antes/depois para auditoria
+        4. Validar estoque suficiente em saídas
+        
+        Args:
+            *args: Argumentos posicionais para o save do Django
+            **kwargs: Argumentos nomeados para o save do Django
+        
+        Raises:
+            ValidationError: Quando estoque é insuficiente para saída
+        
+        Examples:
+            >>> movement = InventoryMovement(product=prod, type='ENTRADA', quantity=10)
+            >>> movement.save()  # Estoque aumenta em 10 unidades
+            
+            >>> movement = InventoryMovement(product=prod, type='SAIDA', quantity=5)
+            >>> movement.save()  # Estoque reduz em 5 unidades
         """
         with transaction.atomic():
             # Carrega o produto com lock para evitar race conditions
-            product = type(self).objects.select_for_update().get(
-                pk=self.product.pk
-            ) if self.pk else self.product
+            product = self._get_locked_product()
             
-            # Guarda estoque anterior
+            # Registra estoque anterior para auditoria
             self.stock_before = product.current_stock
             
             # Atualiza o estoque baseado no tipo de movimentação
-            if self.type == self.ENTRADA:
-                product.current_stock += self.quantity
-            elif self.type == self.SAIDA:
-                # Verifica se há estoque suficiente
-                if product.current_stock < self.quantity:
-                    from django.core.exceptions import ValidationError
-                    raise ValidationError(
-                        f"Estoque insuficiente. Disponível: {product.current_stock} {product.unit}"
-                    )
-                product.current_stock -= self.quantity
-            elif self.type == self.AJUSTE:
-                # Ajuste pode ser positivo ou negativo
-                # A quantidade representa o valor final desejado, não a diferença
-                product.current_stock = self.quantity
+            self._update_product_stock(product)
             
-            # Guarda estoque posterior
+            # Registra estoque posterior para auditoria
             self.stock_after = product.current_stock
             
-            # Salva o produto
+            # Salva o produto e a movimentação
             product.save()
-            
-            # Salva a movimentação
             super().save(*args, **kwargs)
+    
+    def _get_locked_product(self):
+        """
+        Obtém o produto com lock de linha para evitar race conditions.
+        
+        Returns:
+            Product: Produto com lock SELECT FOR UPDATE
+        
+        Notes:
+            - Se a movimentação já existe (tem pk), recarrega do banco
+            - Se é nova, usa a instância já carregada
+        """
+        if self.pk:
+            return type(self).objects.select_for_update().get(pk=self.product.pk)
+        return self.product
+    
+    def _update_product_stock(self, product) -> None:
+        """
+        Atualiza o estoque do produto baseado no tipo de movimentação.
+        
+        Args:
+            product: Instância do produto a ser atualizado
+        
+        Raises:
+            ValidationError: Se estoque for insuficiente para saída
+        
+        Notes:
+            - ENTRADA: Adiciona quantidade ao estoque atual
+            - SAIDA: Subtrai quantidade (valida disponibilidade)
+            - AJUSTE: Define quantidade como valor absoluto
+        """
+        from django.core.exceptions import ValidationError
+        
+        if self.type == self.ENTRADA:
+            product.current_stock += self.quantity
+        elif self.type == self.SAIDA:
+            self._validate_stock_availability(product)
+            product.current_stock -= self.quantity
+        elif self.type == self.AJUSTE:
+            product.current_stock = self.quantity
+    
+    def _validate_stock_availability(self, product) -> None:
+        """
+        Valida se há estoque suficiente para uma saída.
+        
+        Args:
+            product: Produto a validar disponibilidade
+        
+        Raises:
+            ValidationError: Se estoque atual for menor que quantidade solicitada
+        """
+        from django.core.exceptions import ValidationError
+        
+        if product.current_stock < self.quantity:
+            raise ValidationError(
+                f"Estoque insuficiente. Disponível: {product.current_stock} {product.unit}"
+            )
 
     @property
     def difference(self):

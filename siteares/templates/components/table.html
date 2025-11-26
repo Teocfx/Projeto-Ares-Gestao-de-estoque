@@ -1,0 +1,185 @@
+{% comment %}
+Componente: Tabela Responsiva Padronizada
+Uso: {% include 'components/table.html' with headers=headers rows=rows %}
+{% endcomment %}
+
+<div class="table-responsive {% if custom_class %}{{ custom_class }}{% endif %}">
+    <table class="table {% if striped %}table-striped{% endif %} {% if bordered %}table-bordered{% endif %} {% if hover %}table-hover{% endif %} {% if small %}table-sm{% endif %} {% if table_class %}{{ table_class }}{% endif %}">
+        {% if caption %}
+        <caption>{{ caption }}</caption>
+        {% endif %}
+        
+        <thead class="{% if thead_class %}{{ thead_class }}{% else %}table-light{% endif %}">
+            <tr>
+                {% if selectable %}
+                <th scope="col" class="text-center" style="width: 50px;">
+                    <input type="checkbox" class="form-check-input" id="selectAll">
+                </th>
+                {% endif %}
+                
+                {% for header in headers %}
+                <th scope="col" {% if header.width %}style="width: {{ header.width }};"{% endif %} {% if header.class %}class="{{ header.class }}"{% endif %}>
+                    {{ header.label|default:header }}
+                    {% if header.sortable %}
+                    <i class="bi bi-arrow-down-up ms-1 text-muted small"></i>
+                    {% endif %}
+                </th>
+                {% endfor %}
+                
+                {% if actions %}
+                <th scope="col" class="text-center" style="width: 120px;">Ações</th>
+                {% endif %}
+            </tr>
+        </thead>
+        
+        <tbody>
+            {% if rows %}
+                {% for row in rows %}
+                <tr {% if row.class %}class="{{ row.class }}"{% endif %}>
+                    {% if selectable %}
+                    <td class="text-center">
+                        <input type="checkbox" class="form-check-input row-select" value="{{ row.id }}">
+                    </td>
+                    {% endif %}
+                    
+                    {% for cell in row.cells %}
+                    <td {% if cell.class %}class="{{ cell.class }}"{% endif %}>
+                        {{ cell.value|default:cell|safe }}
+                    </td>
+                    {% endfor %}
+                    
+                    {% if actions %}
+                    <td class="text-center">
+                        <div class="btn-group btn-group-sm" role="group">
+                            {% if row.can_edit %}
+                            <a href="{{ row.edit_url }}" class="btn btn-outline-primary" title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            {% endif %}
+                            
+                            {% if row.can_view %}
+                            <a href="{{ row.view_url }}" class="btn btn-outline-info" title="Visualizar">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            {% endif %}
+                            
+                            {% if row.can_delete %}
+                            <button type="button" class="btn btn-outline-danger" 
+                                    onclick="confirmDelete('{{ row.delete_url }}', '{{ row.name }}')" 
+                                    title="Excluir">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                            {% endif %}
+                            
+                            {% if row.custom_actions %}
+                                {{ row.custom_actions|safe }}
+                            {% endif %}
+                        </div>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="{% if selectable %}{{ headers|length|add:2 }}{% else %}{{ headers|length|add:1 }}{% endif %}" class="text-center text-muted py-4">
+                        <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                        {{ empty_message|default:'Nenhum registro encontrado.' }}
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+        
+        {% if footer %}
+        <tfoot class="{% if tfoot_class %}{{ tfoot_class }}{% else %}table-light{% endif %}">
+            {{ footer|safe }}
+        </tfoot>
+        {% endif %}
+    </table>
+</div>
+
+{% if selectable %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const selectAll = document.getElementById('selectAll');
+    const rowSelects = document.querySelectorAll('.row-select');
+    
+    if (selectAll) {
+        selectAll.addEventListener('change', function() {
+            rowSelects.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+    }
+    
+    rowSelects.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const allChecked = Array.from(rowSelects).every(cb => cb.checked);
+            const someChecked = Array.from(rowSelects).some(cb => cb.checked);
+            
+            if (selectAll) {
+                selectAll.checked = allChecked;
+                selectAll.indeterminate = someChecked && !allChecked;
+            }
+        });
+    });
+});
+</script>
+{% endif %}
+
+<style>
+.table-responsive {
+    border-radius: 0.375rem;
+    overflow: hidden;
+}
+
+.table thead th {
+    font-weight: 600;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.btn-group-sm > .btn {
+    padding: 0.25rem 0.5rem;
+}
+</style>
+
+{% comment %}
+Exemplo de uso avançado:
+
+{% include 'components/table.html' with 
+    headers=headers 
+    rows=rows
+    striped=True
+    hover=True
+    selectable=True
+    actions=True
+    empty_message='Nenhum produto cadastrado.'
+%}
+
+Estrutura de dados esperada:
+
+headers = [
+    {'label': 'ID', 'width': '80px', 'sortable': True},
+    {'label': 'Nome', 'sortable': True},
+    {'label': 'Status', 'class': 'text-center'},
+]
+
+rows = [
+    {
+        'id': 1,
+        'cells': [
+            {'value': '#001'},
+            {'value': 'Produto A'},
+            {'value': '<span class="badge bg-success">Ativo</span>'},
+        ],
+        'can_edit': True,
+        'can_delete': True,
+        'edit_url': '/produtos/1/edit/',
+        'delete_url': '/produtos/1/delete/',
+        'name': 'Produto A',
+    }
+]
+{% endcomment %}

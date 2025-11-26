@@ -1,0 +1,121 @@
+{% comment %}
+Componente: Menu Superior Dinâmico (Wagtail)
+Uso: {% include 'components/top_menu.html' %}
+{% endcomment %}
+{% load wagtailcore_tags perfil_tags %}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="{% pageurl request.site.root_page %}">
+            <i class="bi bi-box-seam me-2 text-primary fs-4"></i>
+            <span class="fw-bold">ARES</span>
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNavbar" 
+                aria-controls="topNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="topNavbar">
+            {# Menu dinâmico do Wagtail #}
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                {% if request.site.root_page %}
+                    {% for menuitem in request.site.root_page.get_children.live.in_menu %}
+                        <li class="nav-item {% if menuitem.url == request.path %}active{% endif %}">
+                            <a class="nav-link" href="{% pageurl menuitem %}">
+                                {{ menuitem.title }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                {% endif %}
+                
+                {# Links fixos do sistema interno #}
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard:index' %}">
+                            <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    
+                    {% if user|tem_permissao:'editar_produtos' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'produtos:produto_list' %}">
+                            <i class="bi bi-box me-1"></i>Produtos
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'movimentacoes:movimentacao_list' %}">
+                            <i class="bi bi-arrow-left-right me-1"></i>Movimentações
+                        </a>
+                    </li>
+                    
+                    {% if user|tem_permissao:'gerar_relatorios' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'relatorios:relatorio_list' %}">
+                            <i class="bi bi-file-earmark-text me-1"></i>Relatórios
+                        </a>
+                    </li>
+                    {% endif %}
+                {% endif %}
+            </ul>
+            
+            {# Menu do usuário #}
+            <ul class="navbar-nav ms-auto">
+                {# Theme Switcher #}
+                <li class="nav-item">
+                    <button class="btn btn-link nav-link" data-theme-toggle aria-label="Alternar tema" title="Alternar tema">
+                        <i class="bi bi-sun-fill theme-icon theme-icon-light"></i>
+                        <i class="bi bi-moon-stars-fill theme-icon theme-icon-dark d-none"></i>
+                    </button>
+                </li>
+                
+                {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" 
+                           id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle me-2"></i>
+                            <span class="d-none d-md-inline">{{ user.get_full_name|default:user.username }}</span>
+                            <span class="ms-2">{% load perfil_tags %}{% perfil_badge user %}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="bi bi-person me-2"></i>Meu Perfil
+                                </a>
+                            </li>
+                            
+                            {% if user|is_representante_legal %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="/admin/">
+                                    <i class="bi bi-gear me-2"></i>Administração
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/admin/core/perfilusuario/">
+                                    <i class="bi bi-people me-2"></i>Gerenciar Usuários
+                                </a>
+                            </li>
+                            {% endif %}
+                            
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-danger" href="{% url 'autenticacao:logout' %}">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Sair
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="btn btn-outline-primary" href="{% url 'autenticacao:login' %}">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Entrar
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

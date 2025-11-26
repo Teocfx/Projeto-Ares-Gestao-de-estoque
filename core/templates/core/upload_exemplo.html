@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Exemplo de Upload{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    {% include 'components/titulo.html' with title='Sistema de Upload' subtitle='Exemplos de uso do componente de upload' icon='bi-cloud-upload' %}
+    
+    <div class="row g-4">
+        {# Exemplo 1: Upload de Imagens #}
+        <div class="col-md-6">
+            {% include 'components/card.html' with title='Upload de Imagens' %}
+                <p class="text-muted">Upload de imagens com otimização automática (max 1920px, 85% quality)</p>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#imageUploadModal">
+                    <i class="bi bi-image me-2"></i>Enviar Imagens
+                </button>
+                <div id="imageResults" class="mt-3"></div>
+            {% endinclude %}
+        </div>
+        
+        {# Exemplo 2: Upload de Documentos #}
+        <div class="col-md-6">
+            {% include 'components/card.html' with title='Upload de Documentos' %}
+                <p class="text-muted">Upload de PDFs, Word, Excel (max 20MB)</p>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#documentUploadModal">
+                    <i class="bi bi-file-earmark-pdf me-2"></i>Enviar Documentos
+                </button>
+                <div id="documentResults" class="mt-3"></div>
+            {% endinclude %}
+        </div>
+        
+        {# Exemplo 3: Upload Múltiplo #}
+        <div class="col-md-6">
+            {% include 'components/card.html' with title='Upload Múltiplo' %}
+                <p class="text-muted">Envie vários arquivos de uma vez</p>
+                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#multiUploadModal">
+                    <i class="bi bi-files me-2"></i>Múltiplos Arquivos
+                </button>
+                <div id="multiResults" class="mt-3"></div>
+            {% endinclude %}
+        </div>
+        
+        {# Exemplo 4: Upload com Processamento Manual #}
+        <div class="col-md-6">
+            {% include 'components/card.html' with title='Upload Manual' %}
+                <p class="text-muted">Processar arquivos via JavaScript customizado</p>
+                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#manualUploadModal">
+                    <i class="bi bi-gear me-2"></i>Upload Manual
+                </button>
+                <div id="manualResults" class="mt-3"></div>
+            {% endinclude %}
+        </div>
+    </div>
+    
+    {# Instruções #}
+    <div class="row mt-4">
+        <div class="col-12">
+            {% include 'components/panel.html' with title='Como Usar' id='instrucoes' %}
+                <h5>Exemplo 1: Upload com URL definida</h5>
+                <pre><code>{% templatetag openblock %} include 'components/upload_modal.html' with
+    id='imageUploadModal'
+    title='Upload de Imagens'
+    accept='image/*'
+    accept_label='JPG, PNG, GIF, WEBP'
+    max_size='5242880'
+    max_size_label='5 MB'
+    upload_url='/core/upload/image/'
+    optimize_images='true'
+    multiple='true'
+{% templatetag closeblock %}</code></pre>
+
+                <h5 class="mt-4">Exemplo 2: Upload com processamento manual</h5>
+                <pre><code>{% templatetag openblock %} include 'components/upload_modal.html' with
+    id='manualUploadModal'
+    title='Upload Manual'
+    accept='.pdf,.doc,.docx'
+    multiple='true'
+{% templatetag closeblock %}
+
+&lt;script&gt;
+document.addEventListener('filesSelected', (e) => {
+    if (e.detail.modalId === 'manualUploadModal') {
+        console.log('Arquivos selecionados:', e.detail.files);
+        // Processar arquivos manualmente
+    }
+});
+&lt;/script&gt;</code></pre>
+
+                <h5 class="mt-4">Exemplo 3: Escutar evento de sucesso</h5>
+                <pre><code>&lt;script&gt;
+document.addEventListener('uploadSuccess', (e) => {
+    console.log('Upload concluído!', e.detail.response);
+    // Atualizar UI, recarregar lista, etc.
+});
+&lt;/script&gt;</code></pre>
+            {% endinclude %}
+        </div>
+    </div>
+</div>
+
+{# Modal 1: Upload de Imagens #}
+{% include 'components/upload_modal.html' with 
+    id='imageUploadModal'
+    title='Upload de Imagens'
+    accept='image/*'
+    accept_label='JPG, PNG, GIF, WEBP'
+    max_size='5242880'
+    max_size_label='5 MB'
+    upload_url='/core/upload/image/'
+    optimize_images='true'
+    max_width='1920'
+    max_height='1080'
+    quality='0.85'
+    multiple='true'
+%}
+
+{# Modal 2: Upload de Documentos #}
+{% include 'components/upload_modal.html' with 
+    id='documentUploadModal'
+    title='Upload de Documentos'
+    accept='.pdf,.doc,.docx,.xls,.xlsx'
+    accept_label='PDF, Word, Excel'
+    max_size='20971520'
+    max_size_label='20 MB'
+    upload_url='/core/upload/document/'
+    optimize_images='false'
+    multiple='true'
+%}
+
+{# Modal 3: Upload Múltiplo (todos os tipos) #}
+{% include 'components/upload_modal.html' with 
+    id='multiUploadModal'
+    title='Upload Múltiplo'
+    max_size='10485760'
+    max_size_label='10 MB'
+    upload_url='/core/upload/file/'
+    optimize_images='true'
+    multiple='true'
+%}
+
+{# Modal 4: Upload Manual (sem URL) #}
+{% include 'components/upload_modal.html' with 
+    id='manualUploadModal'
+    title='Upload Manual'
+    accept='.pdf,.jpg,.png'
+    max_size='10485760'
+    max_size_label='10 MB'
+    optimize_images='true'
+    multiple='true'
+%}
+
+<script>
+// Listener para upload de imagens
+document.addEventListener('uploadSuccess', (e) => {
+    if (e.detail.modalId === 'imageUploadModal') {
+        const resultsDiv = document.getElementById('imageResults');
+        resultsDiv.innerHTML = '<div class="alert alert-success">✅ ' + e.detail.response.count + ' imagem(ns) enviada(s) com sucesso!</div>';
+        
+        // Mostrar imagens
+        e.detail.response.files.forEach(file => {
+            resultsDiv.innerHTML += `
+                <div class="mt-2">
+                    <img src="${file.url}" alt="${file.name}" class="img-thumbnail" style="max-height: 100px;">
+                    <small class="d-block text-muted">${file.name} (${(file.size / 1024).toFixed(2)} KB)</small>
+                </div>
+            `;
+        });
+    }
+    
+    if (e.detail.modalId === 'documentUploadModal') {
+        const resultsDiv = document.getElementById('documentResults');
+        resultsDiv.innerHTML = '<div class="alert alert-success">✅ ' + e.detail.response.count + ' documento(s) enviado(s)!</div>';
+        
+        // Listar documentos
+        e.detail.response.files.forEach(file => {
+            resultsDiv.innerHTML += `
+                <div class="mt-2">
+                    <i class="bi bi-file-earmark-pdf"></i> 
+                    <a href="${file.url}" target="_blank">${file.name}</a>
+                    <small class="text-muted">(${(file.size / 1024).toFixed(2)} KB)</small>
+                </div>
+            `;
+        });
+    }
+    
+    if (e.detail.modalId === 'multiUploadModal') {
+        const resultsDiv = document.getElementById('multiResults');
+        resultsDiv.innerHTML = '<div class="alert alert-success">✅ ' + e.detail.response.count + ' arquivo(s) enviado(s)!</div>';
+    }
+});
+
+// Listener para upload manual (sem URL definida)
+document.addEventListener('filesSelected', (e) => {
+    if (e.detail.modalId === 'manualUploadModal') {
+        const files = e.detail.files;
+        const resultsDiv = document.getElementById('manualResults');
+        
+        resultsDiv.innerHTML = `
+            <div class="alert alert-info">
+                <strong>Arquivos selecionados:</strong>
+                <ul class="mb-0 mt-2">
+                    ${files.map(f => `<li>${f.name} (${(f.size / 1024).toFixed(2)} KB)</li>`).join('')}
+                </ul>
+            </div>
+        `;
+        
+        // Fechar modal
+        bootstrap.Modal.getInstance(document.getElementById('manualUploadModal')).hide();
+        
+        // Aqui você pode processar os arquivos como quiser
+        console.log('Processar manualmente:', files);
+    }
+});
+</script>
+{% endblock %}

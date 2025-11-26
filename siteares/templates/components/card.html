@@ -1,0 +1,66 @@
+{% comment %}
+Componente: Card Reutilizável
+Uso: 
+{% include 'components/card.html' with title='Título' body_content='Conteúdo' footer_content='Rodapé' %}
+Ou com blocks:
+{% include 'components/card.html' with title='Título' %}
+    <div slot="body">Conteúdo customizado</div>
+{% endinclude %}
+{% endcomment %}
+
+<div class="card {{ card_class|default:'' }} {% if shadow %}shadow-sm{% endif %} {% if hover %}card-hover{% endif %} h-100">
+    {% if header or title %}
+    <div class="card-header {% if header_class %}{{ header_class }}{% else %}bg-white{% endif %}">
+        {% if header %}
+            {{ header }}
+        {% else %}
+            <div class="d-flex align-items-center justify-content-between">
+                <h5 class="card-title mb-0">
+                    {% if icon %}<i class="bi {{ icon }} me-2"></i>{% endif %}
+                    {{ title }}
+                </h5>
+                {% if header_actions %}
+                <div class="card-header-actions">
+                    {{ header_actions }}
+                </div>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    {% if image_url %}
+    <img src="{{ image_url }}" class="card-img-top" alt="{{ title|default:'Card image' }}">
+    {% endif %}
+    
+    <div class="card-body {% if body_class %}{{ body_class }}{% endif %}">
+        {% if body_content %}
+            {{ body_content|safe }}
+        {% else %}
+            {{ body }}
+        {% endif %}
+    </div>
+    
+    {% if footer or footer_content %}
+    <div class="card-footer {% if footer_class %}{{ footer_class }}{% else %}bg-light{% endif %}">
+        {% if footer_content %}
+            {{ footer_content|safe }}
+        {% else %}
+            {{ footer }}
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+{% if hover %}
+<style>
+.card-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+</style>
+{% endif %}

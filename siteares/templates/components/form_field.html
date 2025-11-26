@@ -1,0 +1,131 @@
+{% comment %}
+Componente: Campo de Formulário Padronizado
+Uso: {% include 'components/form_field.html' with field=form.nome %}
+{% endcomment %}
+
+<div class="mb-3 {% if field.errors %}has-error{% endif %} {% if wrapper_class %}{{ wrapper_class }}{% endif %}">
+    {% if field.label and not hide_label %}
+    <label for="{{ field.id_for_label }}" class="form-label {% if field.field.required %}required{% endif %}">
+        {{ field.label }}
+        {% if field.field.required %}
+            <span class="text-danger">*</span>
+        {% endif %}
+        {% if help_text_inline %}
+            <small class="text-muted ms-2">{{ field.help_text }}</small>
+        {% endif %}
+    </label>
+    {% endif %}
+    
+    {% if prepend_text or append_text %}
+    <div class="input-group">
+        {% if prepend_text %}
+        <span class="input-group-text">{{ prepend_text }}</span>
+        {% endif %}
+    {% endif %}
+    
+    {% if field.field.widget.input_type == 'checkbox' %}
+        <div class="form-check">
+            {{ field }}
+            <label class="form-check-label" for="{{ field.id_for_label }}">
+                {{ field.label }}
+                {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+            </label>
+        </div>
+    {% elif field.field.widget.input_type == 'select' %}
+        <select name="{{ field.name }}" id="{{ field.id_for_label }}" 
+                class="form-select {% if field.errors %}is-invalid{% endif %} {% if field_class %}{{ field_class }}{% endif %}"
+                {% if field.field.required %}required{% endif %}
+                {% if field.field.widget.attrs.disabled %}disabled{% endif %}>
+            {% for value, label in field.field.choices %}
+            <option value="{{ value }}" {% if field.value == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    {% elif field.field.widget.input_type == 'textarea' or 'Textarea' in field.field.widget.__class__.__name__ %}
+        <textarea name="{{ field.name }}" id="{{ field.id_for_label }}" 
+                  class="form-control {% if field.errors %}is-invalid{% endif %} {% if field_class %}{{ field_class }}{% endif %}"
+                  rows="{{ rows|default:3 }}"
+                  {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
+                  {% if field.field.required %}required{% endif %}
+                  {% if field.field.widget.attrs.disabled %}disabled{% endif %}>{{ field.value|default:'' }}</textarea>
+    {% else %}
+        <input type="{{ field.field.widget.input_type|default:'text' }}" 
+               name="{{ field.name }}" 
+               id="{{ field.id_for_label }}" 
+               class="form-control {% if field.errors %}is-invalid{% endif %} {% if field_class %}{{ field_class }}{% endif %}"
+               value="{{ field.value|default:'' }}"
+               {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
+               {% if field.field.required %}required{% endif %}
+               {% if field.field.widget.attrs.disabled %}disabled{% endif %}
+               {% for attr, value in field.field.widget.attrs.items %}
+                   {% if attr != 'class' %}{{ attr }}="{{ value }}"{% endif %}
+               {% endfor %}>
+    {% endif %}
+    
+    {% if prepend_text or append_text %}
+        {% if append_text %}
+        <span class="input-group-text">{{ append_text }}</span>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    {% if field.errors %}
+    <div class="invalid-feedback d-block">
+        {% for error in field.errors %}
+            <div>{{ error }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    {% if field.help_text and not help_text_inline %}
+    <div class="form-text">{{ field.help_text }}</div>
+    {% endif %}
+    
+    {% if custom_help %}
+    <div class="form-text">{{ custom_help|safe }}</div>
+    {% endif %}
+</div>
+
+<style>
+.form-label.required::after {
+    /* Estilo para labels de campos obrigatórios */
+}
+
+.has-error .form-control,
+.has-error .form-select {
+    border-color: #dc3545;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+</style>
+
+{% comment %}
+Exemplos de uso:
+
+1. Campo simples:
+{% include 'components/form_field.html' with field=form.nome %}
+
+2. Campo com placeholder:
+{% include 'components/form_field.html' with field=form.email placeholder='Digite seu email' %}
+
+3. Campo com texto antes/depois (ex: moeda):
+{% include 'components/form_field.html' with field=form.preco prepend_text='R$' %}
+
+4. Campo sem label:
+{% include 'components/form_field.html' with field=form.busca hide_label=True placeholder='Buscar...' %}
+
+5. Textarea com linhas customizadas:
+{% include 'components/form_field.html' with field=form.descricao rows=5 %}
+
+6. Campo com classe CSS customizada:
+{% include 'components/form_field.html' with field=form.codigo field_class='text-uppercase' %}
+
+7. Campo com ajuda customizada:
+{% include 'components/form_field.html' with 
+    field=form.senha 
+    custom_help='A senha deve ter no mínimo 8 caracteres.'
+%}
+{% endcomment %}

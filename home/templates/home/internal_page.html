@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags static %}
+
+{% block title %}{{ page.title }} | {{ block.super }}{% endblock %}
+
+{% block content %}
+
+{# Cabeçalho da Página #}
+<div class="page-header mb-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                {% if page.featured_image %}
+                <div class="featured-image mb-3">
+                    {% image page.featured_image fill-1200x400 as header_img %}
+                    <img src="{{ header_img.url }}" alt="{{ page.title }}" class="img-fluid rounded">
+                </div>
+                {% endif %}
+                <h1 class="mb-2">{{ page.title }}</h1>
+                {% if page.subtitle %}
+                <p class="lead text-muted">{{ page.subtitle }}</p>
+                {% endif %}
+                {% if page.show_date %}
+                <p class="text-muted">
+                    <i class="bi bi-calendar3 me-1"></i>
+                    Publicado em {{ page.first_published_at|date:"d/m/Y" }}
+                    {% if page.author %}
+                    | <i class="bi bi-person me-1"></i>{{ page.author }}
+                    {% endif %}
+                </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Conteúdo Principal #}
+<div class="page-content">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                {% if page.intro %}
+                <div class="intro-text mb-4 p-4 bg-light rounded">
+                    {{ page.intro|richtext }}
+                </div>
+                {% endif %}
+                
+                {% for block in page.body %}
+                    {% include_block block %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.page-header {
+    background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
+    padding: 3rem 0 2rem;
+}
+
+.featured-image img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+}
+
+.intro-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+.page-content {
+    padding: 2rem 0;
+}
+</style>
+
+{% endblock %}

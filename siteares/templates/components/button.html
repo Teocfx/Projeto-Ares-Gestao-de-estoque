@@ -1,0 +1,75 @@
+{% comment %}
+Componente: Botão Padronizado
+Uso: {% include 'components/button.html' with text='Salvar' type='submit' style='primary' %}
+{% endcomment %}
+
+{% if href %}
+    <a href="{{ href }}" 
+       class="btn btn-{{ style|default:'primary' }} {% if size %}btn-{{ size }}{% endif %} {% if outline %}btn-outline-{{ style|default:'primary' }}{% endif %} {% if custom_class %}{{ custom_class }}{% endif %}"
+       {% if target %}target="{{ target }}"{% endif %}
+       {% if disabled %}disabled{% endif %}
+       {% if data_attrs %}{% for key, value in data_attrs.items %}data-{{ key }}="{{ value }}" {% endfor %}{% endif %}>
+        {% if icon %}<i class="bi {{ icon }} {% if text %}me-2{% endif %}"></i>{% endif %}
+        {{ text|default:'Button' }}
+    </a>
+{% else %}
+    <button type="{{ button_type|default:'button' }}" 
+            class="btn btn-{{ style|default:'primary' }} {% if size %}btn-{{ size }}{% endif %} {% if outline %}btn-outline-{{ style|default:'primary' }}{% endif %} {% if custom_class %}{{ custom_class }}{% endif %}"
+            {% if onclick %}onclick="{{ onclick }}"{% endif %}
+            {% if disabled %}disabled{% endif %}
+            {% if form_id %}form="{{ form_id }}"{% endif %}
+            {% if data_attrs %}{% for key, value in data_attrs.items %}data-{{ key }}="{{ value }}" {% endfor %}{% endif %}>
+        {% if icon %}<i class="bi {{ icon }} {% if text %}me-2{% endif %}"></i>{% endif %}
+        {% if loading_text %}
+            <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+        {% endif %}
+        <span class="button-text">{{ text|default:'Button' }}</span>
+    </button>
+{% endif %}
+
+{% comment %}
+Estilos disponíveis:
+- primary (azul)
+- secondary (cinza)
+- success (verde)
+- danger (vermelho)
+- warning (amarelo)
+- info (azul claro)
+- light (branco)
+- dark (preto)
+
+Tamanhos disponíveis (size):
+- sm (pequeno)
+- lg (grande)
+
+Exemplos de uso:
+
+1. Botão primário simples:
+{% include 'components/button.html' with text='Salvar' style='primary' %}
+
+2. Botão com ícone:
+{% include 'components/button.html' with text='Adicionar' icon='bi-plus' style='success' %}
+
+3. Botão outline:
+{% include 'components/button.html' with text='Cancelar' style='secondary' outline=True %}
+
+4. Link como botão:
+{% include 'components/button.html' with text='Ver mais' href='/detalhes/' style='primary' %}
+
+5. Botão de submit:
+{% include 'components/button.html' with text='Enviar' button_type='submit' style='primary' icon='bi-send' %}
+
+6. Botão com data attributes (para modals, etc):
+{% include 'components/button.html' with 
+    text='Excluir' 
+    style='danger' 
+    icon='bi-trash'
+    data_attrs='{\"bs-toggle\": \"modal\", \"bs-target\": \"#deleteModal\"}'
+%}
+
+7. Botão desabilitado:
+{% include 'components/button.html' with text='Indisponível' disabled=True %}
+
+8. Botão pequeno:
+{% include 'components/button.html' with text='Editar' icon='bi-pencil' size='sm' style='primary' %}
+{% endcomment %}

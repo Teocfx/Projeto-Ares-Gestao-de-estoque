@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Verificação 2FA - ARES{% endblock %}
+
+{% block extra_css %}
+<style>
+    .verify-2fa-container {
+        max-width: 500px;
+        margin: 100px auto;
+        padding: 40px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    
+    .verify-icon {
+        font-size: 64px;
+        margin-bottom: 20px;
+    }
+    
+    .verify-2fa-container h1 {
+        color: #333;
+        margin-bottom: 15px;
+    }
+    
+    .verify-2fa-container p {
+        color: #666;
+        margin-bottom: 30px;
+    }
+    
+    .verification-form {
+        margin-top: 30px;
+    }
+    
+    .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 500;
+        color: #333;
+    }
+    
+    .form-group input[type="text"] {
+        width: 100%;
+        padding: 15px;
+        font-size: 24px;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        font-family: 'Courier New', monospace;
+        letter-spacing: 5px;
+        text-align: center;
+    }
+    
+    .form-group input[type="text"]:focus {
+        outline: none;
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25);
+    }
+    
+    .btn-verify {
+        width: 100%;
+        padding: 15px;
+        font-size: 18px;
+        font-weight: 600;
+        background: #0d6efd;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    
+    .btn-verify:hover {
+        background: #0b5ed7;
+    }
+    
+    .help-text {
+        margin-top: 20px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 6px;
+        font-size: 14px;
+        color: #666;
+    }
+    
+    .help-text a {
+        color: #0d6efd;
+        text-decoration: none;
+    }
+    
+    .help-text a:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="verify-2fa-container">
+    <div class="verify-icon">🔐</div>
+    <h1>Verificação em Duas Etapas</h1>
+    <p>Digite o código de 6 dígitos do seu app autenticador</p>
+    
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <form method="post" class="verification-form">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="token">Código de Verificação:</label>
+            <input 
+                type="text" 
+                id="token" 
+                name="token" 
+                maxlength="6" 
+                pattern="[0-9]{6}" 
+                placeholder="000000"
+                required
+                autofocus
+            >
+        </div>
+        
+        <button type="submit" class="btn-verify">Verificar Código</button>
+    </form>
+    
+    <div class="help-text">
+        <p>
+            <strong>Não consegue acessar?</strong><br>
+            Entre em contato com o suporte: suporte@ares.pb.gov.br
+        </p>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tokenInput = document.getElementById('token');
+    
+    // Permitir apenas números
+    tokenInput.addEventListener('input', function(e) {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+    
+    // Auto-submit quando digitar 6 dígitos
+    tokenInput.addEventListener('input', function(e) {
+        if (this.value.length === 6) {
+            // Delay curto para usuário ver o código completo
+            setTimeout(() => {
+                this.form.submit();
+            }, 300);
+        }
+    });
+});
+</script>
+{% endblock %}

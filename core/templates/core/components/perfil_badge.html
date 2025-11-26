@@ -1,0 +1,9 @@
+{% if has_perfil %}
+<span class="badge {{ badge_class }} {% if not ativo %}opacity-50{% endif %}" title="{{ perfil_display }}{% if not ativo %} (Desativado){% endif %}">
+    <i class="bi bi-shield-check me-1"></i>{{ perfil_display }}{% if not ativo %} <i class="bi bi-x-circle ms-1"></i>{% endif %}
+</span>
+{% else %}
+<span class="badge {{ badge_class }}" title="{{ perfil_display }}">
+    <i class="bi bi-question-circle me-1"></i>{{ perfil_display }}
+</span>
+{% endif %}

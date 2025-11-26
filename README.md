@@ -66,11 +66,19 @@ Este sistema foi desenvolvido para facilitar a gestão de estoques em empresas d
 
 ### Pré-requisitos
 
-- Python 3.12+
-- Node.js 22.13.1+
+- Python 3.12+ (ou Python 3.14 com Django 5.2+)
+- Node.js 20+
 - PostgreSQL (produção) ou SQLite (desenvolvimento)
 
-### Setup Rápido
+### 📖 Guias de Setup
+
+**🚀 TESTE RÁPIDO (SQLite - sem PostgreSQL):**
+- **[QUICKSTART-TEST.md](QUICKSTART-TEST.md)** - Instalação mínima para testes (5 minutos)
+
+**Para Windows:**
+- **[SETUP-WINDOWS.md](SETUP-WINDOWS.md)** - Guia completo passo a passo para Windows
+
+**Para Linux/Mac:**
 
 1. **Clone o repositório:**
 ```bash
@@ -82,21 +90,37 @@ cd Projeto-Ares-Gestao-de-estoque
 ```bash
 python -m venv .venv
 source .venv/bin/activate  # Linux/Mac
-# ou
-.venv\Scripts\activate     # Windows
 ```
 
 3. **Instale as dependências:**
 ```bash
-pip install -r requirements.txt
+# Para testes rápidos (SQLite):
+pip install -r requirements/local.txt
+
+# Ou desenvolvimento completo:
+pip install -r requirements/development.txt
+
+npm install
 ```
 
 4. **Configure o banco de dados:**
 ```bash
-cd backend
 python manage.py migrate
 python manage.py createsuperuser
 ```
+
+5. **Compile o frontend e colete arquivos estáticos:**
+```bash
+npx webpack --mode=production
+python manage.py collectstatic --noinput
+```
+
+6. **Inicie o servidor:**
+```bash
+python manage.py runserver
+```
+
+Acesse: http://127.0.0.1:8000/
 
 5. **Inicie o servidor:**
 ```bash
@@ -238,14 +262,28 @@ docker run -p 8000:8080 gestao-estoque
 
 ## 📈 Status do Projeto
 
-- ✅ **Backend**: Django + Wagtail configurados
-- ✅ **Models**: Estrutura básica criada
-- ✅ **URLs**: Roteamento configurado
-- ✅ **Views**: Views stub criadas
-- ⬜ **Templates**: A ser implementado
-- ⬜ **Forms**: A ser implementado
-- ⬜ **Frontend**: A ser configurado
+- ✅ **Backend**: Django 5.2 + Wagtail 7.2 configurados
+- ✅ **Models**: Produtos, Movimentações, Relatórios implementados
+- ✅ **URLs**: Roteamento completo
+- ✅ **Views**: CRUD e Dashboard implementados
+- ✅ **Templates**: Interface completa responsiva
+- ✅ **Forms**: Formulários de cadastro e edição
+- ✅ **Frontend**: Bootstrap 5 + JavaScript/Webpack
+- ✅ **Autenticação**: Sistema de login implementado
+- ✅ **Dashboard**: Métricas e gráficos funcionais
 - ⬜ **Testes**: A ser implementado
+
+## 🔗 Links Úteis
+
+- **[QUICKSTART-TEST.md](QUICKSTART-TEST.md)** - 🚀 Instalação rápida para testes (5 minutos)
+- **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** - 🛠️ Solução de problemas comuns
+- **[SETUP-WINDOWS.md](SETUP-WINDOWS.md)** - Guia completo de instalação no Windows
+- **[ACESSO-TESTE.md](ACESSO-TESTE.md)** - Informações de acesso ao sistema
+- **[docs/](docs/)** - Documentação adicional do projeto
+
+### 📜 Scripts de Instalação Automática
+- **Linux/Mac**: `bash install-quickstart.sh`
+- **Windows**: `.\install-quickstart.ps1`
 
 ## 🤝 Contribuindo
 

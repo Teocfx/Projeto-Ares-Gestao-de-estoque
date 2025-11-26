@@ -1,0 +1,486 @@
+{# Upload Modal Component with validation, preview, and optimization #}
+{% load static %}
+
+<div class="modal fade" id="{{ id|default:'uploadModal' }}" tabindex="-1" aria-labelledby="{{ id|default:'uploadModal' }}Label" aria-hidden="true">
+    <div class="modal-dialog {{ size|default:'' }}">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="{{ id|default:'uploadModal' }}Label">
+                    <i class="bi bi-cloud-upload me-2"></i>{{ title|default:'Upload de Arquivo' }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                {# Upload Area #}
+                <div class="upload-area" id="{{ id|default:'uploadModal' }}_area">
+                    <input type="file" 
+                           id="{{ id|default:'uploadModal' }}_input" 
+                           class="upload-input d-none"
+                           {% if accept %}accept="{{ accept }}"{% endif %}
+                           {% if multiple %}multiple{% endif %}
+                           data-max-size="{{ max_size|default:'10485760' }}"
+                           data-optimize="{{ optimize_images|default:'true' }}"
+                           data-max-width="{{ max_width|default:'1920' }}"
+                           data-max-height="{{ max_height|default:'1080' }}"
+                           data-quality="{{ quality|default:'0.85' }}">
+                    
+                    <div class="upload-zone text-center p-5 border border-2 border-dashed rounded" id="{{ id|default:'uploadModal' }}_zone">
+                        <i class="bi bi-cloud-arrow-up display-1 text-muted mb-3"></i>
+                        <h5>Arraste arquivos aqui</h5>
+                        <p class="text-muted mb-3">ou</p>
+                        <button type="button" class="btn btn-primary" id="{{ id|default:'uploadModal' }}_choose_btn">
+                            <i class="bi bi-folder2-open me-2"></i>Escolher Arquivos
+                        </button>
+                        {% if accept %}
+                        <p class="text-muted small mt-3 mb-0">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Tipos aceitos: {{ accept_label|default:accept }}
+                        </p>
+                        {% endif %}
+                        <p class="text-muted small mb-0">
+                            <i class="bi bi-hdd me-1"></i>
+                            Tamanho máximo: {{ max_size_label|default:'10 MB' }}
+                        </p>
+                    </div>
+                </div>
+
+                {# Preview Area #}
+                <div class="preview-area mt-4 d-none" id="{{ id|default:'uploadModal' }}_preview">
+                    <h6 class="mb-3">
+                        <i class="bi bi-eye me-2"></i>Arquivos Selecionados
+                    </h6>
+                    <div class="preview-list" id="{{ id|default:'uploadModal' }}_list"></div>
+                </div>
+
+                {# Progress Area #}
+                <div class="progress-area mt-4 d-none" id="{{ id|default:'uploadModal' }}_progress_area">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold">Enviando...</span>
+                        <span id="{{ id|default:'uploadModal' }}_progress_text">0%</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                             role="progressbar" 
+                             id="{{ id|default:'uploadModal' }}_progress_bar"
+                             style="width: 0%"
+                             aria-valuenow="0" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100"></div>
+                    </div>
+                    <div class="mt-2 text-center">
+                        <small class="text-muted" id="{{ id|default:'uploadModal' }}_status">Preparando upload...</small>
+                    </div>
+                </div>
+
+                {# Error Messages #}
+                <div class="alert alert-danger alert-dismissible fade show mt-3 d-none" role="alert" id="{{ id|default:'uploadModal' }}_error">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <span id="{{ id|default:'uploadModal' }}_error_text"></span>
+                    <button type="button" class="btn-close" id="{{ id|default:'uploadModal' }}_error_close"></button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="{{ id|default:'uploadModal' }}_cancel">
+                    <i class="bi bi-x-lg me-2"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-primary d-none" id="{{ id|default:'uploadModal' }}_upload">
+                    <i class="bi bi-cloud-upload me-2"></i>Enviar Arquivos
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.upload-zone {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background: #f8f9fa;
+}
+
+.upload-zone:hover {
+    background: #e9ecef;
+    border-color: var(--bs-primary) !important;
+}
+
+.upload-zone.dragover {
+    background: #e7f3ff;
+    border-color: var(--bs-primary) !important;
+    transform: scale(1.02);
+}
+
+.preview-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    margin-bottom: 0.5rem;
+    background: white;
+    transition: all 0.2s ease;
+}
+
+.preview-item:hover {
+    background: #f8f9fa;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.preview-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 0.25rem;
+    margin-right: 1rem;
+}
+
+.preview-item-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e9ecef;
+    border-radius: 0.25rem;
+    margin-right: 1rem;
+    font-size: 1.5rem;
+}
+
+.preview-item-info {
+    flex: 1;
+}
+
+.preview-item-remove {
+    cursor: pointer;
+    color: #dc3545;
+    font-size: 1.25rem;
+    transition: transform 0.2s ease;
+}
+
+.preview-item-remove:hover {
+    transform: scale(1.2);
+}
+
+.file-size {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+.file-type {
+    display: inline-block;
+    padding: 0.125rem 0.5rem;
+    background: #e9ecef;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    margin-left: 0.5rem;
+}
+
+.optimizing-badge {
+    display: inline-block;
+    padding: 0.125rem 0.5rem;
+    background: #fff3cd;
+    color: #856404;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    margin-left: 0.5rem;
+}
+
+.optimized-badge {
+    display: inline-block;
+    padding: 0.125rem 0.5rem;
+    background: #d1e7dd;
+    color: #0a3622;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    margin-left: 0.5rem;
+}
+</style>
+
+<script>
+(function() {
+    const modalId = '{{ id|default:"uploadModal" }}';
+    const uploadInput = document.getElementById(modalId + '_input');
+    const uploadZone = document.getElementById(modalId + '_zone');
+    const uploadArea = document.getElementById(modalId + '_area');
+    const previewArea = document.getElementById(modalId + '_preview');
+    const previewList = document.getElementById(modalId + '_list');
+    const uploadBtn = document.getElementById(modalId + '_upload');
+    const errorDiv = document.getElementById(modalId + '_error');
+    const errorText = document.getElementById(modalId + '_error_text');
+    const errorCloseBtn = document.getElementById(modalId + '_error_close');
+    const chooseBtn = document.getElementById(modalId + '_choose_btn');
+    const progressArea = document.getElementById(modalId + '_progress_area');
+    const progressBar = document.getElementById(modalId + '_progress_bar');
+    const progressText = document.getElementById(modalId + '_progress_text');
+    const statusText = document.getElementById(modalId + '_status');
+    
+    let selectedFiles = [];
+    const maxSize = parseInt(uploadInput.dataset.maxSize);
+    const optimizeImages = uploadInput.dataset.optimize === 'true';
+    const maxWidth = parseInt(uploadInput.dataset.maxWidth);
+    const maxHeight = parseInt(uploadInput.dataset.maxHeight);
+    const quality = parseFloat(uploadInput.dataset.quality);
+    const acceptTypes = '{{ accept|default:"" }}'.split(',').map(t => t.trim()).filter(t => t);
+
+    // Drag and drop events
+    uploadZone.addEventListener('click', () => uploadInput.click());
+    chooseBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        uploadInput.click();
+    });
+    errorCloseBtn.addEventListener('click', () => errorDiv.classList.add('d-none'));
+    
+    uploadZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadZone.classList.add('dragover');
+    });
+    
+    uploadZone.addEventListener('dragleave', () => {
+        uploadZone.classList.remove('dragover');
+    });
+    
+    uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('dragover');
+        handleFiles(e.dataTransfer.files);
+    });
+    
+    uploadInput.addEventListener('change', (e) => {
+        handleFiles(e.target.files);
+    });
+
+    async function handleFiles(files) {
+        errorDiv.classList.add('d-none');
+        const fileArray = Array.from(files);
+        
+        for (const file of fileArray) {
+            // Validate file size
+            if (file.size > maxSize) {
+                showError(`Arquivo ${file.name} excede o tamanho máximo permitido`);
+                continue;
+            }
+            
+            // Validate file type if accept is defined
+            if (acceptTypes.length > 0) {
+                const fileType = file.type;
+                const fileExt = '.' + file.name.split('.').pop().toLowerCase();
+                
+                if (!acceptTypes.some(type => fileType.match(type.replace('*', '.*')) || type === fileExt)) {
+                    showError(`Tipo de arquivo ${file.name} não permitido`);
+                    continue;
+                }
+            }
+            
+            // Optimize image if needed
+            if (optimizeImages && file.type.startsWith('image/')) {
+                statusText.textContent = `Otimizando ${file.name}...`;
+                const optimizedFile = await optimizeImage(file);
+                selectedFiles.push(optimizedFile);
+            } else {
+                selectedFiles.push(file);
+            }
+        }
+        
+        if (selectedFiles.length > 0) {
+            displayPreview();
+            uploadBtn.classList.remove('d-none');
+        }
+    }
+
+    async function optimizeImage(file) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    
+                    // Calculate new dimensions
+                    if (width > maxWidth) {
+                        height = (height * maxWidth) / width;
+                        width = maxWidth;
+                    }
+                    if (height > maxHeight) {
+                        width = (width * maxHeight) / height;
+                        height = maxHeight;
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    canvas.toBlob((blob) => {
+                        const optimizedFile = new File([blob], file.name, {
+                            type: file.type,
+                            lastModified: Date.now()
+                        });
+                        optimizedFile.isOptimized = true;
+                        optimizedFile.originalSize = file.size;
+                        resolve(optimizedFile);
+                    }, file.type, quality);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function displayPreview() {
+        previewList.innerHTML = '';
+        previewArea.classList.remove('d-none');
+        
+        selectedFiles.forEach((file, index) => {
+            const item = document.createElement('div');
+            item.className = 'preview-item';
+            
+            const isImage = file.type.startsWith('image/');
+            let preview = '';
+            
+            if (isImage) {
+                const url = URL.createObjectURL(file);
+                preview = `<img src="${url}" alt="${file.name}">`;
+            } else {
+                const icon = getFileIcon(file.type);
+                preview = `<div class="preview-item-icon"><i class="bi ${icon}"></i></div>`;
+            }
+            
+            const sizeKB = (file.size / 1024).toFixed(2);
+            const optimizedBadge = file.isOptimized ? 
+                `<span class="optimized-badge">Otimizada ${((1 - file.size / file.originalSize) * 100).toFixed(0)}%</span>` : '';
+            
+            item.innerHTML = `
+                ${preview}
+                <div class="preview-item-info">
+                    <div class="fw-bold">${file.name}</div>
+                    <div class="file-size">
+                        ${sizeKB} KB
+                        <span class="file-type">${file.type.split('/')[1] || 'file'}</span>
+                        ${optimizedBadge}
+                    </div>
+                </div>
+                <i class="bi bi-x-circle preview-item-remove" onclick="window.uploadModal_removeFile('${modalId}', ${index})"></i>
+            `;
+            
+            previewList.appendChild(item);
+        });
+    }
+
+    function getFileIcon(type) {
+        if (type.includes('pdf')) return 'bi-file-pdf';
+        if (type.includes('word')) return 'bi-file-word';
+        if (type.includes('excel') || type.includes('spreadsheet')) return 'bi-file-excel';
+        if (type.includes('zip') || type.includes('rar')) return 'bi-file-zip';
+        if (type.includes('text')) return 'bi-file-text';
+        return 'bi-file-earmark';
+    }
+
+    function showError(message) {
+        errorText.textContent = message;
+        errorDiv.classList.remove('d-none');
+    }
+
+    // Global function to remove file
+    window.uploadModal_removeFile = function(modalId, index) {
+        selectedFiles.splice(index, 1);
+        if (selectedFiles.length === 0) {
+            previewArea.classList.add('d-none');
+            uploadBtn.classList.add('d-none');
+        } else {
+            displayPreview();
+        }
+    };
+
+    // Upload button click
+    uploadBtn.addEventListener('click', async () => {
+        {% if upload_url %}
+        await uploadFiles('{{ upload_url }}');
+        {% else %}
+        // Trigger custom event for manual handling
+        const event = new CustomEvent('filesSelected', {
+            detail: { files: selectedFiles, modalId: modalId }
+        });
+        document.dispatchEvent(event);
+        {% endif %}
+    });
+
+    async function uploadFiles(url) {
+        uploadArea.classList.add('d-none');
+        previewArea.classList.add('d-none');
+        progressArea.classList.remove('d-none');
+        uploadBtn.classList.add('d-none');
+        
+        const formData = new FormData();
+        selectedFiles.forEach((file, index) => {
+            formData.append('files[]', file);
+        });
+        
+        try {
+            const xhr = new XMLHttpRequest();
+            
+            xhr.upload.addEventListener('progress', (e) => {
+                if (e.lengthComputable) {
+                    const percentComplete = (e.loaded / e.total) * 100;
+                    progressBar.style.width = percentComplete + '%';
+                    progressBar.setAttribute('aria-valuenow', percentComplete);
+                    progressText.textContent = Math.round(percentComplete) + '%';
+                    statusText.textContent = `Enviando ${selectedFiles.length} arquivo(s)...`;
+                }
+            });
+            
+            xhr.addEventListener('load', () => {
+                if (xhr.status === 200) {
+                    statusText.textContent = 'Upload concluído com sucesso!';
+                    progressBar.classList.remove('progress-bar-animated');
+                    progressBar.classList.add('bg-success');
+                    
+                    // Trigger success event
+                    const event = new CustomEvent('uploadSuccess', {
+                        detail: { response: JSON.parse(xhr.responseText), modalId: modalId }
+                    });
+                    document.dispatchEvent(event);
+                    
+                    setTimeout(() => {
+                        bootstrap.Modal.getInstance(document.getElementById(modalId)).hide();
+                        resetModal();
+                    }, 1500);
+                } else {
+                    throw new Error('Erro no upload');
+                }
+            });
+            
+            xhr.addEventListener('error', () => {
+                statusText.textContent = 'Erro no upload';
+                progressBar.classList.add('bg-danger');
+                showError('Erro ao enviar arquivos. Tente novamente.');
+            });
+            
+            xhr.open('POST', url);
+            xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
+            xhr.send(formData);
+            
+        } catch (error) {
+            showError('Erro ao enviar arquivos: ' + error.message);
+        }
+    }
+
+    function resetModal() {
+        selectedFiles = [];
+        uploadInput.value = '';
+        previewList.innerHTML = '';
+        uploadArea.classList.remove('d-none');
+        previewArea.classList.add('d-none');
+        progressArea.classList.add('d-none');
+        uploadBtn.classList.add('d-none');
+        errorDiv.classList.add('d-none');
+        progressBar.style.width = '0%';
+        progressBar.classList.remove('bg-success', 'bg-danger');
+        progressBar.classList.add('progress-bar-animated');
+    }
+
+    // Reset on modal close
+    document.getElementById(modalId).addEventListener('hidden.bs.modal', resetModal);
+})();
+</script>
