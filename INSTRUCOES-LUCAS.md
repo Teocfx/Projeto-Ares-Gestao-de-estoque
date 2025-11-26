@@ -87,6 +87,21 @@ source .venv/bin/activate
 pip install -r requirements/local.txt
 ```
 
+## ❌ Se der erro: `ModuleNotFoundError: No module named 'decouple'`
+
+As dependências não foram instaladas completamente:
+
+```bash
+# Ative o ambiente virtual
+source .venv/bin/activate
+
+# Reinstale as dependências
+pip install -r requirements/local.txt
+
+# Ou instale manualmente os pacotes que faltam
+pip install python-decouple
+```
+
 ---
 
 ## ❌ Se der erro de conflito do `psycopg`

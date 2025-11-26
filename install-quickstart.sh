@@ -41,6 +41,11 @@ echo ""
 echo "📥 Instalando dependências Python (modo local - SQLite)..."
 pip install -r requirements/local.txt
 
+# Verificar se tudo foi instalado
+echo ""
+echo "🔍 Verificando dependências instaladas..."
+python check-dependencies.py || echo "⚠️  Algumas dependências podem estar faltando"
+
 # Instalar dependências do frontend (se Node.js disponível)
 if command -v npm &> /dev/null; then
     echo ""
