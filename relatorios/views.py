@@ -548,15 +548,19 @@ def download_movimentacoes_pdf(request):
     else:
         date_to = datetime.strptime(date_to, '%Y-%m-%d').date()
     
-    movements = InventoryMovement.objects.filter(
+    # Query base com filtros de data
+    movements_base = InventoryMovement.objects.filter(
         created_at__date__range=[date_from, date_to]
     ).select_related('product', 'user')
     
+    # Aplicar filtros adicionais
+    movements = movements_base
     if movement_type:
         movements = movements.filter(type=movement_type)
     if product_id:
         movements = movements.filter(product_id=product_id)
     
+    # Estatísticas respeitando os filtros aplicados
     stats = {
         'total_movements': movements.count(),
         'entradas': movements.filter(type=InventoryMovement.ENTRADA).count(),
@@ -596,16 +600,19 @@ def download_vencimentos_pdf(request):
     today = timezone.now().date()
     future_date = today + timedelta(days=days_ahead)
     
-    products = Product.objects.filter(is_active=True, expiry_date__isnull=False).select_related('category', 'unit')
+    # Query base - produtos com data de validade
+    products_base = Product.objects.filter(is_active=True, expiry_date__isnull=False).select_related('category', 'unit')
     
+    # Aplicar filtro de período
     if include_expired:
-        products = products.filter(expiry_date__lte=future_date)
+        products = products_base.filter(expiry_date__lte=future_date)
     else:
-        products = products.filter(expiry_date__gte=today, expiry_date__lte=future_date)
+        products = products_base.filter(expiry_date__gte=today, expiry_date__lte=future_date)
     
+    # Calcular estatísticas baseadas nos produtos filtrados
     expired = products.filter(expiry_date__lt=today)
     critical = products.filter(expiry_date__range=[today, today + timedelta(days=7)])
-    warning = products.filter(expiry_date__range=[today + timedelta(days=8), today + timedelta(days=30)])
+    warning = products.filter(expiry_date__range=[today + timedelta(days=8), future_date])
     
     pdf_gen = PDFGenerator(
         title="Relatório de Vencimentos",

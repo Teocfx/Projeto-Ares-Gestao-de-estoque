@@ -18,7 +18,7 @@
             <a href="{% url 'relatorios:download_movimentacoes_pdf' %}?{{ request.GET.urlencode }}" class="btn btn-danger no-print">
                 <i class="bi bi-file-pdf me-1"></i>Download PDF
             </a>
-            <button class="btn btn-success no-print" onclick="window.print()">
+            <button class="btn btn-success no-print" onclick="gerarRelatorioImpressao()">
                 <i class="bi bi-printer me-1"></i>Imprimir
             </button>
         </div>

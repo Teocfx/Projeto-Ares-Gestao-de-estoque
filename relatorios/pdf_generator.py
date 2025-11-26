@@ -222,20 +222,65 @@ class PDFGenerator:
                 spaceAfter=6
             )
             
-            stats_data = [
-                [
-                    Paragraph('<b>Total de Produtos:</b>', stats_style),
-                    Paragraph(f'{stats.get("total_products", 0)}', stats_style),
-                    Paragraph('<b>Valor Total:</b>', stats_style),
-                    Paragraph(f'R$ {stats.get("total_value", 0):,.2f}', stats_style)
-                ],
-                [
-                    Paragraph('<b>Produtos Críticos:</b>', stats_style),
-                    Paragraph(f'<font color="#C8102E">{stats.get("critical_count", 0)}</font>', stats_style),
-                    Paragraph('<b>Estoque Baixo:</b>', stats_style),
-                    Paragraph(f'<font color="#ffc107">{stats.get("low_count", 0)}</font>', stats_style)
+            # Montar dados da tabela baseado no tipo de relatório
+            if stats.get('total_products') is not None:
+                # Relatório de Estoque
+                stats_data = [
+                    [
+                        Paragraph('<b>Total de Produtos:</b>', stats_style),
+                        Paragraph(f'{stats.get("total_products", 0)}', stats_style),
+                        Paragraph('<b>Valor Total:</b>', stats_style),
+                        Paragraph(f'R$ {stats.get("total_value", 0):,.2f}', stats_style)
+                    ],
+                    [
+                        Paragraph('<b>Produtos Críticos:</b>', stats_style),
+                        Paragraph(f'<font color="#C8102E">{stats.get("critical_count", 0)}</font>', stats_style),
+                        Paragraph('<b>Estoque Baixo:</b>', stats_style),
+                        Paragraph(f'<font color="#ffc107">{stats.get("low_count", 0)}</font>', stats_style)
+                    ]
                 ]
-            ]
+            elif stats.get('total_movements') is not None:
+                # Relatório de Movimentações
+                stats_data = [
+                    [
+                        Paragraph('<b>Total de Movimentações:</b>', stats_style),
+                        Paragraph(f'{stats.get("total_movements", 0)}', stats_style),
+                        Paragraph('<b>Entradas:</b>', stats_style),
+                        Paragraph(f'<font color="green">{stats.get("entradas", 0)}</font>', stats_style)
+                    ],
+                    [
+                        Paragraph('<b>Saídas:</b>', stats_style),
+                        Paragraph(f'<font color="#C8102E">{stats.get("saidas", 0)}</font>', stats_style),
+                        Paragraph('<b>Ajustes:</b>', stats_style),
+                        Paragraph(f'<font color="blue">{stats.get("ajustes", 0)}</font>', stats_style)
+                    ]
+                ]
+            elif stats.get('expired_count') is not None:
+                # Relatório de Vencimentos
+                stats_data = [
+                    [
+                        Paragraph('<b>Total de Produtos:</b>', stats_style),
+                        Paragraph(f'{stats.get("total", 0)}', stats_style),
+                        Paragraph('<b>Vencidos:</b>', stats_style),
+                        Paragraph(f'<font color="#C8102E">{stats.get("expired_count", 0)}</font>', stats_style)
+                    ],
+                    [
+                        Paragraph('<b>Urgente (7 dias):</b>', stats_style),
+                        Paragraph(f'<font color="orange">{stats.get("critical_count", 0)}</font>', stats_style),
+                        Paragraph('<b>Atenção (30 dias):</b>', stats_style),
+                        Paragraph(f'<font color="#ffc107">{stats.get("warning_count", 0)}</font>', stats_style)
+                    ]
+                ]
+            else:
+                # Fallback genérico
+                stats_data = [
+                    [
+                        Paragraph('<b>Total:</b>', stats_style),
+                        Paragraph(f'{stats.get("total", 0)}', stats_style),
+                        Paragraph('', stats_style),
+                        Paragraph('', stats_style)
+                    ]
+                ]
             
             stats_table = Table(stats_data, colWidths=[120, 80, 120, 120])
             stats_table.setStyle(TableStyle([
@@ -323,6 +368,140 @@ class PDFGenerator:
                     bar_drawing.add(vbar)
                     
                     # Adicionar ambos os gráficos lado a lado
+                    charts_table = Table([[pie_drawing, bar_drawing]], colWidths=[250, 250], rowHeights=[200])
+                    charts_table.setStyle(TableStyle([
+                        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                    ]))
+                    
+                    story.append(Paragraph('<b>Análise Visual</b>', title_style))
+                    story.append(Spacer(1, 10))
+                    story.append(charts_table)
+                    story.append(Spacer(1, 30))
+            
+            # Relatório de Movimentações - Gráfico de Pizza + Barra
+            elif stats.get('total_movements') is not None:
+                entradas = stats.get('entradas', 0)
+                saidas = stats.get('saidas', 0)
+                ajustes = stats.get('ajustes', 0)
+                total_mov = entradas + saidas + ajustes
+                
+                if total_mov > 0:
+                    # ===== GRÁFICO DE PIZZA =====
+                    pie_drawing = Drawing(250, 200)
+                    
+                    pie_title = String(125, 185, 'Tipos de Movimentação', textAnchor='middle', fontSize=11, fontName='Helvetica-Bold')
+                    pie_drawing.add(pie_title)
+                    
+                    pie = Pie()
+                    pie.x = 50
+                    pie.y = 20
+                    pie.width = 150
+                    pie.height = 150
+                    pie.data = [entradas, saidas, ajustes]
+                    pie.labels = [f'Entradas ({entradas})', f'Saídas ({saidas})', f'Ajustes ({ajustes})']
+                    pie.slices.strokeWidth = 0.5
+                    pie.slices[0].fillColor = colors.HexColor('#28a745')  # Verde
+                    pie.slices[1].fillColor = colors.HexColor('#C8102E')  # Vermelho
+                    pie.slices[2].fillColor = colors.HexColor('#0d6efd')  # Azul
+                    pie.slices[0].popout = 5
+                    pie.slices[1].popout = 5
+                    pie.slices[2].popout = 5
+                    pie_drawing.add(pie)
+                    
+                    # ===== GRÁFICO DE BARRAS =====
+                    bar_drawing = Drawing(250, 200)
+                    
+                    bar_title = String(130, 185, 'Quantidade por Tipo', textAnchor='middle', fontSize=11, fontName='Helvetica-Bold')
+                    bar_drawing.add(bar_title)
+                    
+                    vbar = VerticalBarChart()
+                    vbar.x = 40
+                    vbar.y = 20
+                    vbar.width = 180
+                    vbar.height = 150
+                    vbar.data = [[entradas, saidas, ajustes]]
+                    vbar.categoryAxis.categoryNames = ['Entradas', 'Saídas', 'Ajustes']
+                    vbar.valueAxis.valueMin = 0
+                    vbar.valueAxis.valueMax = max(entradas, saidas, ajustes, 10) * 1.2
+                    
+                    vbar.bars[0].fillColor = colors.HexColor('#28a745')
+                    vbar.bars[1].fillColor = colors.HexColor('#C8102E')
+                    vbar.bars[2].fillColor = colors.HexColor('#0d6efd')
+                    
+                    vbar.barLabelFormat = '%d'
+                    vbar.barLabels.fontSize = 9
+                    vbar.barLabels.dy = 5
+                    bar_drawing.add(vbar)
+                    
+                    # Adicionar gráficos lado a lado
+                    charts_table = Table([[pie_drawing, bar_drawing]], colWidths=[250, 250], rowHeights=[200])
+                    charts_table.setStyle(TableStyle([
+                        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                    ]))
+                    
+                    story.append(Paragraph('<b>Análise Visual</b>', title_style))
+                    story.append(Spacer(1, 10))
+                    story.append(charts_table)
+                    story.append(Spacer(1, 30))
+            
+            # Relatório de Vencimentos - Gráfico de Pizza + Barra
+            elif stats.get('expired_count') is not None:
+                expired_count = stats.get('expired_count', 0)
+                critical_count = stats.get('critical_count', 0)
+                warning_count = stats.get('warning_count', 0)
+                total_exp = expired_count + critical_count + warning_count
+                
+                if total_exp > 0:
+                    # ===== GRÁFICO DE PIZZA =====
+                    pie_drawing = Drawing(250, 200)
+                    
+                    pie_title = String(125, 185, 'Status de Vencimento', textAnchor='middle', fontSize=11, fontName='Helvetica-Bold')
+                    pie_drawing.add(pie_title)
+                    
+                    pie = Pie()
+                    pie.x = 50
+                    pie.y = 20
+                    pie.width = 150
+                    pie.height = 150
+                    pie.data = [expired_count, critical_count, warning_count]
+                    pie.labels = [f'Vencidos ({expired_count})', f'Urgente ({critical_count})', f'Atenção ({warning_count})']
+                    pie.slices.strokeWidth = 0.5
+                    pie.slices[0].fillColor = colors.HexColor('#C8102E')  # Vermelho
+                    pie.slices[1].fillColor = colors.HexColor('#ff6b6b')  # Vermelho claro
+                    pie.slices[2].fillColor = colors.HexColor('#ffc107')  # Amarelo
+                    pie.slices[0].popout = 15
+                    pie.slices[1].popout = 10
+                    pie.slices[2].popout = 5
+                    pie_drawing.add(pie)
+                    
+                    # ===== GRÁFICO DE BARRAS =====
+                    bar_drawing = Drawing(250, 200)
+                    
+                    bar_title = String(130, 185, 'Quantidade por Status', textAnchor='middle', fontSize=11, fontName='Helvetica-Bold')
+                    bar_drawing.add(bar_title)
+                    
+                    vbar = VerticalBarChart()
+                    vbar.x = 40
+                    vbar.y = 20
+                    vbar.width = 180
+                    vbar.height = 150
+                    vbar.data = [[expired_count, critical_count, warning_count]]
+                    vbar.categoryAxis.categoryNames = ['Vencidos', 'Urgente', 'Atenção']
+                    vbar.valueAxis.valueMin = 0
+                    vbar.valueAxis.valueMax = max(expired_count, critical_count, warning_count, 10) * 1.2
+                    
+                    vbar.bars[0].fillColor = colors.HexColor('#C8102E')
+                    vbar.bars[1].fillColor = colors.HexColor('#ff6b6b')
+                    vbar.bars[2].fillColor = colors.HexColor('#ffc107')
+                    
+                    vbar.barLabelFormat = '%d'
+                    vbar.barLabels.fontSize = 9
+                    vbar.barLabels.dy = 5
+                    bar_drawing.add(vbar)
+                    
+                    # Adicionar gráficos lado a lado
                     charts_table = Table([[pie_drawing, bar_drawing]], colWidths=[250, 250], rowHeights=[200])
                     charts_table.setStyle(TableStyle([
                         ('VALIGN', (0, 0), (-1, -1), 'TOP'),
