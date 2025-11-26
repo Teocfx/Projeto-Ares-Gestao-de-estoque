@@ -74,6 +74,24 @@ Acesse: http://127.0.0.1:8000/
 pip install -r requirements/local.txt
 ```
 
+### Erro: `ModuleNotFoundError: No module named 'decouple'`
+
+**Causa:** Dependências não instaladas completamente.
+
+**Solução:**
+```bash
+source .venv/bin/activate  # Linux/Mac
+pip install -r requirements/local.txt
+
+# Ou instale manualmente
+pip install python-decouple
+```
+
+**Verificar dependências:**
+```bash
+python check-dependencies.py
+```
+
 ### Erro: Conflito de dependências do `psycopg`
 
 **Causa:** O `psycopg` (driver do PostgreSQL) tem conflitos em alguns ambientes.

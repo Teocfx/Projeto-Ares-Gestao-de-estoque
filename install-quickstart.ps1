@@ -42,6 +42,14 @@ Write-Host ""
 Write-Host "📥 Instalando dependências Python (modo local - SQLite)..." -ForegroundColor Cyan
 pip install -r requirements/local.txt
 
+# Verificar se tudo foi instalado
+Write-Host ""
+Write-Host "🔍 Verificando dependências instaladas..." -ForegroundColor Cyan
+python check-dependencies.py
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "⚠️  Algumas dependências podem estar faltando" -ForegroundColor Yellow
+}
+
 # Instalar dependências do frontend (se Node.js disponível)
 if ($nodeCmd) {
     Write-Host ""
