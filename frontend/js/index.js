@@ -2,10 +2,10 @@ import 'odometer/themes/odometer-theme-default.css';
 import 'vanilla-calendar-pro/styles/index.css';
 import 'vanilla-calendar-pro/styles/layout.css'; // Only the skeleton
 import 'vanilla-calendar-pro/styles/themes/light.css'; // Light theme
-import "vanilla-cookieconsent/dist/cookieconsent.css"; // Cookieconsent
+import 'vanilla-cookieconsent/dist/cookieconsent.css'; // Cookieconsent
 
-import "../scss/main.scss";
-import "../../tw/styles.css";
+import '../scss/main.scss';
+import '../../tw/styles.css';
 
 import * as bootstrap from 'bootstrap';
 window.bootstrap = bootstrap;
@@ -28,16 +28,14 @@ import './movimentacoes/movimentacoes.js';
 import './relatorios/relatorios.js';
 import './core/document-viewer.js';
 import './core/filtros.js';
-import './core/theme-manager.js';
-import './theme-switcher.js'; // Sistema de troca de temas
 
 import Swiper from 'swiper/bundle';
 import 'swiper/css/bundle';
 
-import Odometer from "odometer";
+import Odometer from 'odometer';
 
-import './cookieconsent-config.js'
-import './compartilhamento.js'
+import './cookieconsent-config.js';
+import './compartilhamento.js';
 
 window.Swiper = Swiper;
 window.Odometer = Odometer;
