@@ -4,10 +4,10 @@ ViewSets para API REST do core (auditoria, perfis, usuários).
 from rest_framework import viewsets, filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet, CharFilter, NumberFilter, DateTimeFilter
 from django.contrib.auth import get_user_model
-from django.db.models import Count, Q
+from django.db.models import Count
 
 from .models import AuditLog, PerfilUsuario
 from .serializers import (
@@ -16,7 +16,7 @@ from .serializers import (
     AuditLogSerializer,
     AuditLogStatsSerializer,
 )
-from .permissions import IsAdminOrOwner, IsAdminUser as IsAdminUserPermission
+from .permissions import IsAdminUser as IsAdminUserPermission
 
 User = get_user_model()
 

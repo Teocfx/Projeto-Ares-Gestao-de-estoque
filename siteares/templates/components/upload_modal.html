@@ -28,7 +28,7 @@
                         <i class="bi bi-cloud-arrow-up display-1 text-muted mb-3"></i>
                         <h5>Arraste arquivos aqui</h5>
                         <p class="text-muted mb-3">ou</p>
-                        <button type="button" class="btn btn-primary" onclick="document.getElementById('{{ id|default:'uploadModal' }}_input').click()">
+                        <button type="button" class="btn btn-primary" id="{{ id|default:'uploadModal' }}_choose_btn">
                             <i class="bi bi-folder2-open me-2"></i>Escolher Arquivos
                         </button>
                         {% if accept %}
@@ -76,7 +76,7 @@
                 <div class="alert alert-danger alert-dismissible fade show mt-3 d-none" role="alert" id="{{ id|default:'uploadModal' }}_error">
                     <i class="bi bi-exclamation-triangle me-2"></i>
                     <span id="{{ id|default:'uploadModal' }}_error_text"></span>
-                    <button type="button" class="btn-close" onclick="document.getElementById('{{ id|default:'uploadModal' }}_error').classList.add('d-none')"></button>
+                    <button type="button" class="btn-close" id="{{ id|default:'uploadModal' }}_error_close"></button>
                 </div>
             </div>
             <div class="modal-footer">
@@ -206,6 +206,8 @@
     const uploadBtn = document.getElementById(modalId + '_upload');
     const errorDiv = document.getElementById(modalId + '_error');
     const errorText = document.getElementById(modalId + '_error_text');
+    const errorCloseBtn = document.getElementById(modalId + '_error_close');
+    const chooseBtn = document.getElementById(modalId + '_choose_btn');
     const progressArea = document.getElementById(modalId + '_progress_area');
     const progressBar = document.getElementById(modalId + '_progress_bar');
     const progressText = document.getElementById(modalId + '_progress_text');
@@ -217,9 +219,15 @@
     const maxWidth = parseInt(uploadInput.dataset.maxWidth);
     const maxHeight = parseInt(uploadInput.dataset.maxHeight);
     const quality = parseFloat(uploadInput.dataset.quality);
+    const acceptTypes = '{{ accept|default:"" }}'.split(',').map(t => t.trim()).filter(t => t);
 
     // Drag and drop events
     uploadZone.addEventListener('click', () => uploadInput.click());
+    chooseBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        uploadInput.click();
+    });
+    errorCloseBtn.addEventListener('click', () => errorDiv.classList.add('d-none'));
     
     uploadZone.addEventListener('dragover', (e) => {
         e.preventDefault();
@@ -252,16 +260,15 @@
             }
             
             // Validate file type if accept is defined
-            {% if accept %}
-            const acceptTypes = '{{ accept }}'.split(',').map(t => t.trim());
-            const fileType = file.type;
-            const fileExt = '.' + file.name.split('.').pop().toLowerCase();
-            
-            if (!acceptTypes.some(type => fileType.match(type.replace('*', '.*')) || type === fileExt)) {
-                showError(`Tipo de arquivo ${file.name} não permitido`);
-                continue;
+            if (acceptTypes.length > 0) {
+                const fileType = file.type;
+                const fileExt = '.' + file.name.split('.').pop().toLowerCase();
+                
+                if (!acceptTypes.some(type => fileType.match(type.replace('*', '.*')) || type === fileExt)) {
+                    showError(`Tipo de arquivo ${file.name} não permitido`);
+                    continue;
+                }
             }
-            {% endif %}
             
             // Optimize image if needed
             if (optimizeImages && file.type.startsWith('image/')) {

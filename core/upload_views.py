@@ -7,10 +7,8 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.core.files.storage import default_storage
-from django.conf import settings
 from PIL import Image
 import os
-import mimetypes
 from datetime import datetime
 
 

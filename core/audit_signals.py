@@ -9,8 +9,6 @@ import threading
 from django.db.models.signals import post_save, post_delete, pre_save
 from django.contrib.auth.signals import user_logged_in, user_logged_out, user_login_failed
 from django.dispatch import receiver
-from django.contrib.auth.models import User
-from django.db import models
 
 from .models import AuditLog, TipoAcaoAuditoria, NivelSeveridade, PerfilUsuario
 
