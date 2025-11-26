@@ -32,13 +32,15 @@ CATEGORY_LIST_URL = 'produtos:category_list'
 UNIT_LIST_URL = 'produtos:unit_list'
 
 
-class ProductListView(LoginRequiredMixin, ListView):
+class ProductListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     """Lista de produtos com busca, filtros e paginação."""
     
     model = Product
     template_name = 'produtos/product_list.html'
     context_object_name = 'products'
     paginate_by = 20
+    permission_required = 'produtos.view_product'
+    permission_denied_message = 'Você não tem permissão para visualizar produtos.'
     
     def get_queryset(self):
         """
@@ -168,12 +170,14 @@ class ProductListView(LoginRequiredMixin, ListView):
         return context
 
 
-class ProductDetailView(LoginRequiredMixin, DetailView):
+class ProductDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     """Detalhes de um produto específico."""
     
     model = Product
     template_name = 'produtos/product_detail.html'
     context_object_name = 'product'
+    permission_required = 'produtos.view_product'
+    permission_denied_message = 'Você não tem permissão para visualizar detalhes de produtos.'
     
     def get_context_data(self, **kwargs):
         """Adicionar informações extras ao contexto."""
@@ -250,13 +254,15 @@ class ProductDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView)
 
 
 # Views para Categorias
-class CategoryListView(LoginRequiredMixin, ListView):
+class CategoryListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     """Lista de categorias."""
     
     model = Category
     template_name = 'produtos/category_list.html'
     context_object_name = 'categories'
     paginate_by = 20
+    permission_required = 'produtos.view_category'
+    permission_denied_message = 'Você não tem permissão para visualizar categorias.'
     
     def get_queryset(self):
         """Ordenar categorias por nome e incluir contagem de produtos."""
@@ -309,13 +315,15 @@ class CategoryDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView
 
 
 # Views para Unidades
-class UnitListView(LoginRequiredMixin, ListView):
+class UnitListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     """Lista de unidades."""
     
     model = Unit
     template_name = 'produtos/unit_list.html'
     context_object_name = 'units'
     paginate_by = 20
+    permission_required = 'produtos.view_unit'
+    permission_denied_message = 'Você não tem permissão para visualizar unidades de medida.'
     
     def get_queryset(self):
         """Ordenar unidades por nome e incluir contagem de produtos."""

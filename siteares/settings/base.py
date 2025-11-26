@@ -469,6 +469,11 @@ LOGIN_REDIRECT_URL = "/admin/"
 
 LOGIN_URL = '/admin/login/'
 ACCOUNT_LOGIN_URL = '/admin/login/'  # Adicionado para django-allauth
+
+# URL para redirecionar quando usuário não tem permissão
+# Quando raise_exception=True em @permission_required, mostra 403
+# Quando False ou omitido, redireciona para LOGIN_URL
+# Para redirecionar para dashboard, use middleware ou handle_no_permission personalizado
 ACCOUNT_LOGIN_METHODS = {'email', 'username'}
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*']

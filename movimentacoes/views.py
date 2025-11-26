@@ -5,7 +5,7 @@ Sistema completo de CRUD com filtros e validações.
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib import messages
 from django.views.generic import ListView, CreateView, UpdateView, DetailView
 from django.db.models import Q, Sum, Count
@@ -20,7 +20,7 @@ from produtos.models import Product
 from .forms import InventoryMovementForm
 
 
-class MovementListView(LoginRequiredMixin, ListView):
+class MovementListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     """Lista paginada de movimentações com filtros avançados."""
     
     model = InventoryMovement
@@ -28,6 +28,8 @@ class MovementListView(LoginRequiredMixin, ListView):
     context_object_name = 'movements'
     paginate_by = 20
     ordering = ['-created_at']
+    permission_required = 'movimentacoes.view_inventorymovement'
+    permission_denied_message = 'Você não tem permissão para visualizar movimentações.'
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -104,13 +106,15 @@ class MovementListView(LoginRequiredMixin, ListView):
         return context
 
 
-class MovementCreateView(LoginRequiredMixin, CreateView):
+class MovementCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     """Criar nova movimentação de estoque."""
     
     model = InventoryMovement
     form_class = InventoryMovementForm
     template_name = 'movimentacoes/form.html'
     success_url = reverse_lazy('movimentacoes:list')
+    permission_required = 'movimentacoes.add_inventorymovement'
+    permission_denied_message = 'Você não tem permissão para criar movimentações.'
 
     def form_valid(self, form):
         try:
@@ -142,12 +146,14 @@ class MovementCreateView(LoginRequiredMixin, CreateView):
         return context
 
 
-class MovementDetailView(LoginRequiredMixin, DetailView):
+class MovementDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     """Visualizar detalhes de uma movimentação."""
     
     model = InventoryMovement
     template_name = 'movimentacoes/detail.html'
     context_object_name = 'movement'
+    permission_required = 'movimentacoes.view_inventorymovement'
+    permission_denied_message = 'Você não tem permissão para visualizar detalhes de movimentações.'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

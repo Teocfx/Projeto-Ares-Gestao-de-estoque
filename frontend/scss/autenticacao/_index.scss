@@ -4,3 +4,7 @@
 
 @forward './login';
 @forward './login_escuro';
+@forward './twofa_common';
+@forward './setup-2fa';
+@forward './verify-2fa';
+@forward './success-2fa';

@@ -1,5 +1,10 @@
 @use './variables.scss';
 
+// Forwards devem vir antes de qualquer outra regra
+@forward './components/menu-wrapper';
+@forward './components/table';
+@forward './components/upload-modal';
+
 /**
  * Componentes Reutilizáveis
  * Estilos para os componentes em blocks/templates/include/

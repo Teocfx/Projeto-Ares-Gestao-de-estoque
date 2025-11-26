@@ -4,8 +4,8 @@ Geração de relatórios com filtros avançados e exportação.
 """
 
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib import messages
 from django.views.generic import ListView, CreateView, DetailView
 from django.http import JsonResponse, HttpResponse, Http404
@@ -22,13 +22,15 @@ from .forms import ReportFilterForm, ReportGenerationForm
 from .pdf_generator import PDFGenerator, ReportExporter
 
 
-class ReportIndexView(LoginRequiredMixin, ListView):
+class ReportIndexView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     """Página principal de relatórios com resumo e links."""
     
     template_name = 'relatorios/index.html'
     context_object_name = 'recent_reports'
     model = ReportGeneration
     paginate_by = 10
+    permission_required = 'relatorios.view_report'
+    permission_denied_message = 'Você não tem permissão para visualizar relatórios.'
     
     def get_queryset(self):
         return ReportGeneration.objects.filter(
@@ -60,6 +62,7 @@ def index(request):
 
 
 @login_required
+@permission_required('relatorios.add_reportgeneration', raise_exception=True)
 def generate_report(request):
     """Página para gerar novo relatório."""
     
@@ -127,7 +130,8 @@ def generate_report(request):
     return render(request, 'relatorios/generate.html', context)
 
 
-@login_required 
+@login_required
+@permission_required('relatorios.view_reportgeneration', raise_exception=True)
 def report_detail(request, pk):
     """Detalhes de um relatório gerado."""
     report = get_object_or_404(ReportGeneration, pk=pk, user=request.user)
@@ -139,6 +143,7 @@ def report_detail(request, pk):
 
 
 @login_required
+@permission_required('relatorios.view_reportgeneration', raise_exception=True)
 def download_report(request, pk):
     """Download de arquivo de relatório."""
     report = get_object_or_404(ReportGeneration, pk=pk, user=request.user)
@@ -164,6 +169,7 @@ def download_report(request, pk):
 
 # Relatórios específicos por tipo
 @login_required
+@permission_required('relatorios.view_report', raise_exception=True)
 def relatorio_estoque(request):
     """Relatório de estoque atual."""
     
@@ -231,6 +237,7 @@ def relatorio_estoque(request):
 
 
 @login_required
+@permission_required('relatorios.view_report', raise_exception=True)
 def relatorio_movimentacoes(request):
     """Relatório de movimentações por período."""
     
@@ -292,6 +299,7 @@ def relatorio_movimentacoes(request):
 
 
 @login_required
+@permission_required('relatorios.view_report', raise_exception=True)
 def relatorio_vencimentos(request):
     """Relatório de produtos próximos ao vencimento."""
     
@@ -340,6 +348,7 @@ def relatorio_vencimentos(request):
 
 
 @login_required
+@permission_required('relatorios.view_report', raise_exception=True)
 def relatorio_financeiro(request):
     """Relatório financeiro - valor do estoque por categoria."""
     
@@ -398,6 +407,7 @@ def relatorio_financeiro(request):
 
 
 @login_required
+@permission_required('relatorios.add_reportgeneration', raise_exception=True)
 def generate_custom_report(request):
     """Gerar relatório personalizado simplificado."""
     if request.method == 'POST':
@@ -456,6 +466,7 @@ def generate_custom_report(request):
 # ====== FUNÇÕES DE DOWNLOAD DE PDF ======
 
 @login_required
+@permission_required('relatorios.view_report', raise_exception=True)
 def download_estoque_pdf(request):
     """Download do relatório de estoque em PDF."""
     # Obter mesmos filtros da view
@@ -512,6 +523,7 @@ def download_estoque_pdf(request):
 
 
 @login_required
+@permission_required('relatorios.view_report', raise_exception=True)
 def download_movimentacoes_pdf(request):
     """Download do relatório de movimentações em PDF."""
     date_from = request.GET.get('date_from')
@@ -568,6 +580,7 @@ def download_movimentacoes_pdf(request):
 
 
 @login_required
+@permission_required('relatorios.view_report', raise_exception=True)
 def download_vencimentos_pdf(request):
     """Download do relatório de vencimentos em PDF."""
     days_ahead = int(request.GET.get('days', 30))
@@ -614,6 +627,7 @@ def download_vencimentos_pdf(request):
 
 
 @login_required
+@permission_required('relatorios.view_report', raise_exception=True)
 def download_financeiro_pdf(request):
     """Download do relatório financeiro em PDF."""
     category_id = request.GET.get('category')

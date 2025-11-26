@@ -11,7 +11,7 @@ from django.views.generic import RedirectView
 from django.shortcuts import render
 from . import views
 
-handler403 = 'siteares.views.erro_403'
+handler403 = 'core.handlers.permission_denied_handler'
 handler404 = 'siteares.views.erro_404'
 handler500 = 'siteares.views.erro_500'
 
