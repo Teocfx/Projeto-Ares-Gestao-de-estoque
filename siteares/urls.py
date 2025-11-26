@@ -36,6 +36,9 @@ urlpatterns = [
     path('relatorios/', include('relatorios.urls')),
     path('search/', include('search.urls')),
     
+    # Autenticação de Dois Fatores (2FA)
+    path('admin/2fa/', include('autenticacao_2fa.urls')),
+    
     # Core URLs
     path("core/", include("core.urls")),
     

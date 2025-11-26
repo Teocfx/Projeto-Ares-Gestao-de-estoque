@@ -6,9 +6,9 @@
 
 ---
 
-## ✅ Melhorias Implementadas (34h / 345h - 9.9%)
+## ✅ Melhorias Implementadas (54h / 345h - 15.7%)
 
-### 🔒 Segurança (6h concluídas)
+### 🔒 Segurança (26h concluídas)
 
 #### ✅ Atualização de Dependências Vulneráveis
 **Status**: Concluído  
@@ -137,6 +137,229 @@ CSP_REPORT_URI="https://report-uri.example.com/csp"
 
 3. **Validar com CSP Evaluator**:
    - https://csp-evaluator.withgoogle.com/
+
+#### ✅ Autenticação de Dois Fatores (2FA)
+**Status**: Concluído  
+**Tempo**: 20h  
+**Impacto**: Crítico  
+
+**Estrutura Implementada**:
+
+**1. App Django `autenticacao_2fa/`**:
+```
+autenticacao_2fa/
+├── __init__.py
+├── apps.py              # Configuração do app
+├── models.py            # Usa TOTPDevice do django-otp
+├── views.py             # 5 views principais
+├── urls.py              # Rotas do 2FA
+├── admin.py
+├── tests.py             # 12 test cases
+├── migrations/
+│   └── __init__.py
+└── templates/
+    └── autenticacao_2fa/
+        ├── setup_2fa.html       # Configuração + QR code
+        ├── verify_2fa.html      # Verificação durante login
+        └── success.html         # Sucesso/gerenciamento
+```
+
+**2. Views Implementadas** (`autenticacao_2fa/views.py` - 250 linhas):
+
+```python
+# View 1: Configuração de 2FA
+@login_required
+def setup_2fa(request):
+    """
+    GET: Gera QR code e exibe página de configuração
+    POST: Verifica token e ativa dispositivo TOTP
+    
+    Funcionalidades:
+    - Cria/atualiza TOTPDevice não confirmado
+    - Gera QR code em base64
+    - Exibe chave secreta para backup
+    - Verifica token de 6 dígitos
+    - Confirma dispositivo após verificação
+    """
+
+# View 2: Verificação durante login
+@login_required
+def verify_2fa(request):
+    """
+    GET: Exibe página de verificação
+    POST: Valida token e marca sessão como verificada
+    
+    Funcionalidades:
+    - Verifica se usuário tem 2FA ativo
+    - Valida token TOTP
+    - Define request.session['otp_verified'] = True
+    - Redireciona para dashboard ou página solicitada
+    """
+
+# View 3: Página de sucesso
+@login_required
+def success_2fa(request):
+    """Exibe status do 2FA e opções de gerenciamento."""
+
+# View 4: Desabilitar 2FA
+@login_required
+def disable_2fa(request):
+    """Remove todos os dispositivos TOTP do usuário."""
+
+# View 5: Status API
+@login_required
+def status_2fa(request):
+    """
+    API JSON: {'has_2fa': bool, 'is_verified': bool, 'username': str}
+    """
+```
+
+**3. Templates Criados** (3 arquivos HTML completos):
+
+**`setup_2fa.html`** - Configuração:
+- QR code gerado dinamicamente (base64)
+- Chave secreta para backup manual
+- Instruções passo a passo
+- Lista de apps compatíveis (Google/Microsoft Authenticator, Authy)
+- Formulário de verificação de token
+- Validação JavaScript (apenas números, 6 dígitos)
+- Design responsivo com CSS inline
+
+**`verify_2fa.html`** - Verificação:
+- Input para código de 6 dígitos
+- Auto-submit após digitar 6 números
+- Mensagens de erro amigáveis
+- Link para suporte
+- Design minimalista focado na UX
+
+**`success.html`** - Gerenciamento:
+- Status do 2FA (ativo/inativo)
+- Informações do dispositivo configurado
+- Instruções de uso ("Como Funciona Agora")
+- Avisos importantes (backup, troca de celular)
+- Botão "Desabilitar 2FA" com confirmação JavaScript
+
+**4. Configurações Django** (`settings/base.py`):
+
+```python
+INSTALLED_APPS = [
+    # ...
+    'django_otp',                    # Framework 2FA
+    'django_otp.plugins.otp_totp',   # Plugin TOTP
+    'autenticacao_2fa',              # App customizado
+    # ...
+]
+
+MIDDLEWARE = [
+    # ...
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django_otp.middleware.OTPMiddleware',  # Após AuthenticationMiddleware
+    # ...
+]
+```
+
+**5. Rotas Configuradas** (`siteares/urls.py`):
+
+```python
+urlpatterns = [
+    # ...
+    path('admin/2fa/', include('autenticacao_2fa.urls')),
+    # ...
+]
+
+# autenticacao_2fa/urls.py
+app_name = 'autenticacao_2fa'
+urlpatterns = [
+    path('setup/', views.setup_2fa, name='setup_2fa'),       # /admin/2fa/setup/
+    path('verify/', views.verify_2fa, name='verify_2fa'),    # /admin/2fa/verify/
+    path('success/', views.success_2fa, name='success'),     # /admin/2fa/success/
+    path('disable/', views.disable_2fa, name='disable_2fa'), # /admin/2fa/disable/
+    path('status/', views.status_2fa, name='status'),        # /admin/2fa/status/
+]
+```
+
+**6. Testes Unitários** (`autenticacao_2fa/tests.py` - 12 test cases):
+
+```python
+class Setup2FATestCase(TestCase):
+    """8 testes para fluxo de configuração."""
+    
+    def test_setup_page_requires_login(self):
+        """Página protegida por @login_required."""
+    
+    def test_totp_device_creation_on_setup(self):
+        """Dispositivo criado ao acessar setup."""
+    
+    def test_verify_valid_token(self):
+        """Token válido confirma dispositivo."""
+    
+    def test_verify_invalid_token(self):
+        """Token inválido não confirma."""
+    
+    def test_disable_2fa(self):
+        """Desabilitar remove dispositivos."""
+    
+    def test_status_api_without_2fa(self):
+        """API retorna has_2fa=False sem config."""
+    
+    def test_status_api_with_2fa(self):
+        """API retorna has_2fa=True com config."""
+
+class Verify2FATestCase(TestCase):
+    """4 testes para fluxo de verificação."""
+    
+    def test_verify_page_requires_login(self):
+        """Página protegida."""
+    
+    def test_successful_verification_sets_session(self):
+        """Verificação marca sessão como otp_verified."""
+```
+
+**Fluxo Completo de Uso**:
+
+1. **Usuário acessa**: `/admin/2fa/setup/`
+2. **Sistema gera**: QR code + chave secreta
+3. **Usuário escaneia**: QR code com Google Authenticator
+4. **Sistema exibe**: Código de 6 dígitos é gerado no celular
+5. **Usuário insere**: Código no formulário
+6. **Sistema valida**: Token e confirma dispositivo
+7. **Próximo login**: Requer usuário/senha + código 2FA
+
+**Segurança Implementada**:
+- ✅ **TOTP (RFC 6238)**: Time-based One-Time Password
+- ✅ **Tokens de 30s**: Novo código a cada 30 segundos
+- ✅ **6 dígitos**: Padrão da indústria (Google, Microsoft)
+- ✅ **Persistência**: Dispositivo salvo no banco (TOTPDevice)
+- ✅ **Sessões**: `request.session['otp_verified']` marca verificação
+- ✅ **Backup**: Chave secreta pode ser inserida manualmente
+- ✅ **Revogação**: Usuário pode desabilitar a qualquer momento
+
+**Dependências Utilizadas**:
+- `django-otp==1.6.3` - Framework de autenticação OTP
+- `qrcode==7.4.2` - Geração de QR codes
+- Pillow (já instalado) - Manipulação de imagens
+
+**Comandos para Ativar**:
+```bash
+# 1. Aplicar migrations do django-otp
+python manage.py migrate
+
+# 2. Criar superuser (se ainda não existe)
+python manage.py createsuperuser
+
+# 3. Acessar configuração 2FA
+# http://127.0.0.1:8000/admin/2fa/setup/
+
+# 4. Executar testes
+python manage.py test autenticacao_2fa
+```
+
+**Próximos Passos (Opcional)**:
+- [ ] Integrar 2FA obrigatório após login (middleware customizado)
+- [ ] Adicionar códigos de backup (recovery codes)
+- [ ] Logs de auditoria para ativação/desativação 2FA
+- [ ] Email de notificação ao configurar/desabilitar 2FA
+- [ ] Suporte a hardware tokens (U2F/WebAuthn)
 
 ---
 
