@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Configurar Autenticação de Dois Fatores - ARES{% endblock %}
+
+{% block extra_css %}
+<style>
+    .setup-2fa-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .setup-2fa-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .setup-2fa-header h1 {
+        color: #333;
+        font-size: 28px;
+        margin-bottom: 10px;
+    }
+    
+    .setup-2fa-header p {
+        color: #666;
+        font-size: 16px;
+    }
+    
+    .qr-code-section {
+        text-align: center;
+        margin: 30px 0;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+    
+    .qr-code-section img {
+        max-width: 300px;
+        margin: 20px auto;
+        display: block;
+    }
+    
+    .secret-key-section {
+        margin: 20px 0;
+        padding: 15px;
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        border-radius: 4px;
+    }
+    
+    .secret-key-section h3 {
+        margin-top: 0;
+        color: #856404;
+    }
+    
+    .secret-key-code {
+        font-family: 'Courier New', monospace;
+        font-size: 18px;
+        font-weight: bold;
+        color: #d63384;
+        background: #fff;
+        padding: 10px;
+        border-radius: 4px;
+        word-break: break-all;
+    }
+    
+    .instructions {
+        margin: 30px 0;
+        padding: 20px;
+        background: #e7f3ff;
+        border-left: 4px solid #0d6efd;
+        border-radius: 4px;
+    }
+    
+    .instructions h3 {
+        margin-top: 0;
+        color: #084298;
+    }
+    
+    .instructions ol {
+        margin: 15px 0;
+        padding-left: 20px;
+    }
+    
+    .instructions li {
+        margin: 10px 0;
+        color: #333;
+    }
+    
+    .verification-form {
+        margin-top: 30px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+    
+    .verification-form h3 {
+        margin-top: 0;
+        color: #333;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #333;
+    }
+    
+    .form-group input[type="text"] {
+        width: 100%;
+        padding: 12px;
+        font-size: 18px;
+        border: 2px solid #ddd;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        letter-spacing: 3px;
+        text-align: center;
+    }
+    
+    .form-group input[type="text"]:focus {
+        outline: none;
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13,110,253,.25);
+    }
+    
+    .btn-verify {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        background: #198754;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    
+    .btn-verify:hover {
+        background: #157347;
+    }
+    
+    .btn-cancel {
+        display: block;
+        margin: 15px auto 0;
+        padding: 10px 20px;
+        background: #6c757d;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 4px;
+        text-align: center;
+        transition: background 0.3s;
+    }
+    
+    .btn-cancel:hover {
+        background: #5c636a;
+        color: #fff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="setup-2fa-container">
+    <div class="setup-2fa-header">
+        <h1>🔐 Configurar Autenticação de Dois Fatores</h1>
+        <p>Aumente a segurança da sua conta com verificação em duas etapas</p>
+    </div>
+    
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="instructions">
+        <h3>📱 Instruções de Configuração</h3>
+        <ol>
+            <li>
+                <strong>Instale um app autenticador</strong> no seu celular:
+                <ul>
+                    <li>Google Authenticator (Android/iOS)</li>
+                    <li>Microsoft Authenticator (Android/iOS)</li>
+                    <li>Authy (Android/iOS/Desktop)</li>
+                </ul>
+            </li>
+            <li><strong>Escaneie o QR code</strong> abaixo com o app</li>
+            <li>Ou <strong>insira a chave manualmente</strong> se o QR code não funcionar</li>
+            <li><strong>Digite o código de 6 dígitos</strong> gerado pelo app</li>
+        </ol>
+    </div>
+    
+    <div class="qr-code-section">
+        <h3>Escaneie este QR Code</h3>
+        <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code para 2FA">
+    </div>
+    
+    <div class="secret-key-section">
+        <h3>⚠️ Chave Secreta (Backup)</h3>
+        <p>Guarde esta chave em local seguro. Você pode usá-la para configurar o autenticador manualmente:</p>
+        <div class="secret-key-code">{{ secret_key }}</div>
+    </div>
+    
+    <form method="post" class="verification-form">
+        {% csrf_token %}
+        <h3>Verificar Código</h3>
+        <p>Digite o código de 6 dígitos gerado pelo seu app autenticador:</p>
+        
+        <div class="form-group">
+            <label for="token">Código de Verificação:</label>
+            <input 
+                type="text" 
+                id="token" 
+                name="token" 
+                maxlength="6" 
+                pattern="[0-9]{6}" 
+                placeholder="000000"
+                required
+                autofocus
+            >
+        </div>
+        
+        <button type="submit" class="btn-verify">✓ Verificar e Ativar 2FA</button>
+        <a href="{% url 'dashboard:index' %}" class="btn-cancel">Cancelar</a>
+    </form>
+</div>
+
+<script>
+// Auto-focus e validação do input
+document.addEventListener('DOMContentLoaded', function() {
+    const tokenInput = document.getElementById('token');
+    
+    // Permitir apenas números
+    tokenInput.addEventListener('input', function(e) {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+    
+    // Auto-submit quando digitar 6 dígitos (opcional)
+    tokenInput.addEventListener('input', function(e) {
+        if (this.value.length === 6) {
+            // Opcional: submit automático
+            // this.form.submit();
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -6,9 +6,9 @@
 
 ---
 
-## ✅ Melhorias Implementadas (32h / 345h - 9.3%)
+## ✅ Melhorias Implementadas (34h / 345h - 9.9%)
 
-### 🔒 Segurança (4h concluídas)
+### 🔒 Segurança (6h concluídas)
 
 #### ✅ Atualização de Dependências Vulneráveis
 **Status**: Concluído  
@@ -38,10 +38,105 @@ sentry-sdk>=2.0.0,<3.0  # ✨ NOVO - Error tracking + performance
 ```
 
 **Próximos Passos**:
-- [ ] Instalar dependências: `pip install -r requirements/base.txt`
+- [x] Instalar dependências: `pip install -r requirements.txt` ✅
+- [x] Configurar CSP headers no settings/base.py ✅
 - [ ] Configurar django-otp (views, templates, middleware)
-- [ ] Configurar CSP headers no settings/production.py
 - [ ] Configurar Sentry SDK com DSN
+
+#### ✅ Content Security Policy (CSP) Headers
+**Status**: Concluído  
+**Tempo**: 2h  
+**Impacto**: Alto  
+
+**Arquivo Modificado**: `siteares/settings/base.py` (linhas 341-419)
+
+**Configuração Implementada**:
+```python
+# CSP habilitado por padrão
+CSP_ENABLED = get_bool("CSP_ENABLED", default=True)
+
+if CSP_ENABLED:
+    # Middleware CSP adicionado dinamicamente
+    if "csp.middleware.CSPMiddleware" not in MIDDLEWARE:
+        MIDDLEWARE.append("csp.middleware.CSPMiddleware")
+    
+    # Modo report-only para desenvolvimento
+    CSP_REPORT_ONLY = get_bool("CSP_REPORT_ONLY", default=True)
+    
+    # Defaults seguros com suporte a customização
+    CSP_DEFAULT_SRC = os.environ.get("CSP_DEFAULT_SRC", "").split(",") or ["'self'"]
+    CSP_SCRIPT_SRC = ["'self'", "'unsafe-inline'", "'unsafe-eval'"]  # Django/Wagtail
+    CSP_STYLE_SRC = ["'self'", "'unsafe-inline'"]
+    CSP_IMG_SRC = ["'self'", "data:", "https:"]
+    CSP_FONT_SRC = ["'self'", "data:"]
+    CSP_CONNECT_SRC = ["'self'"]
+    CSP_BASE_URI = ["'self'"]
+    CSP_OBJECT_SRC = ["'none'"]  # Bloqueia Flash/Java
+    
+    # Segurança adicional
+    CSP_FRAME_ANCESTORS = ["'none'"]  # Previne clickjacking
+    CSP_FORM_ACTION = ["'self'"]  # Valida formulários
+    CSP_UPGRADE_INSECURE_REQUESTS = get_bool("CSP_UPGRADE_INSECURE_REQUESTS", False)
+```
+
+**Benefícios**:
+- ✅ **Proteção XSS**: Bloqueia execução de scripts não autorizados
+- ✅ **Anti-clickjacking**: `CSP_FRAME_ANCESTORS = ['none']`
+- ✅ **Bloqueio de plugins**: `CSP_OBJECT_SRC = ['none']` (Flash, Java)
+- ✅ **Validação de formulários**: `CSP_FORM_ACTION = ['self']`
+- ✅ **HTTPS upgrade**: Suporte a `CSP_UPGRADE_INSECURE_REQUESTS`
+- ✅ **Modo report-only**: Não quebra aplicação durante testes
+- ✅ **Defaults seguros**: Funciona sem variáveis de ambiente
+- ✅ **Customizável**: Sobrescreve via env vars para necessidades específicas
+
+**Variáveis de Ambiente (Opcionais)**:
+```bash
+# Desabilitar CSP (não recomendado em produção)
+CSP_ENABLED=False
+
+# Modo enforcement (produção)
+CSP_REPORT_ONLY=False
+
+# Customizar diretivas (separadas por vírgula)
+CSP_DEFAULT_SRC="'self',https://cdn.example.com"
+CSP_SCRIPT_SRC="'self','unsafe-inline',https://js.example.com"
+CSP_IMG_SRC="'self',data:,https:"
+
+# Upgrade HTTP para HTTPS
+CSP_UPGRADE_INSECURE_REQUESTS=True
+
+# Endpoint para relatórios CSP
+CSP_REPORT_URI="https://report-uri.example.com/csp"
+```
+
+**Diferenças da Implementação Anterior**:
+| Antes | Depois |
+|-------|--------|
+| ❌ CSP desabilitado por padrão | ✅ CSP habilitado por padrão |
+| ❌ Sem defaults seguros | ✅ Defaults seguros para todas diretivas |
+| ❌ Dependente 100% de env vars | ✅ Funciona sem env vars + customizável |
+| ❌ Sem proteção clickjacking | ✅ `CSP_FRAME_ANCESTORS = ['none']` |
+| ❌ Sem validação formulários | ✅ `CSP_FORM_ACTION = ['self']` |
+| ❌ Sem bloqueio plugins | ✅ `CSP_OBJECT_SRC = ['none']` |
+| ❌ Sem suporte HTTPS upgrade | ✅ `CSP_UPGRADE_INSECURE_REQUESTS` |
+| ❌ Documentação em inglês | ✅ Documentação detalhada em português |
+
+**Testes Recomendados**:
+1. **Verificar CSP no navegador**:
+   ```bash
+   python manage.py runserver
+   # Abrir DevTools → Console → Verificar avisos CSP
+   ```
+
+2. **Modo enforcement em staging**:
+   ```bash
+   # .env.staging
+   CSP_REPORT_ONLY=False
+   CSP_REPORT_URI="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+   ```
+
+3. **Validar com CSP Evaluator**:
+   - https://csp-evaluator.withgoogle.com/
 
 ---
 

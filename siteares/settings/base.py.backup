@@ -72,11 +72,6 @@ INSTALLED_APPS = [
     'search',
 
     "auth_keycloak",
-    
-    # Autenticação de Dois Fatores (2FA)
-    'django_otp',
-    'django_otp.plugins.otp_totp',
-    'autenticacao_2fa',
 
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
@@ -343,83 +338,34 @@ WAGTAILADMIN_BASE_URL = config('WAGTAILADMIN_BASE_URL', default="http://example.
 WAGTAILDOCS_EXTENSIONS = ['csv', 'docx', 'key',
                           'odt', 'pdf', 'pptx', 'rtf', 'txt', 'xlsx', 'zip']
 
+# Content Security policy settings
+# http://django-csp.readthedocs.io/en/latest/configuration.html
 
-# ============================================
-# Content Security Policy (CSP)
-# ============================================
-# Proteção contra XSS, clickjacking e code injection
-# Docs: https://django-csp.readthedocs.io/
+# Only enable CSP when enabled through environment variables.
+if "CSP_DEFAULT_SRC" in os.environ:
+    MIDDLEWARE.append("csp.middleware.CSPMiddleware")
 
-# CSP habilitado por padrão (modo report-only em dev, enforcement em prod)
-CSP_ENABLED = get_bool("CSP_ENABLED", default=True)
+    # Only report violations, don't enforce policy
+    CSP_REPORT_ONLY = True
 
-if CSP_ENABLED:
-    # Adiciona middleware CSP
-    if "csp.middleware.CSPMiddleware" not in MIDDLEWARE:
-        MIDDLEWARE.append("csp.middleware.CSPMiddleware")
-    
-    # Modo report-only (dev) ou enforcement (prod)
-    CSP_REPORT_ONLY = get_bool("CSP_REPORT_ONLY", default=True)
-    
-    # ============================================
-    # Configurações Padrão Seguras
-    # ============================================
-    # IMPORTANTE: Valores especiais devem ter aspas: 'self', 'unsafe-inline', 'none'
-    
-    # Permite customização via variáveis de ambiente ou usa defaults seguros
-    if "CSP_DEFAULT_SRC" in os.environ:
-        CSP_DEFAULT_SRC = os.environ.get("CSP_DEFAULT_SRC").split(",")
-    else:
-        CSP_DEFAULT_SRC = ["'self'"]
-    
+    # The “special” source values of 'self', 'unsafe-inline', 'unsafe-eval', and 'none' must be quoted!
+    # e.g.: CSP_DEFAULT_SRC = "'self'" Without quotes they will not work as intended.
+
+    CSP_DEFAULT_SRC = os.environ.get("CSP_DEFAULT_SRC").split(",")
     if "CSP_SCRIPT_SRC" in os.environ:
         CSP_SCRIPT_SRC = os.environ.get("CSP_SCRIPT_SRC").split(",")
-    else:
-        # ⚠️ 'unsafe-inline' e 'unsafe-eval' necessários para Django admin/Wagtail
-        CSP_SCRIPT_SRC = ["'self'", "'unsafe-inline'", "'unsafe-eval'"]
-    
     if "CSP_STYLE_SRC" in os.environ:
         CSP_STYLE_SRC = os.environ.get("CSP_STYLE_SRC").split(",")
-    else:
-        CSP_STYLE_SRC = ["'self'", "'unsafe-inline'"]
-    
     if "CSP_IMG_SRC" in os.environ:
         CSP_IMG_SRC = os.environ.get("CSP_IMG_SRC").split(",")
-    else:
-        # Permite imagens do próprio site, data URIs e HTTPS externo
-        CSP_IMG_SRC = ["'self'", "data:", "https:"]
-    
-    if "CSP_FONT_SRC" in os.environ:
-        CSP_FONT_SRC = os.environ.get("CSP_FONT_SRC").split(",")
-    else:
-        CSP_FONT_SRC = ["'self'", "data:"]
-    
     if "CSP_CONNECT_SRC" in os.environ:
         CSP_CONNECT_SRC = os.environ.get("CSP_CONNECT_SRC").split(",")
-    else:
-        CSP_CONNECT_SRC = ["'self'"]
-    
+    if "CSP_FONT_SRC" in os.environ:
+        CSP_FONT_SRC = os.environ.get("CSP_FONT_SRC").split(",")
     if "CSP_BASE_URI" in os.environ:
         CSP_BASE_URI = os.environ.get("CSP_BASE_URI").split(",")
-    else:
-        CSP_BASE_URI = ["'self'"]
-    
     if "CSP_OBJECT_SRC" in os.environ:
         CSP_OBJECT_SRC = os.environ.get("CSP_OBJECT_SRC").split(",")
-    else:
-        # Bloqueia plugins (Flash, Java, etc)
-        CSP_OBJECT_SRC = ["'none'"]
-    
-    # Configurações adicionais de segurança
-    CSP_FRAME_ANCESTORS = ["'none'"]  # Previne clickjacking
-    CSP_FORM_ACTION = ["'self'"]  # Formulários apenas para próprio site
-    
-    # Upgrade HTTP para HTTPS (apenas em produção com HTTPS)
-    CSP_UPGRADE_INSECURE_REQUESTS = get_bool("CSP_UPGRADE_INSECURE_REQUESTS", default=False)
-    
-    # Report URI (opcional - endpoint para receber violações CSP)
-    if "CSP_REPORT_URI" in os.environ:
-        CSP_REPORT_URI = os.environ.get("CSP_REPORT_URI")
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
