@@ -36,13 +36,9 @@ def user_login(request):
 @login_required
 def user_logout(request):
     """View de logout."""
-    if request.method == 'POST':
-        logout(request)
-        messages.success(request, '👋 Você saiu do sistema. Até logo!')
-        return redirect('autenticacao:login')
-    
-    # Se for GET, redireciona para o dashboard (segurança)
-    return redirect('dashboard:index')
+    logout(request)
+    messages.success(request, '👋 Você saiu do sistema. Até logo!')
+    return redirect('autenticacao:login')
 
 
 def recuperar_senha(request):
