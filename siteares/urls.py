@@ -28,13 +28,16 @@ urlpatterns = [
         name="wagtailimages_serve",
     ),
     
-    # Apps de Gestão de Estoque ARES
-    path('', include('dashboard.urls')),
+    # Apps de Gestão de Estoque ARES (área administrativa)
+    path('dashboard/', include('dashboard.urls')),  # Dashboard em /dashboard/
     path('auth/', include('autenticacao.urls')),
     path('produtos/', include('produtos.urls')),
     path('movimentacoes/', include('movimentacoes.urls')),
     path('relatorios/', include('relatorios.urls')),
     path('search/', include('search.urls')),
+    
+    # Redirect raiz baseado em autenticação
+    path('', views.home_redirect, name='home'),
     
     # Autenticação de Dois Fatores (2FA)
     path('2fa/', include('autenticacao_2fa.urls')),
@@ -48,6 +51,9 @@ urlpatterns = [
     # Utilidades
     path("__reload__/", include("django_browser_reload.urls")),
     path("favicon.ico", RedirectView.as_view(url=settings.STATIC_URL + "img/favicon.ico")),
+    
+    # Wagtail CMS pages (páginas institucionais)
+    path("loja/", include(wagtail_urls)),  # Páginas Wagtail em /loja/
 ]
 
 # SSO Login (se habilitado)
@@ -66,11 +72,6 @@ if settings.DEBUG:
 
     urlpatterns += staticfiles_urlpatterns()
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-# Wagtail CMS pages (deve ser a última rota - catch-all)
-urlpatterns += [
-    path("", include(wagtail_urls)),
-]
 
 # Custom error handlers
 def erro_500(request):

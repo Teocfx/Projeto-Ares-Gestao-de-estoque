@@ -1,0 +1,220 @@
+{% comment %}
+Menu Wrapper - Acesso rápido às páginas principais
+Exibido no canto inferior direito (flutuante)
+{% endcomment %}
+{% load wagtailcore_tags perfil_tags %}
+
+{% if user.is_authenticated %}
+<div class="menu-wrapper">
+    <button class="menu-wrapper-toggle" id="menuWrapperToggle" aria-label="Menu rápido">
+        <i class="bi bi-grid-3x3-gap-fill"></i>
+    </button>
+    
+    <div class="menu-wrapper-content" id="menuWrapperContent">
+        <div class="menu-wrapper-header">
+            <h6 class="mb-0">Acesso Rápido</h6>
+            <button class="btn-close btn-close-sm" id="menuWrapperClose" aria-label="Fechar"></button>
+        </div>
+        
+        <div class="menu-wrapper-grid">
+            <a href="{% url 'dashboard:index' %}" class="menu-wrapper-item">
+                <div class="menu-wrapper-icon bg-primary">
+                    <i class="bi bi-speedometer2"></i>
+                </div>
+                <span>Dashboard</span>
+            </a>
+            
+            {% if user|tem_permissao:'editar_produtos' %}
+            <a href="{% url 'produtos:list' %}" class="menu-wrapper-item">
+                <div class="menu-wrapper-icon bg-success">
+                    <i class="bi bi-box"></i>
+                </div>
+                <span>Produtos</span>
+            </a>
+            {% endif %}
+            
+            <a href="{% url 'movimentacoes:list' %}" class="menu-wrapper-item">
+                <div class="menu-wrapper-icon bg-warning">
+                    <i class="bi bi-arrow-left-right"></i>
+                </div>
+                <span>Movimentações</span>
+            </a>
+            
+            {% if user|tem_permissao:'gerar_relatorios' %}
+            <a href="/relatorios/" class="menu-wrapper-item">
+                <div class="menu-wrapper-icon bg-info">
+                    <i class="bi bi-file-earmark-text"></i>
+                </div>
+                <span>Relatórios</span>
+            </a>
+            {% endif %}
+            
+            <a href="{% url 'wagtailadmin_home' %}" class="menu-wrapper-item">
+                <div class="menu-wrapper-icon bg-secondary">
+                    <i class="bi bi-gear"></i>
+                </div>
+                <span>Admin CMS</span>
+            </a>
+            
+            {% if user|tem_permissao:'editar_produtos' %}
+            <a href="{% url 'produtos:create' %}" class="menu-wrapper-item">
+                <div class="menu-wrapper-icon bg-primary">
+                    <i class="bi bi-plus-circle"></i>
+                </div>
+                <span>Novo Produto</span>
+            </a>
+            {% endif %}
+            
+            <a href="{% url 'movimentacoes:create' %}" class="menu-wrapper-item">
+                <div class="menu-wrapper-icon bg-success">
+                    <i class="bi bi-arrow-down-up"></i>
+                </div>
+                <span>Nova Movimentação</span>
+            </a>
+            
+            <a href="/search/" class="menu-wrapper-item">
+                <div class="menu-wrapper-icon bg-dark">
+                    <i class="bi bi-search"></i>
+                </div>
+                <span>Buscar</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.menu-wrapper {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1040;
+}
+
+.menu-wrapper-toggle {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--bs-primary);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.menu-wrapper-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.menu-wrapper-content {
+    position: absolute;
+    bottom: 70px;
+    right: 0;
+    width: 320px;
+    background: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    display: none;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+}
+
+.menu-wrapper-content.show {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.menu-wrapper-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid var(--bs-border-color);
+}
+
+.menu-wrapper-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.menu-wrapper-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--bs-body-color);
+    transition: all 0.2s ease;
+    background: var(--bs-light);
+}
+
+.menu-wrapper-item:hover {
+    background: var(--bs-secondary-bg);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.menu-wrapper-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.menu-wrapper-item span {
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+@media (max-width: 576px) {
+    .menu-wrapper-content {
+        width: calc(100vw - 40px);
+        right: -10px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggle = document.getElementById('menuWrapperToggle');
+    const content = document.getElementById('menuWrapperContent');
+    const close = document.getElementById('menuWrapperClose');
+    
+    if (toggle && content) {
+        toggle.addEventListener('click', function() {
+            content.classList.toggle('show');
+        });
+        
+        if (close) {
+            close.addEventListener('click', function() {
+                content.classList.remove('show');
+            });
+        }
+        
+        // Fechar ao clicar fora
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.menu-wrapper')) {
+                content.classList.remove('show');
+            }
+        });
+    }
+});
+</script>
+{% endif %}

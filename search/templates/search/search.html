@@ -8,7 +8,7 @@
             <div class="search-content">
                 <!-- Sidebar de Filtros -->
                 <aside class="search-filters">
-                    <form id="search-form" action="{% url 'search' %}" method="get">
+                    <form id="search-form" action="/search/" method="get">
                         <div class="search-header">
                             <h2>Busca</h2>
                         </div>
@@ -24,7 +24,7 @@
 
                             <div class="search-actions">
                                 <button type="submit" class="search-submit">Pesquisar</button>
-                                <a href="{% url 'search' %}" class="clear-filters">Limpar filtros</a>
+                                <a href="/search/" class="clear-filters">Limpar filtros</a>
                             </div>
                         </div>
 
@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Redireciona mantendo apenas os parâmetros relevantes
-        window.location = '{% url 'search' %}' + (params.toString() ? '?' + params.toString() : '');
+        window.location = '/search/' + (params.toString() ? '?' + params.toString() : '');
     }
     
     // Configura o submit do formulário
@@ -252,9 +252,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Redireciona mantendo apenas a query se existir
             const currentQuery = searchInput.value.trim();
             if (currentQuery) {
-                window.location = '{% url 'search' %}?query=' + encodeURIComponent(currentQuery);
+                window.location = '/search/?query=' + encodeURIComponent(currentQuery);
             } else {
-                window.location = '{% url 'search' %}';
+                window.location = '/search/';
             }
         });
     }

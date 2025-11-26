@@ -6,7 +6,7 @@ Uso: {% include 'components/top_menu.html' %}
 
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
     <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center" href="{% pageurl request.site.root_page %}">
+        <a class="navbar-brand d-flex align-items-center" href="{% if user.is_authenticated %}{% url 'dashboard:index' %}{% else %}/loja/{% endif %}">
             <i class="bi bi-box-seam me-2 text-primary fs-4"></i>
             <span class="fw-bold">ARES</span>
         </a>
@@ -17,43 +17,32 @@ Uso: {% include 'components/top_menu.html' %}
         </button>
         
         <div class="collapse navbar-collapse" id="topNavbar">
-            {# Menu dinâmico do Wagtail #}
+            {# Menu fixo do sistema #}
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                {% if request.site.root_page %}
-                    {% for menuitem in request.site.root_page.get_children.live.in_menu %}
-                        <li class="nav-item {% if menuitem.url == request.path %}active{% endif %}">
-                            <a class="nav-link" href="{% pageurl menuitem %}">
-                                {{ menuitem.title }}
-                            </a>
-                        </li>
-                    {% endfor %}
-                {% endif %}
-                
-                {# Links fixos do sistema interno #}
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'dashboard:index' %}">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" href="{% url 'dashboard:index' %}">
                             <i class="bi bi-speedometer2 me-1"></i>Dashboard
                         </a>
                     </li>
                     
                     {% if user|tem_permissao:'editar_produtos' %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'produtos:produto_list' %}">
+                        <a class="nav-link {% if 'produtos' in request.path %}active{% endif %}" href="{% url 'produtos:list' %}">
                             <i class="bi bi-box me-1"></i>Produtos
                         </a>
                     </li>
                     {% endif %}
                     
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'movimentacoes:movimentacao_list' %}">
+                        <a class="nav-link {% if 'movimentacoes' in request.path %}active{% endif %}" href="{% url 'movimentacoes:list' %}">
                             <i class="bi bi-arrow-left-right me-1"></i>Movimentações
                         </a>
                     </li>
                     
                     {% if user|tem_permissao:'gerar_relatorios' %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'relatorios:relatorio_list' %}">
+                        <a class="nav-link {% if 'relatorios' in request.path %}active{% endif %}" href="/relatorios/">
                             <i class="bi bi-file-earmark-text me-1"></i>Relatórios
                         </a>
                     </li>
@@ -63,14 +52,6 @@ Uso: {% include 'components/top_menu.html' %}
             
             {# Menu do usuário #}
             <ul class="navbar-nav ms-auto">
-                {# Theme Switcher #}
-                <li class="nav-item">
-                    <button class="btn btn-link nav-link" data-theme-toggle aria-label="Alternar tema" title="Alternar tema">
-                        <i class="bi bi-sun-fill theme-icon theme-icon-light"></i>
-                        <i class="bi bi-moon-stars-fill theme-icon theme-icon-dark d-none"></i>
-                    </button>
-                </li>
-                
                 {% if user.is_authenticated %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" 

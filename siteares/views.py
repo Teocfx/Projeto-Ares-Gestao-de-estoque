@@ -29,6 +29,16 @@ def acesso_negado(request):
 def erro_404(request, exception):
     return render(request, "404.html", status=404)
 
+def home_redirect(request):
+    """
+    Redireciona para dashboard se logado, ou para loja se não logado.
+    """
+    if request.user.is_authenticated:
+        return redirect('dashboard:index')
+    else:
+        # Redireciona para a home da loja (Wagtail)
+        return redirect('/loja/')
+
 def erro_403(request, exception):
     return render(request, "403.html", status=403)
 
