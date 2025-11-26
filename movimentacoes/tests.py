@@ -4,7 +4,6 @@ Testes para o módulo de movimentações de estoque.
 from django.test import TestCase, Client, override_settings
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from django.utils import timezone
 from decimal import Decimal
 
 from produtos.models import Product, Category, Unit

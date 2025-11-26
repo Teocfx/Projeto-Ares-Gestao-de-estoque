@@ -3,7 +3,6 @@ Management command para criar página Home da Loja automaticamente.
 Executado após migrate ou manualmente com: python manage.py setup_loja_home
 """
 from django.core.management.base import BaseCommand
-from django.contrib.contenttypes.models import ContentType
 from wagtail.models import Site, Page
 from home.models import HomePage
 

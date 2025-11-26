@@ -128,7 +128,7 @@ class CarrosselManager {
 }
 
 // Inicializar automaticamente
-const carrosselManager = new CarrosselManager();
+new CarrosselManager();
 
 // Exportar para uso externo se necessário
 if (typeof module !== 'undefined' && module.exports) {

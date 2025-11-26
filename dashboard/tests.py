@@ -9,7 +9,6 @@ from decimal import Decimal
 from datetime import datetime, timedelta
 
 from produtos.models import Product, Category, Unit
-from movimentacoes.models import InventoryMovement
 
 
 User = get_user_model()
@@ -124,7 +123,7 @@ class DashboardViewTestCase(TestCase):
     def test_dashboard_with_expired_products(self):
         """Testa que o dashboard identifica produtos vencidos."""
         # Criar produto vencido
-        expired_product = Product.objects.create(
+        Product.objects.create(
             sku='PROD-004',
             name='Produto Vencido',
             category=self.category,

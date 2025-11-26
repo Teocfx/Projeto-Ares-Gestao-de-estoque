@@ -4,12 +4,10 @@ Testes para o módulo de busca.
 from django.test import TestCase, Client, override_settings
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from django.utils import timezone
 from decimal import Decimal
 
 from produtos.models import Product, Category, Unit
 from movimentacoes.models import InventoryMovement
-from wagtail.models import Page
 from wagtail.contrib.search_promotions.models import Query
 
 User = get_user_model()
@@ -221,7 +219,7 @@ class SearchPermissionsTests(TestCase):
     
     def test_search_with_authenticated_user(self):
         """Testa busca com usuário autenticado."""
-        user = User.objects.create_user(
+        User.objects.create_user(
             username='testuser',
             email='test@example.com',
             password='testpass123'
