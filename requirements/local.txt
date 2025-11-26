@@ -1,8 +1,0 @@
-# Requisitos mínimos para desenvolvimento local com SQLite
-# Use este arquivo para testes rápidos sem PostgreSQL
-
--r base.txt
-
-# Ferramentas de desenvolvimento (opcionais)
-black==22.3.0
-ruff==0.0.290
