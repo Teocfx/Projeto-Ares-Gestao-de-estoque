@@ -6,18 +6,23 @@
 {% block body_class %}relatorios-page relatorios-vencimentos-page{% endblock %}
 
 {% block page_header %}
-    {% include 'include/titulo.html' with titulo="Relatório de Vencimentos" subtitulo="Produtos próximos ao vencimento ou vencidos" icon="calendar-x" %}
-    <div class="d-flex gap-2 mt-3">
-        <a href="{% url 'relatorios:index' %}" class="btn btn-outline-secondary no-print">
-            <i class="bi bi-arrow-left me-1"></i>Voltar
-        </a>
-        <a href="{% url 'relatorios:download_vencimentos_pdf' %}?{{ request.GET.urlencode }}" class="btn btn-danger no-print">
-            <i class="bi bi-file-pdf me-1"></i>Download PDF
-        </a>
-        <button class="btn btn-primary no-print" onclick="gerarRelatorioImpressao()">
-            <i class="bi bi-printer me-1"></i>Imprimir Relatório
-        </button>
-    </div>
+{% include 'include/titulo.html' with titulo="Relatório de Vencimentos" subtitulo="Produtos próximos ao vencimento ou vencidos" icon="calendar-x" show_actions=True %}
+    {% block titulo_actions %}
+        <div class="d-flex gap-2">
+            <a href="{% url 'relatorios:index' %}" class="btn btn-outline-secondary no-print">
+                <i class="bi bi-arrow-left me-1"></i>Voltar
+            </a>
+            <a href="{% url 'relatorios:generate' %}" class="btn btn-primary no-print">
+                <i class="bi bi-plus-circle me-1"></i>Gerar Novo Relatório
+            </a>
+            <a href="{% url 'relatorios:download_vencimentos_pdf' %}?{{ request.GET.urlencode }}" class="btn btn-danger no-print">
+                <i class="bi bi-file-pdf me-1"></i>Download PDF
+            </a>
+            <button class="btn btn-success no-print" onclick="window.print()">
+                <i class="bi bi-printer me-1"></i>Imprimir
+            </button>
+        </div>
+    {% endblock %}
 {% endblock %}
 
 {% block content %}

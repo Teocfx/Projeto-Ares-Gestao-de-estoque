@@ -59,6 +59,7 @@
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.13.1",
     "cssnano": "^7.0.7",
+    "django": "^1.0.0",
     "odometer": "^0.4.8",
     "swiper": "^11.2.8",
     "uikit": "^3.23.3",

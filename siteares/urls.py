@@ -75,6 +75,6 @@ if settings.DEBUG:
 
 # Custom error handlers
 def erro_500(request):
-    return render(request, "500.html", status=500)
+    return render(request, "errors/500.html", status=500)
 
 handler500 = erro_500

@@ -469,57 +469,64 @@ def generate_custom_report(request):
 @permission_required('relatorios.view_report', raise_exception=True)
 def download_estoque_pdf(request):
     """Download do relatório de estoque em PDF."""
-    # Obter mesmos filtros da view
-    search = request.GET.get('search', '')
-    category_id = request.GET.get('category')
-    status = request.GET.get('status')
-    
-    products = Product.objects.filter(is_active=True).select_related('category', 'unit')
-    
-    if search:
-        products = products.filter(Q(name__icontains=search) | Q(sku__icontains=search))
-    if category_id:
-        products = products.filter(category_id=category_id)
-    if status:
-        if status == 'critico':
-            products = products.filter(current_stock=0)
-        elif status == 'baixo':
-            products = products.filter(current_stock__gt=0, current_stock__lte=F('min_stock'))
-        elif status == 'ok':
-            products = products.filter(current_stock__gt=F('min_stock'))
-    
-    # Estatísticas
-    total_value = sum(float(p.current_stock) * float(getattr(p, 'unit_price', 0) or 0) for p in products)
-    total_products = products.count()
-    critical_count = products.filter(current_stock=0).count()
-    low_count = products.filter(current_stock__gt=0, current_stock__lte=F('min_stock')).count()
-    ok_count = total_products - critical_count - low_count
-    
-    stats = {
-        'total_products': total_products,
-        'total_value': total_value,
-        'critical_count': critical_count,
-        'low_count': low_count,
-        'ok_count': ok_count,
-    }
-    
-    # Gerar PDF
-    pdf_gen = PDFGenerator(
-        title="Relatório de Estoque",
-        subtitle="Situação atual do estoque de produtos",
-        author=request.user.get_full_name() or request.user.username
-    )
-    
-    context = {
-        'products': products.order_by('name')[:500],  # Limitar para performance
-        'stats': stats,
-    }
-    
-    pdf_bytes = pdf_gen.generate_pdf('relatorios/pdf/estoque.html', context)
-    
-    response = HttpResponse(pdf_bytes, content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="relatorio_estoque_{timezone.now().strftime("%Y%m%d_%H%M%S")}.pdf"'
-    return response
+    try:
+        # Obter mesmos filtros da view
+        search = request.GET.get('search', '')
+        category_id = request.GET.get('category')
+        status = request.GET.get('status')
+        
+        products = Product.objects.filter(is_active=True).select_related('category', 'unit')
+        
+        if search:
+            products = products.filter(Q(name__icontains=search) | Q(sku__icontains=search))
+        if category_id:
+            products = products.filter(category_id=category_id)
+        if status:
+            if status == 'critico':
+                products = products.filter(current_stock=0)
+            elif status == 'baixo':
+                products = products.filter(current_stock__gt=0, current_stock__lte=F('min_stock'))
+            elif status == 'ok':
+                products = products.filter(current_stock__gt=F('min_stock'))
+        
+        # Estatísticas
+        total_value = sum(float(p.current_stock) * float(getattr(p, 'unit_price', 0) or 0) for p in products)
+        total_products = products.count()
+        critical_count = products.filter(current_stock=0).count()
+        low_count = products.filter(current_stock__gt=0, current_stock__lte=F('min_stock')).count()
+        ok_count = total_products - critical_count - low_count
+        
+        stats = {
+            'total_products': total_products,
+            'total_value': total_value,
+            'critical_count': critical_count,
+            'low_count': low_count,
+            'ok_count': ok_count,
+        }
+        
+        # Gerar PDF
+        pdf_gen = PDFGenerator(
+            title="Relatório de Estoque",
+            subtitle="Situação atual do estoque de produtos",
+            author=request.user.get_full_name() or request.user.username
+        )
+        
+        context = {
+            'products': products.order_by('name')[:500],  # Limitar para performance
+            'stats': stats,
+        }
+        
+        pdf_content = pdf_gen.generate_pdf('relatorios/pdf/estoque.html', context)
+        
+        # Sempre retornar como PDF para download
+        response = HttpResponse(pdf_content, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="relatorio_estoque_{timezone.now().strftime("%Y%m%d_%H%M%S")}.pdf"'
+        return response
+            
+    except Exception as e:
+        # Se falhar, redirecionar com mensagem
+        messages.error(request, f'Erro ao gerar PDF: {str(e)}. Tente exportar em outro formato.')
+        return redirect('relatorios:estoque')
 
 
 @login_required
@@ -607,7 +614,7 @@ def download_vencimentos_pdf(request):
     )
     
     context = {
-        'products': products.order_by('expiry_date'),
+        'expiring_products': products.order_by('expiry_date'),
         'expired': expired,
         'critical': critical,
         'warning': warning,
