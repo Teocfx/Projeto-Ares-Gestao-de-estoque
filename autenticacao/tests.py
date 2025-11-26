@@ -58,8 +58,9 @@ class LoginViewTests(TestCase):
         """Testa se usuário autenticado é redirecionado."""
         self.client.login(username='testuser', password='testpass123')
         response = self.client.get(self.login_url)
-        # A view pode retornar 200 (renderizar) ou 302 (redirecionar)
-        self.assertIn(response.status_code, [200, 302])
+        # Usuário já autenticado deve ser redirecionado
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/dashboard/', response.url)
 
 
 class LogoutViewTests(TestCase):

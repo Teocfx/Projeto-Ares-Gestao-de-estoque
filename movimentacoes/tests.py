@@ -1,7 +1,7 @@
 """
 Testes para o módulo de movimentações de estoque.
 """
-from django.test import TestCase, Client
+from django.test import TestCase, Client, override_settings
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.utils import timezone
@@ -28,11 +28,7 @@ class InventoryMovementModelTests(TestCase):
             name='Categoria Teste',
             is_active=True
         )
-        self.unit = Unit.objects.create(
-            name='Unidade',
-            abbreviation='un',
-            is_active=True
-        )
+        self.unit = Unit.objects.create(name='UN', description='Unidade')
         self.product = Product.objects.create(
             name='Produto Teste',
             sku='TEST001',
@@ -40,7 +36,7 @@ class InventoryMovementModelTests(TestCase):
             unit=self.unit,
             current_stock=100,
             min_stock=10,
-            price=Decimal('25.00'),
+            unit_price=Decimal('25.00'),
             is_active=True
         )
     
@@ -94,7 +90,8 @@ class InventoryMovementModelTests(TestCase):
             user=self.user
         )
         
-        expected = f"ENTRADA - {self.product.name} - 30"
+        # Formato real: 'Entrada - Produto Teste (30 UN)'
+        expected = f"{movement.get_type_display()} - {self.product.name} ({movement.quantity} {self.product.unit})"
         self.assertEqual(str(movement), expected)
     
     def test_movement_with_document(self):
@@ -123,6 +120,9 @@ class InventoryMovementModelTests(TestCase):
         self.assertIsNotNone(movement.updated_at)
 
 
+@override_settings(
+    STORAGES={"staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"}}
+)
 class MovementListViewTests(TestCase):
     """Testes para a view de listagem de movimentações."""
     
@@ -133,10 +133,16 @@ class MovementListViewTests(TestCase):
             email='test@example.com',
             password='testpass123'
         )
+        # Adicionar permissão necessária
+        from django.contrib.contenttypes.models import ContentType
+        from django.contrib.auth.models import Permission
+        content_type = ContentType.objects.get_for_model(InventoryMovement)
+        permission = Permission.objects.get(content_type=content_type, codename='view_inventorymovement')
+        self.user.user_permissions.add(permission)
         self.client.login(username='testuser', password='testpass123')
         
         self.category = Category.objects.create(name='Categoria', is_active=True)
-        self.unit = Unit.objects.create(name='Unidade', abbreviation='un', is_active=True)
+        self.unit = Unit.objects.create(name='UN', description='Unidade')
         self.product = Product.objects.create(
             name='Produto Teste',
             sku='TEST001',
@@ -144,7 +150,7 @@ class MovementListViewTests(TestCase):
             unit=self.unit,
             current_stock=100,
             min_stock=10,
-            price=Decimal('20.00'),
+            unit_price=Decimal('20.00'),
             is_active=True
         )
         
@@ -196,6 +202,9 @@ class MovementListViewTests(TestCase):
         self.assertGreater(len(response.context['movements']), 0)
 
 
+@override_settings(
+    STORAGES={"staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"}}
+)
 class MovementCreateViewTests(TestCase):
     """Testes para a view de criação de movimentações."""
     
@@ -206,10 +215,16 @@ class MovementCreateViewTests(TestCase):
             email='test@example.com',
             password='testpass123'
         )
+        # Adicionar permissão necessária
+        from django.contrib.contenttypes.models import ContentType
+        from django.contrib.auth.models import Permission
+        content_type = ContentType.objects.get_for_model(InventoryMovement)
+        permission = Permission.objects.get(content_type=content_type, codename='add_inventorymovement')
+        self.user.user_permissions.add(permission)
         self.client.login(username='testuser', password='testpass123')
         
         self.category = Category.objects.create(name='Categoria', is_active=True)
-        self.unit = Unit.objects.create(name='Unidade', abbreviation='un', is_active=True)
+        self.unit = Unit.objects.create(name='UN', description='Unidade')
         self.product = Product.objects.create(
             name='Produto Teste',
             sku='TEST001',
@@ -217,7 +232,7 @@ class MovementCreateViewTests(TestCase):
             unit=self.unit,
             current_stock=100,
             min_stock=10,
-            price=Decimal('20.00'),
+            unit_price=Decimal('20.00'),
             is_active=True
         )
     
@@ -259,7 +274,7 @@ class InventoryMovementFormTests(TestCase):
     
     def setUp(self):
         self.category = Category.objects.create(name='Categoria', is_active=True)
-        self.unit = Unit.objects.create(name='Unidade', abbreviation='un', is_active=True)
+        self.unit = Unit.objects.create(name='UN', description='Unidade')
         self.product = Product.objects.create(
             name='Produto Teste',
             sku='TEST001',
@@ -267,7 +282,7 @@ class InventoryMovementFormTests(TestCase):
             unit=self.unit,
             current_stock=100,
             min_stock=10,
-            price=Decimal('20.00'),
+            unit_price=Decimal('20.00'),
             is_active=True
         )
     
@@ -318,7 +333,7 @@ class MovementStatisticsTests(TestCase):
         )
         
         self.category = Category.objects.create(name='Categoria', is_active=True)
-        self.unit = Unit.objects.create(name='Unidade', abbreviation='un', is_active=True)
+        self.unit = Unit.objects.create(name='UN', description='Unidade')
         self.product = Product.objects.create(
             name='Produto Teste',
             sku='TEST001',
@@ -326,7 +341,7 @@ class MovementStatisticsTests(TestCase):
             unit=self.unit,
             current_stock=100,
             min_stock=10,
-            price=Decimal('20.00'),
+            unit_price=Decimal('20.00'),
             is_active=True
         )
     
@@ -356,3 +371,5 @@ class MovementStatisticsTests(TestCase):
         
         self.assertEqual(entradas, 2)
         self.assertEqual(saidas, 1)
+
+

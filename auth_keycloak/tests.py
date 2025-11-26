@@ -4,7 +4,7 @@ Testes para o módulo de autenticação Keycloak.
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, PropertyMock
 
 from .adapters import KeycloakAdapter
 from .utils import obter_provedor_recente, pode_fazer_logout_sso
@@ -54,7 +54,8 @@ class KeycloakAdapterTests(TestCase):
         
         request = MagicMock()
         request.user = self.user
-        request.user.is_authenticated = True
+        # is_authenticated é uma propriedade read-only, então usamos um mock
+        type(request.user).is_authenticated = PropertyMock(return_value=True)
         
         # Deve fazer logout SSO para usuário autenticado via SSO
         redirect_url = self.adapter.get_logout_redirect_url(request)
@@ -99,7 +100,7 @@ class KeycloakIntegrationTests(TestCase):
         """Testa logout de usuário local."""
         self.client.login(username='testuser', password='testpass123')
         
-        response = self.client.post(reverse('account_logout'))
+        response = self.client.post(reverse('autenticacao:logout'))
         # Deve redirecionar após logout
         self.assertEqual(response.status_code, 302)
     
@@ -108,7 +109,7 @@ class KeycloakIntegrationTests(TestCase):
         """Testa se logout redireciona corretamente."""
         self.client.login(username='testuser', password='testpass123')
         
-        response = self.client.post(reverse('account_logout'))
+        response = self.client.post(reverse('autenticacao:logout'))
         self.assertIn(response.status_code, [200, 302])
 
 

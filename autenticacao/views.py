@@ -7,6 +7,10 @@ from django.contrib import messages
 
 def user_login(request):
     """View de login."""
+    # Se o usuário já está autenticado, redireciona para o dashboard
+    if request.user.is_authenticated:
+        return redirect('dashboard:index')
+    
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
