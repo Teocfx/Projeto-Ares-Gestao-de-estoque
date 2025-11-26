@@ -1,0 +1,242 @@
+@use '../variables';
+
+/**
+ * Autenticação 2FA - Estilos Comuns
+ * Estilos compartilhados entre setup e verificação 2FA
+ */
+
+// Container base para páginas 2FA
+.twofa-page {
+    background: linear-gradient(135deg, variables.$color-primary 0%, variables.$color-primary-hover 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    
+    // Navbar override
+    .navbar {
+        z-index: 1021;
+        
+        .navbar-brand,
+        .nav-link {
+            color: variables.$color-white !important;
+        }
+        
+        .navbar-toggler {
+            border-color: variables.$color-white;
+            
+            .navbar-toggler-icon {
+                filter: brightness(0) invert(1);
+            }
+        }
+    }
+}
+
+// Estilos comuns para formulário de verificação
+.verification-form {
+    margin-top: 30px;
+    
+    h3 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        color: variables.$color-text-primary;
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+    
+    p {
+        color: variables.$color-text-secondary;
+        margin-bottom: 20px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: variables.$color-text-primary;
+            font-size: 0.95rem;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            font-size: 24px;
+            border: 2px solid variables.$color-light-border;
+            border-radius: 8px;
+            font-family: 'Courier New', Consolas, monospace;
+            letter-spacing: 5px;
+            text-align: center;
+            background-color: variables.$color-white;
+            color: variables.$color-grey-900;
+            transition: all 0.3s ease;
+            
+            &::placeholder {
+                color: variables.$color-grey-400;
+                letter-spacing: normal;
+            }
+            
+            &:focus {
+                outline: none;
+                border-color: variables.$color-primary;
+                box-shadow: 0 0 0 4px variables.$color-primary-10;
+            }
+            
+            &:invalid {
+                border-color: variables.$color-error;
+            }
+        }
+    }
+}
+
+// Botões de ação
+.btn-verify,
+.btn-activate {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    
+    &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    &:active:not(:disabled) {
+        transform: translateY(0);
+    }
+    
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+}
+
+.btn-verify {
+    background: variables.$color-primary;
+    color: variables.$color-white;
+    
+    &:hover:not(:disabled) {
+        background: variables.$color-primary-hover;
+    }
+}
+
+.btn-activate {
+    background: variables.$color-success;
+    color: variables.$color-white;
+    
+    &:hover:not(:disabled) {
+        background: darken(variables.$color-success, 5%);
+    }
+}
+
+.btn-cancel {
+    display: block;
+    margin: 15px auto 0;
+    padding: 10px 24px;
+    background: variables.$color-grey-600;
+    color: variables.$color-white;
+    text-decoration: none;
+    border-radius: 8px;
+    text-align: center;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    
+    &:hover {
+        background: variables.$color-grey-700;
+        color: variables.$color-white;
+        transform: translateY(-2px);
+    }
+    
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+// Messages/Alerts
+.messages {
+    margin-bottom: 20px;
+    
+    .alert {
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        border: 1px solid transparent;
+        
+        &.alert-success {
+            background-color: lighten(variables.$color-success, 45%);
+            border-color: variables.$color-success;
+            color: darken(variables.$color-success, 20%);
+        }
+        
+        &.alert-error,
+        &.alert-danger {
+            background-color: lighten(variables.$color-error, 40%);
+            border-color: variables.$color-error;
+            color: darken(variables.$color-error, 10%);
+        }
+        
+        &.alert-warning {
+            background-color: lighten(variables.$color-warning, 35%);
+            border-color: variables.$color-warning;
+            color: darken(variables.$color-warning, 25%);
+        }
+        
+        &.alert-info {
+            background-color: lighten(variables.$color-info, 40%);
+            border-color: variables.$color-info;
+            color: darken(variables.$color-info, 20%);
+        }
+    }
+}
+
+// Animações
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+// Responsividade
+@media (max-width: 767.98px) {
+    .verification-form {
+        .form-group {
+            input[type="text"] {
+                font-size: 20px;
+                padding: 12px;
+                letter-spacing: 3px;
+            }
+        }
+    }
+    
+    .btn-verify,
+    .btn-activate {
+        font-size: 15px;
+        padding: 12px;
+    }
+}

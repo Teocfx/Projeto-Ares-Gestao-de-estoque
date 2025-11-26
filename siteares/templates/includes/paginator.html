@@ -1,0 +1,6 @@
+{% comment %}
+Alias para o componente de paginação padronizado.
+Este arquivo mantém compatibilidade com templates antigos que usam 'includes/paginator.html'.
+Use preferencialmente: {% include 'include/pagination.html' with page_obj=posts %}
+{% endcomment %}
+{% include 'include/pagination.html' with page_obj=posts %}

@@ -1,0 +1,84 @@
+{% comment %}
+Menu Wrapper - Acesso rápido às páginas principais
+Exibido no canto inferior direito (flutuante)
+{% endcomment %}
+{% load wagtailcore_tags perfil_tags %}
+
+{% if user.is_authenticated %}
+<div class="menu-wrapper">
+    <button class="menu-wrapper-toggle" id="menuWrapperToggle" aria-label="Menu rápido">
+        <i class="bi bi-grid-3x3-gap-fill"></i>
+    </button>
+    
+    <div class="menu-wrapper-content" id="menuWrapperContent">
+        <div class="menu-wrapper-header">
+            <h6 class="mb-0">Acesso Rápido</h6>
+            <button class="btn-close btn-close-sm" id="menuWrapperClose" aria-label="Fechar"></button>
+        </div>
+        
+        <div class="menu-wrapper-grid">
+            <a href="{% url 'dashboard:index' %}" class="menu-wrapper-item">
+                <div class="menu-wrapper-icon bg-primary">
+                    <i class="bi bi-speedometer2"></i>
+                </div>
+                <span>Dashboard</span>
+            </a>
+            
+            {% if user|tem_permissao:'editar_produtos' %}
+            <a href="{% url 'produtos:list' %}" class="menu-wrapper-item">
+                <div class="menu-wrapper-icon bg-success">
+                    <i class="bi bi-box"></i>
+                </div>
+                <span>Produtos</span>
+            </a>
+            {% endif %}
+            
+            <a href="{% url 'movimentacoes:list' %}" class="menu-wrapper-item">
+                <div class="menu-wrapper-icon bg-warning">
+                    <i class="bi bi-arrow-left-right"></i>
+                </div>
+                <span>Movimentações</span>
+            </a>
+            
+            {% if user|tem_permissao:'gerar_relatorios' %}
+            <a href="/relatorios/" class="menu-wrapper-item">
+                <div class="menu-wrapper-icon bg-info">
+                    <i class="bi bi-file-earmark-text"></i>
+                </div>
+                <span>Relatórios</span>
+            </a>
+            {% endif %}
+            
+            <a href="{% url 'wagtailadmin_home' %}" class="menu-wrapper-item">
+                <div class="menu-wrapper-icon bg-secondary">
+                    <i class="bi bi-gear"></i>
+                </div>
+                <span>Admin CMS</span>
+            </a>
+            
+            {% if user|tem_permissao:'editar_produtos' %}
+            <a href="{% url 'produtos:create' %}" class="menu-wrapper-item">
+                <div class="menu-wrapper-icon bg-primary">
+                    <i class="bi bi-plus-circle"></i>
+                </div>
+                <span>Novo Produto</span>
+            </a>
+            {% endif %}
+            
+            <a href="{% url 'movimentacoes:create' %}" class="menu-wrapper-item">
+                <div class="menu-wrapper-icon bg-success">
+                    <i class="bi bi-arrow-down-up"></i>
+                </div>
+                <span>Nova Movimentação</span>
+            </a>
+            
+            <a href="/search/" class="menu-wrapper-item">
+                <div class="menu-wrapper-icon bg-dark">
+                    <i class="bi bi-search"></i>
+                </div>
+                <span>Buscar</span>
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}

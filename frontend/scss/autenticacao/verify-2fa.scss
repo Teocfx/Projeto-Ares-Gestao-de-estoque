@@ -1,0 +1,209 @@
+@use '../variables';
+@use './twofa_common';
+
+/**
+ * Autenticação 2FA - Verificação
+ * Página de verificação do código 2FA no login
+ */
+
+.verify-2fa-container {
+    background-color: variables.$color-white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    padding: 50px 40px;
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    animation: slideUp 0.5s ease-out;
+    
+    .verify-icon {
+        font-size: 64px;
+        margin-bottom: 20px;
+        animation: pulse 2s ease-in-out infinite;
+        display: inline-block;
+    }
+    
+    h1 {
+        color: variables.$color-text-primary;
+        font-size: 26px;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+    
+    > p {
+        color: variables.$color-text-secondary;
+        font-size: 16px;
+        margin-bottom: 30px;
+        line-height: 1.5;
+    }
+    
+    .verification-form {
+        margin-top: 30px;
+        padding: 0;
+        background: transparent;
+        border: none;
+        text-align: left;
+        
+        .form-group {
+            margin-bottom: 25px;
+            
+            label {
+                text-align: left;
+                font-size: 1rem;
+            }
+            
+            input[type="text"] {
+                font-size: 28px;
+                padding: 18px;
+                letter-spacing: 8px;
+                
+                &:focus {
+                    box-shadow: 0 0 0 4px variables.$color-primary-10;
+                }
+            }
+        }
+    }
+    
+    .help-text {
+        margin-top: 25px;
+        padding: 18px;
+        background: variables.$color-grey-100;
+        border-radius: 8px;
+        font-size: 14px;
+        text-align: center;
+        
+        p {
+            margin: 0;
+            color: variables.$color-text-secondary;
+            line-height: 1.6;
+            
+            strong {
+                color: variables.$color-text-primary;
+                display: block;
+                margin-bottom: 8px;
+            }
+        }
+        
+        a {
+            color: variables.$color-primary;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            
+            &:hover {
+                color: variables.$color-primary-hover;
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+// Loading state
+.verify-2fa-container.loading {
+    .btn-verify {
+        position: relative;
+        color: transparent;
+        
+        &::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin-left: -10px;
+            margin-top: -10px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: variables.$color-white;
+            animation: spin 0.8s linear infinite;
+        }
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// Error state
+.verify-2fa-container.error {
+    .form-group input[type="text"] {
+        border-color: variables.$color-error;
+        animation: shake 0.5s;
+    }
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-5px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(5px);
+    }
+}
+
+// Success state
+.verify-2fa-container.success {
+    .verify-icon {
+        animation: none;
+    }
+    
+    .form-group input[type="text"] {
+        border-color: variables.$color-success;
+    }
+    
+    .btn-verify {
+        background: variables.$color-success;
+        
+        &::before {
+            content: '✓ ';
+        }
+    }
+}
+
+// Responsividade
+@media (max-width: 991.98px) {
+    .verify-2fa-container {
+        max-width: 450px;
+        padding: 40px 35px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .verify-2fa-container {
+        max-width: 95%;
+        padding: 35px 25px;
+        
+        .verify-icon {
+            font-size: 52px;
+        }
+        
+        h1 {
+            font-size: 22px;
+        }
+        
+        > p {
+            font-size: 15px;
+        }
+        
+        .verification-form {
+            .form-group {
+                input[type="text"] {
+                    font-size: 24px;
+                    padding: 15px;
+                    letter-spacing: 6px;
+                }
+            }
+        }
+        
+        .help-text {
+            padding: 15px;
+            font-size: 13px;
+        }
+    }
+}

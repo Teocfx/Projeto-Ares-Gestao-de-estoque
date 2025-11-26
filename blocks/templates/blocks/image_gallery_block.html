@@ -28,29 +28,6 @@
             </div>
         </div>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const swiperThumbs = new Swiper(".image-gallery-swiper-thumbs", {
-                    loop: true,
-                    spaceBetween: 10,
-                    slidesPerView: 4,
-                    freeMode: true,
-                    watchSlidesProgress: true,
-                });
-
-                const swiperMain = new Swiper(".image-gallery-swiper-main", {
-                    loop: true,
-                    spaceBetween: 10,
-                    autoHeight: true,
-                    navigation: {
-                        nextEl: ".swiper-button-next",
-                        prevEl: ".swiper-button-prev",
-                    },
-                    thumbs: { swiper: swiperThumbs },
-                });
-            });
-        </script>
-
     {% elif self.images %}
         {# Lógica para Imagem Única #}
         {% with item=self.images.0 %}

@@ -6,6 +6,7 @@ Uso: {% include 'include/pagination.html' with page_obj=page_obj %}
 
 Parâmetros:
 - page_obj (obrigatório): Objeto de paginação do Django (Paginator)
+- query_params (opcional): Parâmetros de query string para preservar na paginação
 - size (opcional): Tamanho dos botões (sm, md, lg). Padrão: md
 - show_info (opcional): Booleano para mostrar info de registros. Padrão: True
 - max_pages (opcional): Número máximo de páginas visíveis. Padrão: 5
@@ -43,7 +44,7 @@ No template:
             {# Botão Primeira Página #}
             {% if page_obj.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="?page=1" aria-label="Primeira página">
+                <a class="page-link" href="?{% if query_params %}{{ query_params }}&{% endif %}page=1" aria-label="Primeira página">
                     <i class="bi bi-chevron-double-left"></i>
                 </a>
             </li>
@@ -58,7 +59,7 @@ No template:
             {# Botão Página Anterior #}
             {% if page_obj.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Página anterior">
+                <a class="page-link" href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ page_obj.previous_page_number }}" aria-label="Página anterior">
                     <i class="bi bi-chevron-left"></i>
                 </a>
             </li>
@@ -87,7 +88,7 @@ No template:
                         </li>
                         {% else %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            <a class="page-link" href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ num }}">{{ num }}</a>
                         </li>
                         {% endif %}
                     {% endif %}
@@ -97,7 +98,7 @@ No template:
             {# Botão Próxima Página #}
             {% if page_obj.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Próxima página">
+                <a class="page-link" href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ page_obj.next_page_number }}" aria-label="Próxima página">
                     <i class="bi bi-chevron-right"></i>
                 </a>
             </li>
@@ -112,7 +113,7 @@ No template:
             {# Botão Última Página #}
             {% if page_obj.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Última página">
+                <a class="page-link" href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ page_obj.paginator.num_pages }}" aria-label="Última página">
                     <i class="bi bi-chevron-double-right"></i>
                 </a>
             </li>

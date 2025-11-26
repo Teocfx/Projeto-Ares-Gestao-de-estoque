@@ -1,0 +1,243 @@
+@use '../variables';
+@use './twofa_common';
+
+/**
+ * Autenticação 2FA - Setup/Configuração
+ * Página de configuração inicial do 2FA
+ */
+
+.setup-2fa-container {
+    background-color: variables.$color-white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    padding: 40px 30px;
+    width: 100%;
+    max-width: 650px;
+    animation: slideUp 0.5s ease-out;
+    max-height: 90vh;
+    overflow-y: auto;
+    
+    // Custom scrollbar
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    &::-webkit-scrollbar-track {
+        background: variables.$color-grey-200;
+        border-radius: 4px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+        background: variables.$color-grey-400;
+        border-radius: 4px;
+        
+        &:hover {
+            background: variables.$color-grey-500;
+        }
+    }
+}
+
+.setup-2fa-header {
+    text-align: center;
+    margin-bottom: 30px;
+    
+    h1 {
+        color: variables.$color-text-primary;
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+    
+    p {
+        color: variables.$color-text-secondary;
+        font-size: 16px;
+        margin: 0;
+    }
+}
+
+.instructions {
+    margin: 30px 0;
+    padding: 24px;
+    background: lighten(variables.$color-info, 45%);
+    border-left: 4px solid variables.$color-info;
+    border-radius: 8px;
+    
+    h3 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        color: darken(variables.$color-info, 20%);
+        font-size: 1.15rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    ol {
+        margin: 15px 0 0;
+        padding-left: 24px;
+        color: variables.$color-text-primary;
+        
+        li {
+            margin: 12px 0;
+            line-height: 1.6;
+            
+            strong {
+                color: darken(variables.$color-info, 15%);
+            }
+            
+            ul {
+                margin-top: 8px;
+                padding-left: 20px;
+                list-style-type: disc;
+                
+                li {
+                    margin: 5px 0;
+                    color: variables.$color-text-secondary;
+                }
+            }
+        }
+    }
+}
+
+.qr-code-section {
+    text-align: center;
+    margin: 30px 0;
+    padding: 24px;
+    background: variables.$color-grey-100;
+    border-radius: 12px;
+    border: 2px dashed variables.$color-grey-300;
+    
+    h3 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        color: variables.$color-text-primary;
+        font-size: 1.15rem;
+        font-weight: 600;
+    }
+    
+    img {
+        max-width: 280px;
+        width: 100%;
+        height: auto;
+        margin: 0 auto;
+        display: block;
+        background: variables.$color-white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+}
+
+.secret-key-section {
+    margin: 25px 0;
+    padding: 20px;
+    background: lighten(variables.$color-warning, 35%);
+    border: 2px solid variables.$color-warning;
+    border-radius: 8px;
+    
+    h3 {
+        margin-top: 0;
+        margin-bottom: 12px;
+        color: darken(variables.$color-warning, 30%);
+        font-size: 1.1rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    > p {
+        margin-bottom: 12px;
+        color: darken(variables.$color-warning, 25%);
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+    
+    .secret-key-code {
+        font-family: 'Courier New', Consolas, monospace;
+        font-size: 18px;
+        font-weight: bold;
+        color: variables.$color-error;
+        background: variables.$color-white;
+        padding: 15px;
+        border-radius: 6px;
+        word-break: break-all;
+        border: 1px solid variables.$color-grey-300;
+        user-select: all;
+        cursor: text;
+        
+        &:hover {
+            background: variables.$color-grey-50;
+        }
+    }
+}
+
+.verification-form {
+    margin-top: 30px;
+    padding: 24px;
+    background: variables.$color-grey-50;
+    border-radius: 12px;
+    border: 1px solid variables.$color-grey-200;
+}
+
+// Responsividade
+@media (max-width: 991.98px) {
+    .setup-2fa-container {
+        padding: 30px 25px;
+        max-width: 90%;
+    }
+    
+    .qr-code-section img {
+        max-width: 240px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .setup-2fa-container {
+        padding: 25px 20px;
+        max-width: 95%;
+        max-height: 85vh;
+    }
+    
+    .setup-2fa-header h1 {
+        font-size: 24px;
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .instructions {
+        padding: 18px;
+        
+        ol {
+            padding-left: 18px;
+            font-size: 0.95rem;
+        }
+    }
+    
+    .qr-code-section {
+        padding: 18px;
+        
+        img {
+            max-width: 200px;
+            padding: 10px;
+        }
+    }
+    
+    .secret-key-section {
+        padding: 15px;
+        
+        .secret-key-code {
+            font-size: 14px;
+            padding: 12px;
+        }
+    }
+    
+    .verification-form {
+        padding: 18px;
+    }
+}

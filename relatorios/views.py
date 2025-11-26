@@ -4,8 +4,8 @@ Geração de relatórios com filtros avançados e exportação.
 """
 
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib import messages
 from django.views.generic import ListView, CreateView, DetailView
 from django.http import JsonResponse, HttpResponse, Http404
@@ -22,13 +22,15 @@ from .forms import ReportFilterForm, ReportGenerationForm
 from .pdf_generator import PDFGenerator, ReportExporter
 
 
-class ReportIndexView(LoginRequiredMixin, ListView):
+class ReportIndexView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     """Página principal de relatórios com resumo e links."""
     
     template_name = 'relatorios/index.html'
     context_object_name = 'recent_reports'
     model = ReportGeneration
     paginate_by = 10
+    permission_required = 'relatorios.view_report'
+    permission_denied_message = 'Você não tem permissão para visualizar relatórios.'
     
     def get_queryset(self):
         return ReportGeneration.objects.filter(
@@ -60,6 +62,7 @@ def index(request):
 
 
 @login_required
+@permission_required('relatorios.add_reportgeneration', raise_exception=True)
 def generate_report(request):
     """Página para gerar novo relatório."""
     
@@ -127,7 +130,8 @@ def generate_report(request):
     return render(request, 'relatorios/generate.html', context)
 
 
-@login_required 
+@login_required
+@permission_required('relatorios.view_reportgeneration', raise_exception=True)
 def report_detail(request, pk):
     """Detalhes de um relatório gerado."""
     report = get_object_or_404(ReportGeneration, pk=pk, user=request.user)
@@ -139,6 +143,7 @@ def report_detail(request, pk):
 
 
 @login_required
+@permission_required('relatorios.view_reportgeneration', raise_exception=True)
 def download_report(request, pk):
     """Download de arquivo de relatório."""
     report = get_object_or_404(ReportGeneration, pk=pk, user=request.user)
@@ -164,6 +169,7 @@ def download_report(request, pk):
 
 # Relatórios específicos por tipo
 @login_required
+@permission_required('relatorios.view_report', raise_exception=True)
 def relatorio_estoque(request):
     """Relatório de estoque atual."""
     
@@ -231,6 +237,7 @@ def relatorio_estoque(request):
 
 
 @login_required
+@permission_required('relatorios.view_report', raise_exception=True)
 def relatorio_movimentacoes(request):
     """Relatório de movimentações por período."""
     
@@ -292,6 +299,7 @@ def relatorio_movimentacoes(request):
 
 
 @login_required
+@permission_required('relatorios.view_report', raise_exception=True)
 def relatorio_vencimentos(request):
     """Relatório de produtos próximos ao vencimento."""
     
@@ -340,6 +348,7 @@ def relatorio_vencimentos(request):
 
 
 @login_required
+@permission_required('relatorios.view_report', raise_exception=True)
 def relatorio_financeiro(request):
     """Relatório financeiro - valor do estoque por categoria."""
     
@@ -398,6 +407,7 @@ def relatorio_financeiro(request):
 
 
 @login_required
+@permission_required('relatorios.add_reportgeneration', raise_exception=True)
 def generate_custom_report(request):
     """Gerar relatório personalizado simplificado."""
     if request.method == 'POST':
@@ -456,62 +466,71 @@ def generate_custom_report(request):
 # ====== FUNÇÕES DE DOWNLOAD DE PDF ======
 
 @login_required
+@permission_required('relatorios.view_report', raise_exception=True)
 def download_estoque_pdf(request):
     """Download do relatório de estoque em PDF."""
-    # Obter mesmos filtros da view
-    search = request.GET.get('search', '')
-    category_id = request.GET.get('category')
-    status = request.GET.get('status')
-    
-    products = Product.objects.filter(is_active=True).select_related('category', 'unit')
-    
-    if search:
-        products = products.filter(Q(name__icontains=search) | Q(sku__icontains=search))
-    if category_id:
-        products = products.filter(category_id=category_id)
-    if status:
-        if status == 'critico':
-            products = products.filter(current_stock=0)
-        elif status == 'baixo':
-            products = products.filter(current_stock__gt=0, current_stock__lte=F('min_stock'))
-        elif status == 'ok':
-            products = products.filter(current_stock__gt=F('min_stock'))
-    
-    # Estatísticas
-    total_value = sum(float(p.current_stock) * float(getattr(p, 'unit_price', 0) or 0) for p in products)
-    total_products = products.count()
-    critical_count = products.filter(current_stock=0).count()
-    low_count = products.filter(current_stock__gt=0, current_stock__lte=F('min_stock')).count()
-    ok_count = total_products - critical_count - low_count
-    
-    stats = {
-        'total_products': total_products,
-        'total_value': total_value,
-        'critical_count': critical_count,
-        'low_count': low_count,
-        'ok_count': ok_count,
-    }
-    
-    # Gerar PDF
-    pdf_gen = PDFGenerator(
-        title="Relatório de Estoque",
-        subtitle="Situação atual do estoque de produtos",
-        author=request.user.get_full_name() or request.user.username
-    )
-    
-    context = {
-        'products': products.order_by('name')[:500],  # Limitar para performance
-        'stats': stats,
-    }
-    
-    pdf_bytes = pdf_gen.generate_pdf('relatorios/pdf/estoque.html', context)
-    
-    response = HttpResponse(pdf_bytes, content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="relatorio_estoque_{timezone.now().strftime("%Y%m%d_%H%M%S")}.pdf"'
-    return response
+    try:
+        # Obter mesmos filtros da view
+        search = request.GET.get('search', '')
+        category_id = request.GET.get('category')
+        status = request.GET.get('status')
+        
+        products = Product.objects.filter(is_active=True).select_related('category', 'unit')
+        
+        if search:
+            products = products.filter(Q(name__icontains=search) | Q(sku__icontains=search))
+        if category_id:
+            products = products.filter(category_id=category_id)
+        if status:
+            if status == 'critico':
+                products = products.filter(current_stock=0)
+            elif status == 'baixo':
+                products = products.filter(current_stock__gt=0, current_stock__lte=F('min_stock'))
+            elif status == 'ok':
+                products = products.filter(current_stock__gt=F('min_stock'))
+        
+        # Estatísticas
+        total_value = sum(float(p.current_stock) * float(getattr(p, 'unit_price', 0) or 0) for p in products)
+        total_products = products.count()
+        critical_count = products.filter(current_stock=0).count()
+        low_count = products.filter(current_stock__gt=0, current_stock__lte=F('min_stock')).count()
+        ok_count = total_products - critical_count - low_count
+        
+        stats = {
+            'total_products': total_products,
+            'total_value': total_value,
+            'critical_count': critical_count,
+            'low_count': low_count,
+            'ok_count': ok_count,
+        }
+        
+        # Gerar PDF
+        pdf_gen = PDFGenerator(
+            title="Relatório de Estoque",
+            subtitle="Situação atual do estoque de produtos",
+            author=request.user.get_full_name() or request.user.username
+        )
+        
+        context = {
+            'products': products.order_by('name')[:500],  # Limitar para performance
+            'stats': stats,
+        }
+        
+        pdf_content = pdf_gen.generate_pdf('relatorios/pdf/estoque.html', context)
+        
+        # Sempre retornar como PDF para download
+        response = HttpResponse(pdf_content, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="relatorio_estoque_{timezone.now().strftime("%Y%m%d_%H%M%S")}.pdf"'
+        return response
+            
+    except Exception as e:
+        # Se falhar, redirecionar com mensagem
+        messages.error(request, f'Erro ao gerar PDF: {str(e)}. Tente exportar em outro formato.')
+        return redirect('relatorios:estoque')
 
 
 @login_required
+@permission_required('relatorios.view_report', raise_exception=True)
 def download_movimentacoes_pdf(request):
     """Download do relatório de movimentações em PDF."""
     date_from = request.GET.get('date_from')
@@ -529,15 +548,19 @@ def download_movimentacoes_pdf(request):
     else:
         date_to = datetime.strptime(date_to, '%Y-%m-%d').date()
     
-    movements = InventoryMovement.objects.filter(
+    # Query base com filtros de data
+    movements_base = InventoryMovement.objects.filter(
         created_at__date__range=[date_from, date_to]
     ).select_related('product', 'user')
     
+    # Aplicar filtros adicionais
+    movements = movements_base
     if movement_type:
         movements = movements.filter(type=movement_type)
     if product_id:
         movements = movements.filter(product_id=product_id)
     
+    # Estatísticas respeitando os filtros aplicados
     stats = {
         'total_movements': movements.count(),
         'entradas': movements.filter(type=InventoryMovement.ENTRADA).count(),
@@ -568,6 +591,7 @@ def download_movimentacoes_pdf(request):
 
 
 @login_required
+@permission_required('relatorios.view_report', raise_exception=True)
 def download_vencimentos_pdf(request):
     """Download do relatório de vencimentos em PDF."""
     days_ahead = int(request.GET.get('days', 30))
@@ -576,16 +600,19 @@ def download_vencimentos_pdf(request):
     today = timezone.now().date()
     future_date = today + timedelta(days=days_ahead)
     
-    products = Product.objects.filter(is_active=True, expiry_date__isnull=False).select_related('category', 'unit')
+    # Query base - produtos com data de validade
+    products_base = Product.objects.filter(is_active=True, expiry_date__isnull=False).select_related('category', 'unit')
     
+    # Aplicar filtro de período
     if include_expired:
-        products = products.filter(expiry_date__lte=future_date)
+        products = products_base.filter(expiry_date__lte=future_date)
     else:
-        products = products.filter(expiry_date__gte=today, expiry_date__lte=future_date)
+        products = products_base.filter(expiry_date__gte=today, expiry_date__lte=future_date)
     
+    # Calcular estatísticas baseadas nos produtos filtrados
     expired = products.filter(expiry_date__lt=today)
     critical = products.filter(expiry_date__range=[today, today + timedelta(days=7)])
-    warning = products.filter(expiry_date__range=[today + timedelta(days=8), today + timedelta(days=30)])
+    warning = products.filter(expiry_date__range=[today + timedelta(days=8), future_date])
     
     pdf_gen = PDFGenerator(
         title="Relatório de Vencimentos",
@@ -594,7 +621,7 @@ def download_vencimentos_pdf(request):
     )
     
     context = {
-        'products': products.order_by('expiry_date'),
+        'expiring_products': products.order_by('expiry_date'),
         'expired': expired,
         'critical': critical,
         'warning': warning,
@@ -614,6 +641,7 @@ def download_vencimentos_pdf(request):
 
 
 @login_required
+@permission_required('relatorios.view_report', raise_exception=True)
 def download_financeiro_pdf(request):
     """Download do relatório financeiro em PDF."""
     category_id = request.GET.get('category')

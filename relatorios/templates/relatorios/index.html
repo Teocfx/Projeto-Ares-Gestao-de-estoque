@@ -6,12 +6,15 @@
 {% block body_class %}relatorios-page{% endblock %}
 
 {% block page_header %}
-{% include 'include/titulo.html' with titulo="Central de Relatórios" icon="chart-bar" %}
-    {% block titulo_actions %}
+{# Cabeçalho da página com botão de ação #}
+{% include 'include/titulo.html' with titulo="Central de Relatórios" icon="chart-bar" show_actions=True %}
+{% block titulo_actions %}
+    <div class="d-flex gap-2">
         <a href="{% url 'relatorios:generate' %}" class="btn btn-primary">
             <i class="bi bi-plus-circle me-2"></i>Gerar Novo Relatório
         </a>
-    {% endblock %}
+    </div>
+{% endblock %}
 {% endblock %}
 
 {% block content %}
