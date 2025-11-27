@@ -199,16 +199,15 @@ coverage html
 ```
 
 ## 🤖 Testes Automatizados
-- Ferramentas utilizadas
-- Como rodar os testes
+- Ferramentas utilizadas: Pytest para testes de API (implementado em produtos/tests_api.py com 26 testes). Jest configurado para frontend.
 
-## 📊 Métricas e Estimativas
-- Métricas aplicadas (ex: cobertura, defeitos, complexidade)
-- Estimativas de esforço
+📊 Métricas e Estimativas
+- Métricas aplicadas: Cobertura de testes
+- Estimativas de esforço: 60h totais.
   
 ## 🔍 Revisão Técnica
-- Técnicas usadas (pareamento, SonarQube, Lint)
-- Resultados encontrados
+- Técnicas usadas (pareamento, SonarQube, Lint): SonarQube configurado via sonar-project.properties para análise de qualidade. ESLint (.eslintrc) e Stylelint (.stylelintrc) para linting de JS/SCSS. Pre-commit hooks (.pre-commit-config.yaml) para validação automática. Pareamento mencionado como recomendação, mas não aplicado consistentemente.
+- Resultados encontrados: Nota geral 8/10.
   
 ## 🔧 Versionamento
 Para organizar e registrar o desenvolvimento do sistema, o desenvolvimento foi realizado em branches separadas, o que ajudou a isolar funcionalidades, reduzir conflitos e garantir o bom funcionamento do sistema durante o controle de versão.
