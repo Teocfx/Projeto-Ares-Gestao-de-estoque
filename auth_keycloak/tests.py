@@ -59,6 +59,7 @@ class KeycloakAdapterTests(TestCase):
         
         # Deve fazer logout SSO para usuário autenticado via SSO
         redirect_url = self.adapter.get_logout_redirect_url(request)
+        self.assertIsNotNone(redirect_url)
         mock_logout_sso.assert_called_once_with(self.user, mock_provedor)
 
 
@@ -118,7 +119,7 @@ class KeycloakAuthenticationTests(TestCase):
     
     def test_login_without_keycloak(self):
         """Testa login sem Keycloak (usuário local)."""
-        user = User.objects.create_user(
+        User.objects.create_user(
             username='localuser',
             email='local@example.com',
             password='localpass123'

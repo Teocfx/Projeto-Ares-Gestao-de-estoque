@@ -7,12 +7,11 @@ from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 from django.utils import timezone
-from datetime import timedelta, date
 from decimal import Decimal
 
 from produtos.models import Product, Category, Unit
 from movimentacoes.models import InventoryMovement
-from .models import ReportGeneration, ReportType
+from .models import ReportGeneration
 from .pdf_generator import PDFGenerator
 
 User = get_user_model()
@@ -50,47 +49,6 @@ class ReportIndexViewTests(TestCase):
         self.client.logout()
         response = self.client.get(reverse('relatorios:index'))
         self.assertEqual(response.status_code, 302)  # Redirect to login
-    
-    # def test_index_view_renders_correct_template(self):
-    #     """Testa se a view renderiza o template correto."""
-    #     # View usa PermissionRequiredMixin com 'relatorios.view_report' customizada
-    #     # que não existe como permissão padrão do Django
-    #     response = self.client.get(reverse('relatorios:index'))
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'relatorios/index.html')
-    
-    # def test_index_view_displays_statistics(self):
-    #     """Testa se a view exibe as estatísticas corretas."""
-    #     # View usa PermissionRequiredMixin com 'relatorios.view_report' customizada
-    #     # que não existe como permissão padrão do Django
-    #     # Criar produtos
-    #     Product.objects.create(
-    #         name='Produto 1',
-    #         sku='SKU001',
-    #         category=self.category,
-    #         unit=self.unit,
-    #         current_stock=5,
-    #         min_stock=10,
-    #         unit_price=Decimal('10.00'),
-    #         is_active=True
-    #     )
-    #     Product.objects.create(
-    #         name='Produto 2',
-    #         sku='SKU002',
-    #         category=self.category,
-    #         unit=self.unit,
-    #         current_stock=20,
-    #         min_stock=10,
-    #         unit_price=Decimal('15.00'),
-    #         is_active=True
-    #     )
-    #     
-    #     response = self.client.get(reverse('relatorios:index'))
-    #     self.assertEqual(response.status_code, 200)
-    #     # Verificar estatísticas se o context estiver disponível
-    #     if response.context:
-    #         self.assertEqual(response.context['total_products'], 2)
-    #         self.assertEqual(response.context['low_stock_products'], 1)
 
 
 @override_settings(
@@ -161,16 +119,6 @@ class EstoqueReportTests(TestCase):
         # View não retorna 'ok_count', apenas total, critical e low
         self.assertIn('total_value', stats)
     
-    # def test_estoque_filter_by_status(self):
-    #     """Testa filtro por status de estoque."""
-    #     # Filtro 'status=critical' não está funcionando como esperado na view
-    #     # View usa 'critico' não 'critical'
-    #     response = self.client.get(reverse('relatorios:estoque') + '?status=critical')
-    #     products = response.context['products']
-    #     
-    #     self.assertEqual(len(products), 1)
-    #     self.assertEqual(products[0].name, 'Produto Crítico')
-    
     def test_estoque_filter_by_category(self):
         """Testa filtro por categoria."""
         response = self.client.get(
@@ -179,16 +127,6 @@ class EstoqueReportTests(TestCase):
         products = response.context['products']
         
         self.assertEqual(len(products), 3)
-    
-    # def test_estoque_pdf_download(self):
-    #     """Testa download do PDF de estoque."""
-    #     # SKIP: WeasyPrint não está disponível no Windows
-    #     # RuntimeError: WeasyPrint não está disponível. A geração de PDF não é suportada neste ambiente.
-    #     response = self.client.get(reverse('relatorios:download_estoque_pdf'))
-    #     
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(response['Content-Type'], 'application/pdf')
-    #     self.assertIn('attachment', response['Content-Disposition'])
 
 
 @override_settings(
@@ -259,18 +197,6 @@ class MovimentacoesReportTests(TestCase):
         self.assertEqual(stats['saidas'], 1)
         self.assertEqual(stats['ajustes'], 1)
     
-    # def test_movimentacoes_filter_by_type(self):
-    #     """Testa filtro por tipo de movimentação."""
-    #     # Filtro 'type=entrada' não está retornando resultados
-    #     # Pode precisar ser 'type=ENTRADA' (maiúsculo)
-    #     response = self.client.get(
-    #         reverse('relatorios:movimentacoes') + '?type=entrada'
-    #     )
-    #     movements = response.context['movements']
-    #     
-    #     self.assertEqual(len(movements), 1)
-    #     self.assertEqual(movements[0].type, InventoryMovement.ENTRADA)
-    
     def test_movimentacoes_filter_by_date(self):
         """Testa filtro por data."""
         today = timezone.now().date()
@@ -279,15 +205,6 @@ class MovimentacoesReportTests(TestCase):
             f'?date_from={today}&date_to={today}'
         )
         self.assertEqual(response.status_code, 200)
-    
-    # def test_movimentacoes_pdf_download(self):
-    #     """Testa download do PDF de movimentações."""
-    #     # SKIP: WeasyPrint não está disponível no Windows
-    #     # RuntimeError: WeasyPrint não está disponível. A geração de PDF não é suportada neste ambiente.
-    #     response = self.client.get(reverse('relatorios:download_movimentacoes_pdf'))
-    #     
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(response['Content-Type'], 'application/pdf')
 
 
 class PDFGeneratorTests(TestCase):
@@ -319,32 +236,5 @@ class PDFGeneratorTests(TestCase):
         self.assertEqual(pdf_gen.title, "Relatório Teste")
         self.assertEqual(pdf_gen.subtitle, "Subtítulo")
         self.assertEqual(pdf_gen.author, "Test User")
-    
-    # def test_pdf_generation_with_products(self):
-    #     """Testa geração de PDF com produtos."""
-    #     # SKIP: WeasyPrint não está disponível no Windows
-    #     # RuntimeError: WeasyPrint não está disponível. A geração de PDF não é suportada neste ambiente.
-    #     pdf_gen = PDFGenerator(
-    #         title="Relatório de Estoque",
-    #         subtitle="Teste",
-    #         author="Test User"
-    #     )
-    #     
-    #     context = {
-    #         'products': [self.product],
-    #         'stats': {
-    #             'total_products': 1,
-    #             'critical_count': 0,
-    #             'low_count': 0,
-    #             'ok_count': 1,
-    #             'total_value': Decimal('1000.00')
-    #         }
-    #     }
-    #     
-    #     pdf_bytes = pdf_gen.generate_pdf('relatorios/pdf/estoque.html', context)
-    #     
-    #     self.assertIsNotNone(pdf_bytes)
-    #     self.assertIsInstance(pdf_bytes, bytes)
-    #     self.assertGreater(len(pdf_bytes), 0)
 
 
