@@ -10,7 +10,7 @@ from decimal import Decimal
 from datetime import datetime, timedelta
 
 from produtos.models import Product, Category, Unit
-from produtos.forms import ProductForm, CategoryForm, UnitForm
+from produtos.forms import ProductForm, CategoryForm
 
 
 User = get_user_model()
@@ -253,7 +253,7 @@ class ProductListViewTestCase(TestCase):
     def test_product_list_requires_permission(self):
         """Testa que a lista de produtos requer permissão."""
         # Criar usuário sem permissão
-        user_no_perm = User.objects.create_user(
+        User.objects.create_user(
             username='noperm',
             password='test123'
         )
@@ -474,7 +474,7 @@ class ProductCreateViewTestCase(TestCase):
     
     def test_product_create_requires_permission(self):
         """Testa que criação requer permissão."""
-        user_no_perm = User.objects.create_user(
+        User.objects.create_user(
             username='noperm2',
             password='test123'
         )

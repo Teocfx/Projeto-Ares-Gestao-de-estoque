@@ -4,13 +4,10 @@ Testes para o módulo core.
 from django.test import TestCase, Client, override_settings
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from django.utils import timezone
 from wagtail.documents.models import Document
 from wagtail.documents.tests.utils import get_test_document_file
 
-from .models import TimeStampedModel, UserTrackingModel
-from produtos.models import Product, Category, Unit
-from decimal import Decimal
+from produtos.models import Category, Unit
 
 User = get_user_model()
 
@@ -62,21 +59,6 @@ class TesteComponentesViewTests(TestCase):
         """Testa se a view requer autenticação."""
         response = self.client.get(reverse('core:teste_componentes'))
         self.assertEqual(response.status_code, 302)  # Redirect to login
-    
-    # def test_view_loads_when_authenticated(self):
-    #     """Testa se a view carrega quando autenticado."""
-    #     self.client.login(username='testuser', password='testpass123')
-    #     response = self.client.get(reverse('core:teste_componentes'))
-    #     
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'teste_componentes.html')
-    # 
-    # def test_view_context_has_breadcrumbs_disabled(self):
-    #     """Testa se breadcrumbs estão desabilitados."""
-    #     self.client.login(username='testuser', password='testpass123')
-    #     response = self.client.get(reverse('core:teste_componentes'))
-    #     
-    #     self.assertFalse(response.context['show_breadcrumbs'])
 
 
 class DocumentServeViewTests(TestCase):
@@ -105,16 +87,6 @@ class DocumentServeViewTests(TestCase):
         
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-    
-    # def test_serve_nonexistent_document(self):
-    #     """Testa servir um documento inexistente."""
-    #     url = reverse('core:document_serve_inline', kwargs={
-    #         'document_id': 99999,
-    #         'document_filename': 'nonexistent.pdf'
-    #     })
-    #     
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, 404)
 
 
 class CoreUtilsTests(TestCase):
@@ -126,37 +98,6 @@ class CoreUtilsTests(TestCase):
             is_active=True
         )
         self.unit = Unit.objects.create(name='UN', description='Unidade')
-    
-    # def test_model_ordering(self):
-    #     """Testa ordenação padrão por created_at."""
-    #     product1 = Product.objects.create(
-    #         name='Produto 1',
-    #         sku='SKU001',
-    #         category=self.category,
-    #         unit=self.unit,
-    #         current_stock=10,
-    #         min_stock=5,
-    #         unit_price=Decimal('10.00'),
-    #         is_active=True
-    #     )
-    #     
-    #     import time
-    #     time.sleep(0.1)
-    #     
-    #     product2 = Product.objects.create(
-    #         name='Produto 2',
-    #         sku='SKU002',
-    #         category=self.category,
-    #         unit=self.unit,
-    #         current_stock=20,
-    #         min_stock=5,
-    #         unit_price=Decimal('20.00'),
-    #         is_active=True
-    #     )
-    #     
-    #     # Por padrão, o mais recente deve vir primeiro
-    #     products = Product.objects.all()
-    #     self.assertEqual(products.first(), product2)
 
 
 @override_settings(

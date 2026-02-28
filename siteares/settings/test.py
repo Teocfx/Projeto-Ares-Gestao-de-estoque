@@ -3,7 +3,7 @@ Settings específicas para ambiente de testes.
 Herda de dev.py e adiciona configurações otimizadas para testes.
 """
 
-from .dev import *
+from .dev import *  # noqa: F403, F401
 
 # Ativa debug em testes para evitar erros de staticfiles
 DEBUG = True

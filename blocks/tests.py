@@ -5,7 +5,6 @@ Este módulo é usado para definir blocos customizados do Wagtail StreamField.
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from wagtail.blocks import StreamBlock, CharBlock, RichTextBlock
-from wagtail.models import Page
 
 User = get_user_model()
 
